@@ -204,6 +204,15 @@ feed:
 
 最后在主题的配置中添加入口
 
+## 评论
+使用[disqus](https://disqus.com)，
+
+进入disqus网站，填写博客的域名，按照指引完成之后，获取shortname，然后在_config.xml中添加
+
+``` yaml
+disqus_shortname: shortname
+```
+
 ## 参考
 1. <https://xuanwo.org/2015/03/26/hexo-intor/>
 1. <http://jiji262.github.io/2016/04/15/2016-04-15-hexo-github-pages-blog/>

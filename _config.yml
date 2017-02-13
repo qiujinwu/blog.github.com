@@ -73,7 +73,8 @@ deploy:
   branch: master
 
 plugin:
-- hexo-generator-feed
+ - hexo-generator-feed
+ - hexo-generator-sitemap
 #Feed Atom
 feed:
   type: atom

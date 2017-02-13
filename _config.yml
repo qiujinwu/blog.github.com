@@ -82,3 +82,8 @@ feed:
 
 disqus_shortname: blog-qiujinwu-com
 
+sitemap:
+  path: sitemap.xml
+baidusitemap:
+  path: baidusitemap.xml
+

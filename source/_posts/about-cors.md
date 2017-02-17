@@ -4,6 +4,7 @@ date: 2017-02-16 19:07:40
 tags:
  - cors
  - jsonp
+ - nginx
 categories:
  - 后端
 ---

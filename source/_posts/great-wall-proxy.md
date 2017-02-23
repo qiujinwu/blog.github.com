@@ -63,6 +63,7 @@ $ export http_proxy="http://127.0.0.1:8123/"
 1. <https://www.domecross.com/>
 2. <https://crola.xyz/>
 3. <https://shadowsocks.org/en/download/clients.html>
+4. <https://www.yuntisecure.com/>
 
 ## 参考
 1. <https://blog.xinshangshangxin.com/2015/06/21/linux%E7%BB%88%E7%AB%AF%E7%BF%BB%E5%A2%99/>

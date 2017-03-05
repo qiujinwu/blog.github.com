@@ -83,6 +83,18 @@ sudo systemctl restart docker
 
 注意，第一个ExecStart=不能省略，参见<http://askubuntu.com/questions/19320/how-to-enable-or-disable-services>
 
+# Python
+一般安装其他软件就把Python连带安装进来了，2和3都有，默认是Python2
+
+``` bash
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 500
+
+python --version
+Python 3.5.2
+
+```
+
 # rcconf
 可以用rcconf启用/禁用某些服务的自启动
 

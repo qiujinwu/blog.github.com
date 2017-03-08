@@ -127,5 +127,16 @@ e.SetHTMLTemplate(template.Load())
 
 经过这么一折腾，所有的静态资源都直接包含在一个单独的可执行程序中了
 
+## 数据库迁移脚本
+在Makefile中还有这么一段
+``` makefile
+gen_migrations:
+	go generate github.com/drone/drone/store/datastore/ddl
+```
 
+这用于将支持的数据库的迁移（migrate）sql脚本打包
+``` go
+package ddl
+//go:generate go-bindata -pkg ddl -o ddl_gen.go sqlite3/ mysql/ postgres/
+```
 

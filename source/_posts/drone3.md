@@ -74,7 +74,7 @@ var infoCmd = cli.Command{
 }
 ```
 
-# Agent
+# Cli
 drone cli仅仅是对【src/github.com/drone/drone/client】的一个封装调用，本质上就是一个http请求，只不过使用不同的jwt token。
 
 src/github.com/drone/drone/drone/user_list.go
@@ -602,7 +602,7 @@ drone server和agent使用一个**[mq](https://github.com/drone/mq)**来通信�
 
 和**[rabbitmq](https://www.rabbitmq.com/)**之类的mq不同在于用使用go语言编写，所以可以集成到服务内部，而不用单独开启一个服务，这一点和**[zeromq](http://zeromq.org/)**有点类似。关于和其他主流的mq对比，见官网<http://mq.drone.io/overview/>
 
-## server初始化
+## server mq初始化
 通过使用闭包完成全局初始化，然后通过中间件设置到gin.Context
 
 src/github.com/drone/drone/router/middleware/broker.go

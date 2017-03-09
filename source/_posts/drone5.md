@@ -10,7 +10,7 @@ categories:
 ---
 
 # 插件
-drone不仅仅只是自动编译，还可以利用插件做一些其他事情，比如结果通知，打包目标文件成一个docker镜像。drone的插件可浏览<>，一些常用的比如
+drone不仅仅只是自动编译，还可以利用插件做一些其他事情，比如结果通知，打包目标文件成一个docker镜像。drone的插件可浏览<http://plugins.drone.io/>，一些常用的比如
 
 1. <http://plugins.drone.io/drone-plugins/drone-docker/>
 2. <http://plugins.drone.io/appleboy/drone-scp/>

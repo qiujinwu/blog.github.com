@@ -166,6 +166,31 @@ app = create_app()
 sentry.captureMessage('hello, world!.shit');
 ```
 
+## Pip修改默认源
+Pip默认的源速度很慢，而且时而访问不了，可以修改到国内的源
+``` bash
+pip install -i http://pypi.douban.com/simple/ \
+    --trusted-host pypi.douban.com itsdangerous
+```
+
+其他比如<http://mirrors.aliyun.com/pypi/simple/>
+
+### 设置全局默认
+``` bash
+king@KingUbuntu64:~$ mkdir -p ~/.config/pip/
+king@KingUbuntu64:~$ vi ~/.config/pip/pip.conf
+```
+
+如果是Windows，路径是【%APPDATA%\pip\pip.ini】
+``` ini
+[global]
+timeout = 60
+index-url = http://pypi.douban.com/simple
+[install]
+trusted-host=pypi.douban.com
+```
+
+
 # 不用docker
 先准备redis，mysql或者postgres
 

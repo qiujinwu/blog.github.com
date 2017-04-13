@@ -148,7 +148,7 @@ king@king:~/tmp/dockerfile$ ll
 -rwxr-xr-x  1 root root 1112800 4月  13 09:49 b.out*
 ```
 
-可以看到，静态连接的可执行程序打了非常多，但是他没有那些系统库/三方库的以来，所以可以很方便的使用精简版的docker来运行
+可以看到，静态连接的可执行程序大了非常多，但是他没有那些系统库/三方库的依赖，所以可以很方便的使用精简版的docker来运行
 
 Dockerfile4
 ```
@@ -178,4 +178,37 @@ timeout
 timeout
 timeout
 timeout
+```
+
+``` bash
+(venv) king@king:~/tmp/dockerfile$ ldd a.out 
+	linux-vdso.so.1 =>  (0x00007ffdd8157000)
+	libevent-2.0.so.5 => /usr/lib/x86_64-linux-gnu/libevent-2.0.so.5 (0x00007f85e9e7d000)
+	libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007f85e9ab4000)
+	libpthread.so.0 => /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f85e9896000)
+	/lib64/ld-linux-x86-64.so.2 (0x000055b917112000)
+(venv) king@king:~/tmp/dockerfile$ ldd b.out 
+	不是动态可执行文件
+(venv) king@king:~/tmp/dockerfile$ file b.out 
+b.out: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, 
+for GNU/Linux 2.6.32, BuildID[sha1]=eb066746936748bf4438aa6473cfcd101759dd95, not stripped
+```
+
+
+# 常见问题
+1. 部分设备只安装了动态库，没有匹配的静态库，导致静态编译失败
+2. 静态编译时存在一个顺序问题，如果在链接时，并未发现引用就不会链接任何符号，而右边的对象如果又依赖这些库，就会出现链接失败，如下
+
+
+还是上面的代码main.c
+``` bash
+king@king:~/tmp/a$ gcc main.c -c
+king@king:~/tmp/a$ gcc -levent -static main.o
+main.o：在函数‘main’中：
+main.c:(.text+0x5e)：对‘event_base_new’未定义的引用
+main.c:(.text+0x9b)：对‘event_assign’未定义的引用
+main.c:(.text+0xd8)：对‘event_add’未定义的引用
+main.c:(.text+0xf6)：对‘event_base_dispatch’未定义的引用
+collect2: error: ld returned 1 exit status
+king@king:~/tmp/a$ gcc main.o -levent -static
 ```

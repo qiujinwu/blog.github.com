@@ -136,3 +136,46 @@ docker ps | grep a.out | awk '{print $1}' | xargs -i docker stop {}
 docker images | grep a.out | awk '{print $3}' | xargs -i docker rmi {}
 ```
 
+
+# 裁剪
+上面的运行时还有100多M，还是挺大的，利用静态编译可以压缩到更小。
+```
+king@king:~/tmp/dockerfile$ ./b.sh + main.c -levent
+king@king:~/tmp/dockerfile$ ./b.sh + main.c -levent -static -o b.out
+king@king:~/tmp/dockerfile$ ll
+总用量 1148
+-rwxr-xr-x  1 root root    9024 4月  13 09:48 a.out*
+-rwxr-xr-x  1 root root 1112800 4月  13 09:49 b.out*
+```
+
+可以看到，静态连接的可执行程序打了非常多，但是他没有那些系统库/三方库的以来，所以可以很方便的使用精简版的docker来运行
+
+Dockerfile4
+```
+FROM scratch
+ADD b.out /
+CMD ["/b.out"]
+```
+
+``` bash
+docker build -f $PWD/Dockerfile4 -t b.out:0.1 ~/tmp/dockerfile/
+```
+
+``` bash
+king@king:~/tmp/dockerfile$ docker images
+REPOSITORY      TAG                 IMAGE ID            CREATED             SIZE
+b.out           0.1                 1176fc755f3d        2 minutes ago       1.11 MB
+a.out           0.1                 bd79dd4a7add        32 minutes ago      172 MB
+king_build      0.1                 e0d3c8b3e691        53 minutes ago      479 MB
+king_release    0.1                 cc28cd7564c0        About an hour ago   172 MB
+```
+
+可以看到打出来的docker镜像非常非常小
+
+``` bash
+king@king:~/tmp/dockerfile$ docker run -it --rm b.out:0.1
+timeout
+timeout
+timeout
+timeout
+```

@@ -170,6 +170,20 @@ server {
 
 ngrokd运行，分别通过nginx代理到8001和8002端口，内网机器则通过4443和4444来连接
 
+## 去除端口
+代理到本地之后，http的请求就变成了http://www.domain.com:8002/path#path，为了保持一致，在本地最好用nginx将这个8002去掉
+``` nginx
+server {
+    listen 8088;
+    index index.html;
+    location / {
+        #include proxy_params;
+        proxy_set_header Host  $host;
+        proxy_pass http://127.0.0.1:5000;
+    }
+}
+```
+
 ``` bash
 #!/bin/bash
 {

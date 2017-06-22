@@ -3,7 +3,7 @@ title: Golang持续集成，并生成docker镜像
 date: 2017-6-22 18:23:16
 tags:
  - golang
- - ci
+ - 持续集成
 categories:
  - Golang
 ---

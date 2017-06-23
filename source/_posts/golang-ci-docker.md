@@ -131,3 +131,6 @@ after_script:
   - docker tag qjw/git-notify hub.c.163.com/${USERNAME}/git-notify
   - docker push hub.c.163.com/${USERNAME}/git-notify
 ```
+
+# 参考
+1. <https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/>

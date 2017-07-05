@@ -6,7 +6,7 @@ tags:
  - golang
  - 持续集成
 categories:
- - 开发环境
+ - 源码学习
 ---
 
 [Drone](https://github.com/drone/drone)是一个优秀的[持续集成（CL）](http://www.ruanyifeng.com/blog/2015/09/continuous-integration.html)的系统，最大的特色就是它的执行流（pipeline）是在docker里执行，这就确保了每一次环境都保持一致，避免其他干扰。一些其他主流的包括但不限于

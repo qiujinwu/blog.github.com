@@ -6,7 +6,7 @@ tags:
  - golang
  - 持续集成
 categories:
- - 开发环境
+ - 源码学习
 ---
 
 # 插件

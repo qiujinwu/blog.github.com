@@ -79,3 +79,54 @@ func (i Pill) String() string {
 	return _Pill_name[_Pill_index[i]:_Pill_index[i+1]]
 }
 ```
+
+# [go-callvis](https://github.com/TrueFurby/go-callvis)
+
+生成调用图
+
+> Purpose of this tool is to provide a visual overview of your program by using the data from call graph and its relations with packages and types. This is especially useful in larger projects where the complexity of the code rises or when you are just simply trying to understand code structure of somebody else.
+
+## 安装
+``` bash
+go get -u github.com/TrueFurby/go-callvis
+cd $GOPATH/src/github.com/TrueFurby/go-callvis && make
+```
+
+## 使用
+
+必须包含main package
+
+``` bash
+go-callvis github.com/qjw/kelly/sample | dot -Tpng -o output.png
+```
+
+> 生成的png图片可能很大
+
+# [gometalinter](https://github.com/alecthomas/gometalinter)
+
+执行各种静态检查，支持各种第三方的lint tools
+
+> Concurrently run Go lint tools and normalise their output
+
+``` bash
+go get -u gopkg.in/alecthomas/gometalinter.v1
+gometalinter.v1 --install
+gometalinter.v1 --vendor --skip=vendor... 
+```
+
+# [depth](https://github.com/KyleBanks/depth)
+
+查看依赖树
+
+``` bash
+king@king:~/code/go/src/bb$ depth github.com/qjw/kelly
+github.com/qjw/kelly
+  ├ github.com/qjw/kelly/binding
+    └ gopkg.in/go-playground/validator.v9
+      └ github.com/go-playground/universal-translator
+        └ github.com/go-playground/locales
+          └ github.com/go-playground/locales/currency
+  ├ github.com/qjw/kelly/render
+  ├ github.com/julienschmidt/httprouter
+  ├ github.com/urfave/negroni
+```

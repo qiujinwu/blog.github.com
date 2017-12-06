@@ -1,7 +1,11 @@
 ---
 title: SSH隧道
-date: 2017-12-06 15:07:25
+date: 2017-12-06 19:07:25
 tags:
+- ssh
+categories:
+- 运营运维
+- 代理
 ---
 
 ssh常用来做远程ssl登录，通过添加公钥到`~/.ssh/authorized_keys`还可以实现`无密登录`

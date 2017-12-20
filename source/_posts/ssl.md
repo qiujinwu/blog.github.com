@@ -304,7 +304,7 @@ create_and_sign kingqiu "kingqiu" intermediate
 ```
 
 ### [cnf配置](http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/)
-上述的脚本有两个cnf文件，分别是ca_openssl.cnf和imm_openssl.conf,原始文件在<https://github.com/barretlee/autocreate-ca>
+上述的脚本有两个cnf文件，分别是ca_openssl.cnf和imm_openssl.cnf,原始文件在<https://github.com/barretlee/autocreate-ca>
 ``` bash
 wget -O ca_openssl.cnf \
 	https://raw.githubusercontent.com/barretlee/autocreate-ca/master/cnf/root-ca
@@ -372,7 +372,7 @@ king@king:/tmp/b$ diff ca_openssl.cnf imm_openssl.cnf
 
 注意：
 1. CA_default/dir的路径和证书的路径匹配
-2. private_key和certificate的路径正确
+2. private_key、certificate和crl的路径正确
 
 ``` ini
 [ CA_default ]
@@ -457,7 +457,7 @@ server {
 chrome和opera打开的界面都是一样的，并且数据互通。打开【证书管理器】之后，打开tab【授权中心】，选择【cachain.crt】，就一次性将root ca和intermediate ca一并导入了（必须都导入，否则无法通过信任，业务证书也无法看到完整的证书链），
 
 ### Windows下添加信任
-双击ca.crt和intermediate.ca依次安装到【受信任的根证书颁发机构】
+双击ca.crt和intermediate.crt依次安装到【受信任的根证书颁发机构】
 
 再次刷新，即可看到锁变绿了，chrome有时需要关闭重新打开才能信任。
 
@@ -486,6 +486,9 @@ Windows下，直接双击kingqiu.p12导入到默认的位置即可。
 
 
 ## 典型的问题
+
+Linux下chrome无法导入intermediate.crt，ca.crt无问题，换成opera正常。chrome提示【证书授权中心导入错误-无法解析文件】
+
 
 提示O/S等不匹配
 

@@ -91,6 +91,95 @@ Successfully built 3591a1e64c2d
 
 具体怎么获取ssh key以及销毁，在脚本<https://github.com/dockito/vault/blob/master/ONVAULT>
 
+## 使用定制ssh key
+
+生成key，名称务必保持`id_rsa`
+``` bash
+(venv) king@king:~/$ ssh-keygen
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/king/.ssh/id_rsa):  id_rsa
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in id_rsa.
+Your public key has been saved in id_rsa.pub.
+The key fingerprint is:
+SHA256:fXnNp2bZXa9G7EhrjqsaZS/4W9XKgGB+YN5esolUWnQ king@king
+The key's randomart image is:
++---[RSA 2048]----+
+|        . E      |
+|       . .       |
+|      = o        |
+|     = B o   o o |
+|      = S + +.o =|
+|     . B * =.oo+=|
+|      + = o.o== +|
+|       o o .+oo. |
+|      ..+oo+...  |
++----[SHA256]-----+
+```
+
+新建`config`，确保和上面步骤的id_rsa同一目录，假如目录是`/home/king/tmp`，留意选项`StrictHostKeyChecking`
+``` bash
+Host *
+    StrictHostKeyChecking no
+```
+
+运行server
+``` bash
+docker run --rm -it -p 172.17.0.1:14242:3000 -v ~/tmp:/vault/.ssh dockito/vault
+```
+
+将id_rsa.pub作为deploy key设置到gitlab/github上
+
+然后重新build
+
+### 非`id_rsa`的key
+
+在脚本[ONVAULT](https://github.com/dockito/vault/blob/master/ONVAULT)，若设置了环境变量`VAULT_SSH_KEY`，会自动更新配置config
+``` bash
+if [[  "$VAULT_SSH_KEY" != "id_rsa" ]]; then
+	# configure the ssh to any host to use this ssh key
+	echo -e "\nHost *\nIdentityFile ~/.ssh/$VAULT_SSH_KEY" >> ~/.ssh/config
+fi
+```
+
+重命名
+
+``` bash
+mv id_rsa gitlab && mv id_rsa.pub gitlab.pub
+```
+
+留意环境变量`VAULT_SSH_KEY`
+
+``` dockerfile
+FROM base:0.1
+ENV VAULT_SSH_KEY gitlab
+RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+```
+``` bash
+king@king:~/$ ./b.sh 
+Untagged: b:0.1
+Deleted: sha256:60987f8c94
+Sending build context to Docker daemon   131 MB
+Step 1/3 : FROM base:0.1
+ ---> e8e50a0502d0
+Step 2/3 : ENV VAULT_SSH_KEY gitlab
+ ---> Using cache
+ ---> 8b92fa1adab3
+Step 3/3 : RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+ ---> Running in 43e70f25b64e
+[Dockito Vault] Downloading private keys...
+[Dockito Vault] Using ssh key: gitlab
+[Dockito Vault] Executing command: git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+Cloning into 'flask-swagger'...
+Warning: Permanently added 'gitlab.self.kim,139.224.170.165' (ECDSA) to the list of known hosts.
+[Dockito Vault] Removing private keys...
+ ---> 1400a685ef0a
+Removing intermediate container 43e70f25b64e
+Successfully built 1400a685ef0a
+```
+
+
 # 参考
 1. <https://elasticcompute.io/2016/01/22/build-time-secrets-with-docker-containers/>
 2. <https://github.com/dockito/vault>

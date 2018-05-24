@@ -179,6 +179,22 @@ Removing intermediate container 43e70f25b64e
 Successfully built 1400a685ef0a
 ```
 
+# 问题
+``` bash
+[Dockito Vault] Executing command: git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+Cloning into 'flask-swagger'...
+fatal: cannot run ssh: No such file or directory
+fatal: unable to fork
+```
+> apk add --update --virtual openssh-client
+
+``` bash
+Collecting git+ssh://git@gitlab.self.kim/kingqiu/flask-swagger.git (from -r requirements.txt (line 57))
+  Cloning ssh://git@gitlab.self.kim/kingqiu/flask-swagger.git to /tmp/pip-o1noeq66-build
+Bad owner or permissions on /root/.ssh/config
+fatal: Could not read from remote repository.
+```
+> chmod 0600 config && chown `whoami`:`id -g -n` config
 
 # 参考
 1. <https://elasticcompute.io/2016/01/22/build-time-secrets-with-docker-containers/>

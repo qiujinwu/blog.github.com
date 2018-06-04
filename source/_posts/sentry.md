@@ -288,5 +288,39 @@ sentry --config=. start
 sentry --config=. celery worker -B
 ```
 
+# 使用OpenID登陆
+在upgrade时，注册一个owner权限的用户，并且用此账户登陆
+
+首次登陆会弹出`Welcome to Sentry`，其中`Root URL`会用作oauth回调路径，所以慎重填写
+
+使用通用的OpenID登陆依赖一个[sentry-auth-openid](https://github.com/TableflippersAnonymous/sentry-auth-openid)插件。
+
+直接安装的sentry，按照指引即可，若使用docker，可以先调试确认
+
+``` bash
+sudo docker run --rm -it --name my-sentry -e SENTRY_SECRET_KEY='$KEY' \
+	-p 9000:9000 \
+	--link sentry-redis:redis --link sentry-postgres:postgres sentry /bin/bash
+# 安装插件
+pip install https://github.com/TableflippersAnonymous/sentry-auth-openid/archive/master.zip
+# 安装vi以便编辑配置
+apt update && apt install vim -y
+```
+
+vi /etc/sentry/sentry.conf.py 添加以下内容
+``` bash
+OPENID_AUTHORIZE_URL = "http://server:5556/dex/auth"
+OPENID_TOKEN_URL = "http://server:5556/dex/token"
+OPENID_CLIENT_ID = "example-app"
+OPENID_CLIENT_SECRET = "ZXhhbXBsZS1hcHAtc2VjcmV0"
+```
+
+openid服务器，可以用<https://github.com/coreos/dex> 测试用着
+
+## 启用
+
+登陆之后，左边菜单`MANAGE -> Auth`，完整的URL <http://localhost:9000/organizations/sentry/auth/>
+
+然后点击`OPENID` 按钮会跳转到oidc服务器进行验证，验证OK保存，下次就自动开启了openid登陆
 
 

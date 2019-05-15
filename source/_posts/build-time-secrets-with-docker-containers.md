@@ -70,18 +70,18 @@ Service started on port 3000
 ### 目标镜像
 ``` dockerfile
 FROM base:0.1
-RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+RUN ONVAULT git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
 ```
 ``` bash
 king@king:~/$ docker build -t b:0.1 .
 Sending build context to Docker daemon   131 MB
 Step 1/2 : FROM base:0.1
  ---> e8e50a0502d0
-Step 2/2 : RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+Step 2/2 : RUN ONVAULT git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
  ---> Running in 2747e4ef93b9
 [Dockito Vault] Downloading private keys...
 [Dockito Vault] Using ssh key: id_rsa
-[Dockito Vault] Executing command: git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+[Dockito Vault] Executing command: git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
 Cloning into 'flask-swagger'...
 [Dockito Vault] Removing private keys...
  ---> 3591a1e64c2d
@@ -154,7 +154,7 @@ mv id_rsa gitlab && mv id_rsa.pub gitlab.pub
 ``` dockerfile
 FROM base:0.1
 ENV VAULT_SSH_KEY gitlab
-RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+RUN ONVAULT git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
 ```
 ``` bash
 king@king:~/$ ./b.sh 
@@ -166,13 +166,13 @@ Step 1/3 : FROM base:0.1
 Step 2/3 : ENV VAULT_SSH_KEY gitlab
  ---> Using cache
  ---> 8b92fa1adab3
-Step 3/3 : RUN ONVAULT git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+Step 3/3 : RUN ONVAULT git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
  ---> Running in 43e70f25b64e
 [Dockito Vault] Downloading private keys...
 [Dockito Vault] Using ssh key: gitlab
-[Dockito Vault] Executing command: git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+[Dockito Vault] Executing command: git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
 Cloning into 'flask-swagger'...
-Warning: Permanently added 'gitlab.self.kim,139.224.170.165' (ECDSA) to the list of known hosts.
+Warning: Permanently added 'gitlab.kimq.cn,139.224.170.165' (ECDSA) to the list of known hosts.
 [Dockito Vault] Removing private keys...
  ---> 1400a685ef0a
 Removing intermediate container 43e70f25b64e
@@ -181,7 +181,7 @@ Successfully built 1400a685ef0a
 
 # 问题
 ``` bash
-[Dockito Vault] Executing command: git clone git@gitlab.self.kim:kingqiu/flask-swagger.git
+[Dockito Vault] Executing command: git clone git@gitlab.kimq.cn:kingqiu/flask-swagger.git
 Cloning into 'flask-swagger'...
 fatal: cannot run ssh: No such file or directory
 fatal: unable to fork
@@ -189,8 +189,8 @@ fatal: unable to fork
 > apk add --update --virtual openssh-client
 
 ``` bash
-Collecting git+ssh://git@gitlab.self.kim/kingqiu/flask-swagger.git (from -r requirements.txt (line 57))
-  Cloning ssh://git@gitlab.self.kim/kingqiu/flask-swagger.git to /tmp/pip-o1noeq66-build
+Collecting git+ssh://git@gitlab.kimq.cn/kingqiu/flask-swagger.git (from -r requirements.txt (line 57))
+  Cloning ssh://git@gitlab.kimq.cn/kingqiu/flask-swagger.git to /tmp/pip-o1noeq66-build
 Bad owner or permissions on /root/.ssh/config
 fatal: Could not read from remote repository.
 ```

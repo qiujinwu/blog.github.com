@@ -44,7 +44,7 @@ func newTestStorage() *example.TestStorage {
 	ts := example.NewTestStorage()
 	c, _ := ts.GetClient("1234")
 	tc := c.(*osin.DefaultClient)
-	tc.RedirectUri = "http://qjw.p.self.kim/callback"
+	tc.RedirectUri = "http://qjw.p.kimq.cn/callback"
 	return ts
 }
 
@@ -131,7 +131,7 @@ var endpotin = oauth2.Endpoint{
 var oauthConfig = &oauth2.Config{
 	ClientID:     "1234",
 	ClientSecret: "aabbccdd",
-	RedirectURL:  "http://qjw.p.self.kim/callback",
+	RedirectURL:  "http://qjw.p.kimq.cn/callback",
 	Scopes:       []string{"api"},
 	Endpoint:     endpotin,
 }
@@ -213,7 +213,7 @@ const htmlIndex = `<html><body>
 //var oauthConfig = &oauth2.Config{
 //	ClientID:     "1234",
 //	ClientSecret: "aabbccdd",
-//	RedirectURL:  "http://qjw.p.self.kim/callback",
+//	RedirectURL:  "http://qjw.p.kimq.cn/callback",
 //	Scopes:       []string{"api"},
 //	Endpoint:     endpotin,
 //}
@@ -227,7 +227,7 @@ var endpotin = oauth2.Endpoint{
 var oauthConfig = &oauth2.Config{
 	ClientID:     "4f56sad4f56sa4df65safd",
 	ClientSecret: "7f8dasf46sa54f56s4df65",
-	RedirectURL:  "http://qjw.p.self.kim/callback",
+	RedirectURL:  "http://qjw.p.kimq.cn/callback",
 	Scopes:       []string{"api"},
 	Endpoint:     endpotin,
 }
@@ -297,7 +297,7 @@ $ make
 staticClients:
 - id: example-app
   redirectURIs:
-  - 'http://qjw.p.self.kim/callback'
+  - 'http://qjw.p.kimq.cn/callback'
   name: 'Example App'
   secret: ZXhhbXBsZS1hcHAtc2VjcmV0
 ```
@@ -343,7 +343,7 @@ func main() {
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Endpoint:     provider.Endpoint(),
-		RedirectURL:  "http://qjw.p.self.kim/callback",
+		RedirectURL:  "http://qjw.p.kimq.cn/callback",
 		Scopes:       []string{oidc.ScopeOpenID},
 	}
 
@@ -404,7 +404,7 @@ Dex默认提供了几种不需要额外配置的认证方式，参见配置 `con
 staticClients:
 - id: example-app
   redirectURIs:
-  - 'http://qjw.p.self.kim/callback'
+  - 'http://qjw.p.kimq.cn/callback'
   name: 'Example App'
   secret: ZXhhbXBsZS1hcHAtc2VjcmV0
   
@@ -429,7 +429,7 @@ staticPasswords:
 ```
 
 为了支持Gitlab，需要
-1. 准备gitlab，可以使用gitlab.com，或者自行搭建的私有仓库，用Docker运行Gitlab非常容易，参见<http://blog.self.kim/2017/06/19/gitlab-env/>
+1. 准备gitlab，可以使用gitlab.com，或者自行搭建的私有仓库，用Docker运行Gitlab非常容易，参见<http://blog.kimq.cn/2017/06/19/gitlab-env/>
 2. Gitlab新建`applications`，其中回调<http://server:5556/dex/callback>，*假设dex服务器的地址是http://server:5556,下同*。
 3. 修改dex配置,假设自行搭建的gitlab服务器地址<http://server:8080>，注意配置`baseURL`,`redirectURI/clientID/clientSecret`和gitlab上保持一致
 ``` yml
@@ -458,7 +458,7 @@ func (s *Server) test(w http.ResponseWriter, r *http.Request) {
 	s.storage.CreateClient(storage.Client{
 		ID:           "tt",
 		Secret:       "123456",
-		RedirectURIs: []string{"http://qjw.p.self.kim/callback"},
+		RedirectURIs: []string{"http://qjw.p.kimq.cn/callback"},
 		Name:         "hehe",
 	})
 	w.Write([]byte("Hello, world!"))
@@ -502,7 +502,7 @@ func main() {
 		ClientID:     clientID,
 		ClientSecret: clientSecret,
 		Endpoint:     provider.Endpoint(),
-		RedirectURL:  "http://qjw.p.self.kim/callback",
+		RedirectURL:  "http://qjw.p.kimq.cn/callback",
 		Scopes:       []string{oidc.ScopeOpenID},
 	}
 

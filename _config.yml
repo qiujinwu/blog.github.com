@@ -3,8 +3,8 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: King`s博客
-subtitle: 专注互联网，后端架构和Golang
+title: 个人笔记
+subtitle: 专注互联网
 description: 随笔
 author: KingQiu
 language: zh-CN
@@ -12,7 +12,7 @@ timezone: Asia/Shanghai
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://blog.kimq.cn
+url: http://www.kimq.cn
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:

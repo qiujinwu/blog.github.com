@@ -1,6 +1,6 @@
 ---
 title: sentry配置ldap登录授权
-date: 2020-02-03 00:00:00
+date: 2020-02-04 00:00:00
 tags:
  - openldap
 categories:

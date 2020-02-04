@@ -1023,61 +1023,6 @@ func main() {
 }
 ```
 
-## 管理
-
-> 只能使用`unix socket`的连接进去, tcp接口不可用, 留意`ldapi:///`
-
-``` bash
-# 所有配置
-$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "cn=config"
-# 所有配置, 只打印dn
-$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "cn=config" dn
-# 所有配置, 只打印特定dn的三属性
-$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "cn=config" \
-    olcRootDN=cn=admin,dc=example,dc=org dn olcRootDN olcRootPW
-SASL/EXTERNAL authentication started
-SASL username: gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth
-SASL SSF: 0
-dn: olcDatabase={1}mdb,cn=config
-olcRootDN: cn=admin,dc=example,dc=org
-olcRootPW: {SSHA}qSOxtba1hCDm2ROqdp9m/i5T/4bw164r
-```
-
-### 修改密码
-``` bash
-root@openldap-host:/$ slappasswd -h {SSHA}
-New password: 
-Re-enter new password: 
-{SSHA}kzOUv6FlZrCrdmP4RFcWVg0q350a2zNa
-
-root@openldap-host:/$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "cn=config" \
-    olcRootDN=cn=admin,dc=example,dc=org dn olcRootDN olcRootPW
-dn: olcDatabase={1}mdb,cn=config
-olcRootDN: cn=admin,dc=example,dc=org
-olcRootPW: {SSHA}qSOxtba1hCDm2ROqdp9m/i5T/4bw164r
-
-root@openldap-host:/$ cat > modification.ldif <<EOF
-> dn: olcDatabase={1}mdb,cn=config
-changetype: modify
-replace: olcRootPW
-olcRootPW: {SSHA}kzOUv6FlZrCrdmP4RFcWVg0q350a2zNa
-> EOF
-root@openldap-host:/$ ldapmodify -Y EXTERNAL -H ldapi:/// -f modification.ldif
-modifying entry "olcDatabase={1}mdb,cn=config"
-
-root@openldap-host:/$ /etc/init.d/slapd restart
-[ ok ] Stopping OpenLDAP: slapd.
-[ ok ] Starting OpenLDAP: slapd.
-root@openldap-host:/$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b "cn=config" \
-    olcRootDN=cn=admin,dc=example,dc=org dn olcRootDN olcRootPW
-dn: olcDatabase={1}mdb,cn=config
-olcRootDN: cn=admin,dc=example,dc=org
-olcRootPW: {SSHA}kzOUv6FlZrCrdmP4RFcWVg0q350a2zNa
-```
-+ <https://tech.feedyourhead.at/content/openldap-set-config-admin-password>
-+ <https://blog.51cto.com/jerry12356/1857969>
-
-
 ## 安装问题
 + [I can't install python-ldap](https://stackoverflow.com/questions/4768446/i-cant-install-python-ldap)
 + [How to meet depends requirements for libldap-2.4-2](https://askubuntu.com/questions/815897/how-to-meet-depends-requirements-for-libldap-2-4-2)

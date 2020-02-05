@@ -23,6 +23,20 @@ $ docker run -p 389:389 --name ldap \
   --env LDAP_ADMIN_PASSWORD="pwd" --detach osixia/openldap
 ```
 
+## SSL
+如果要使用SSL访问, 将地址从`ldap://localhost`换成`ldaps://localhost`
+
+若使用自己的证书
+
+``` bash
+$ docker run --hostname ldap.example.org \
+  --volume /path/to/certificates:/container/service/slapd/assets/certs \
+  --env LDAP_TLS_CRT_FILENAME=my-ldap.crt \
+  --env LDAP_TLS_KEY_FILENAME=my-ldap.key \
+  --env LDAP_TLS_CA_CRT_FILENAME=the-ca.crt \
+  --detach osixia/openldap
+```
+
 ## [原生客户端](http://www.ldapadmin.org/)
 
 支持`Windows` 和`Linux` , 个人感觉体验不如**[phpldapadmin](http://phpldapadmin.sourceforge.net/wiki/index.php/Main_Page)**
@@ -1021,7 +1035,27 @@ func main() {
 		fmt.Printf("%s: %v\n", entry)
 	}
 }
+
 ```
+
+# 数据安全
+缺省的[mdb数据存储](https://lmdb.readthedocs.io/en/release/)在`/var/lib/ldap/`, 一个数据文件,一个锁文件, 我们可以外挂docker数据目录(`/var/lib/ldap`)和配置目录(`/etc/ldap/slapd.d`)实现数据的持久化保存
+
+``` python
+import lmdb
+
+# 注意传入的路径是一个目录, 下面包含两文件
+env_db = lmdb.Environment('/home/user/mdb')
+
+txn = env_db.begin()
+for key, value in txn.cursor():  # 遍历
+    print(key)
+
+print("-")
+data = txn.get("cn".encode("utf8"))
+env_db.close()
+```
+
 
 ## 安装问题
 + [I can't install python-ldap](https://stackoverflow.com/questions/4768446/i-cant-install-python-ldap)

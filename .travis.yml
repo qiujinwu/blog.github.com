@@ -1,8 +1,9 @@
 language: node_js
-node_js: stable
+node_js: 12
 install:
 - npm install
 script:
+- hexo -v
 - hexo g
 after_script:
 - cd ./public
@@ -11,10 +12,11 @@ after_script:
 - git config user.email "qiujinwu456@gmail.com"
 - git add .
 - git commit -m "Update docs"
-- git push --force --quiet "https://$GH_TOKEN@${GH_REF}" master:master
+- git checkout -b gh-pages
+- git push --force --quiet "https://$GH_TOKEN@${GH_REF}" gh-pages:gh-pages
 branches:
   only:
-  - master
+  - src
 env:
   global:
-  - GH_REF: github.com/qiujinwu/blog.qiujinwu.com.git
+  - GH_REF: github.com/qiujinwu/blog.github.com.git

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>关于盗链 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="防盗链本质上就是要验证来源，防止对未许可、未授权的请求提供服务，根据验证身份的数据来源可以简单地分为两类  直接从请求方主动携带的字段中提取，最常用的就是Http 头Referer字段，一些严格的验证包括验证IP地址，User Agent等。 验证信息需要事先从服务端获取或者按照服务端约定的规则提供  Referer这种方式最流行，最简单，对服务器影响小，一般的cdn（腾讯云，阿里云cdn）都提供">
+<meta name="keywords" content="盗链">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于盗链">
+<meta property="og:url" content="http://blog.kimq.cn/2017/02/17/stolen-chain/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="防盗链本质上就是要验证来源，防止对未许可、未授权的请求提供服务，根据验证身份的数据来源可以简单地分为两类  直接从请求方主动携带的字段中提取，最常用的就是Http 头Referer字段，一些严格的验证包括验证IP地址，User Agent等。 验证信息需要事先从服务端获取或者按照服务端约定的规则提供  Referer这种方式最流行，最简单，对服务器影响小，一般的cdn（腾讯云，阿里云cdn）都提供">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于盗链">
+<meta name="twitter:description" content="防盗链本质上就是要验证来源，防止对未许可、未授权的请求提供服务，根据验证身份的数据来源可以简单地分为两类  直接从请求方主动携带的字段中提取，最常用的就是Http 头Referer字段，一些严格的验证包括验证IP地址，User Agent等。 验证信息需要事先从服务端获取或者按照服务端约定的规则提供  Referer这种方式最流行，最简单，对服务器影响小，一般的cdn（腾讯云，阿里云cdn）都提供">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-stolen-chain" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      关于盗链
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/17/stolen-chain/" class="article-date"><time datetime="2017-02-17T00:33:18.000Z" itemprop="datePublished">2017-02-17</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>防盗链本质上就是要验证来源，防止对未许可、未授权的请求提供服务，根据验证身份的数据来源可以简单地分为两类</p>
+<ol>
+<li>直接从请求方主动携带的字段中提取，最常用的就是Http 头<strong>Referer</strong>字段，一些严格的验证包括验证<strong>IP地址</strong>，<strong>User Agent</strong>等。</li>
+<li>验证信息需要事先从服务端获取或者按照服务端约定的规则提供</li>
+</ol>
+<h1 id="Referer"><a href="#Referer" class="headerlink" title="Referer"></a>Referer</h1><p>这种方式最流行，最简单，对服务器影响小，一般的cdn（腾讯云，阿里云cdn）都提供Referer防盗链机制，具体可以分为黑名单和白名单，通常支持通配符或者正则表达式，此外一个特例就是是否允许空的Referer。</p>
+<p>一般不推荐不允许Referer为空，因为防盗链做得过于严密对于真实用户也是不方便的，比如隐私模式或HTTPS浏览时，就不存在Referer。对于一些特殊资源比如音视频，使用第三方播放器也可能不存在Referer。</p>
+<p>常用的后端框架例如JavaSpring,NodeExpress,PythonFlask都可以找到基于Referer的防盗链中间件（过滤器），nginx也有插件<a href="http://www.ttlsa.com/nginx/nginx-referer/" target="_blank" rel="noopener">http://www.ttlsa.com/nginx/nginx-referer/</a></p>
+<h2 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h2><p>要破解首先要明确服务提供方的规则，如果对方允许空Referer，那么将图片dom元素置于frame中即可。一种更好的办法是用服务器中转，在服务器中清掉Referer甚至伪造，但带来额外的服务器开销。</p>
+<p>nginx同样可以实现这样的功能</p>
+<h1 id="请求方提供授权信息"><a href="#请求方提供授权信息" class="headerlink" title="请求方提供授权信息"></a>请求方提供授权信息</h1><p>一般理解，授权就是需要登录的那种，在需要授权的web系统中，可以一并对图片等静态资源作授权（<em>而不仅仅是ajax接口或者web网页路径，虽然静态资源通常不会加入授权访问</em>）。</p>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p>若只允许资源在本域访问，可以在非资源请求时下发携带授权信息的cookie，而服务器在<strong>资源请求中验证cookie</strong>，这种方式也很简单，但是若需要授权第三方就比较麻烦。</p>
+<p>要实现第三方授权，可以参考<strong>跨域cookie共享</strong></p>
+<p>这种方案仍然可以用非浏览器的方式获取，</p>
+<h2 id="Url-Token加超时"><a href="#Url-Token加超时" class="headerlink" title="Url Token加超时"></a>Url Token加超时</h2><p>若需要授权第三方使用，可以给他提供一个密钥（对称）或者公钥（非对称），在请求我们资源时，url必须携带token和timestamp,token通过url和timestamp加密得来（具体算法呵呵），</p>
+<h3 id="根据约定的规则"><a href="#根据约定的规则" class="headerlink" title="根据约定的规则"></a>根据约定的规则</h3><p>在我方验证时，需确保token正确，以及时间戳和当前时间戳误差在一定时间内（比方5分钟）。之所以要验证误差，是为了避免因无超时第三方偷懒使用一个固定的地址，而这种固定地址泄漏之后就一直可访问，关于url加密，可以用nginx插件<a href="http://www.ttlsa.com/nginx/nginx-modules-secure_link/" target="_blank" rel="noopener">http://www.ttlsa.com/nginx/nginx-modules-secure_link/</a></p>
+<h2 id="自己提供Token"><a href="#自己提供Token" class="headerlink" title="自己提供Token"></a>自己提供Token</h2><p>这常见于下载站，请求方需要事先获取一个下载url，这个url同样包含一个token和时间戳，时间戳表示过期时间，这样可以避免url一直可用。</p>
+<p>或者简单的，生成一个验证码，并且把验证码放入cookie中，下载时，必须携带这个验证码作为参数，服务器只需要简单的验证cookie中的验证码和参数是否一致，然后删除cookie(使用内存cookie或者超时很短也可以)，确保立即失效。</p>
+<h1 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h1><p>自行/协商生成url 加 超时是个不错的防盗链方法，但有时超时并不一定满足需求，比如专门提供内嵌视频的视频服务提供商，此时商家可能只需要简单地内嵌一个frame网页。</p>
+<p>这种情况下，视频的地址仍然是服务提供商动态生成，比如<a href="http://video.example.com/a.avi?key=fasdfasd" target="_blank" rel="noopener">http://video.example.com/a.avi?key=fasdfasd</a>，由于没有超时，这个地址一直可用，为了避免盗链，服务器后端就需要保存会话。</p>
+<ol>
+<li>在第一次访问时，用参数的key作为key，通过Ip，User Agent，Referer等计算value并将键值对存入数据库或者redis中，</li>
+<li>若key存在，就验证value是否匹配</li>
+</ol>
+<p>这里的key可以看做跟软件序列号一样，可以通过一个算法批量产生，并且能够自验证有效性。以降低非法key对后端数据库造成的查询压力。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://blog.goquxiao.com/posts/2015/06/13/fang-dao-lian-zi-liao-zheng-li/" target="_blank" rel="noopener">https://blog.goquxiao.com/posts/2015/06/13/fang-dao-lian-zi-liao-zheng-li/</a></li>
+<li><a href="http://oneoo.com/2008/09/03/uri-the-use-of-secret-technology-for-the-key-anti-daolian/" target="_blank" rel="noopener">http://oneoo.com/2008/09/03/uri-the-use-of-secret-technology-for-the-key-anti-daolian/</a></li>
+<li><a href="https://onebitbug.me/2013/10/10/use-nginx-lua-module-to-prevent-hotlinking/" target="_blank" rel="noopener">https://onebitbug.me/2013/10/10/use-nginx-lua-module-to-prevent-hotlinking/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/17/stolen-chain/" data-id="ckdbgbyy4005o43po4a63pwqc" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/17/stolen-chain/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/盗链/">盗链</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/02/16/about-cors/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">关于跨域</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/02/17/cross-domain-cookie/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Cookie跨域和单点登录</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/02/17/stolen-chain/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

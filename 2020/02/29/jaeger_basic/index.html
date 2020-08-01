@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Jaeger初探 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Jaeger 是Uber 开源的分布式追踪系统，兼容OpenTracing 标准, 官网https://github.com/jaegertracing/jaeger 运行Sample $ docker run -d --name jaeger \  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \  -p 5775:5775/udp \  -p 6831:6831/udp">
+<meta name="keywords" content="golang,python,grpc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Jaeger初探">
+<meta property="og:url" content="http://blog.kimq.cn/2020/02/29/jaeger_basic/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="Jaeger 是Uber 开源的分布式追踪系统，兼容OpenTracing 标准, 官网https://github.com/jaegertracing/jaeger 运行Sample $ docker run -d --name jaeger \  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \  -p 5775:5775/udp \  -p 6831:6831/udp">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Jaeger初探">
+<meta name="twitter:description" content="Jaeger 是Uber 开源的分布式追踪系统，兼容OpenTracing 标准, 官网https://github.com/jaegertracing/jaeger 运行Sample $ docker run -d --name jaeger \  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \  -p 5775:5775/udp \  -p 6831:6831/udp">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-jaeger_basic" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Jaeger初探
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/02/29/jaeger_basic/" class="article-date"><time datetime="2020-02-29T16:00:00.000Z" itemprop="datePublished">2020-03-01</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Jaeger 是Uber 开源的分布式追踪系统，兼容OpenTracing 标准, 官网<a href="https://github.com/jaegertracing/jaeger" target="_blank" rel="noopener">https://github.com/jaegertracing/jaeger</a></p>
+<p>运行Sample</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d --name jaeger \</span><br><span class="line">  -e COLLECTOR_ZIPKIN_HTTP_PORT=9411 \</span><br><span class="line">  -p 5775:5775/udp \</span><br><span class="line">  -p 6831:6831/udp \</span><br><span class="line">  -p 6832:6832/udp \</span><br><span class="line">  -p 5778:5778 \</span><br><span class="line">  -p 16686:16686 \</span><br><span class="line">  -p 14268:14268 \</span><br><span class="line">  -p 14250:14250 \</span><br><span class="line">  -p 9411:9411 \</span><br><span class="line">  jaegertracing/all-in-one:1.17</span><br></pre></td></tr></table></figure>
+<p>可以打开<a href="http://localhost:16686" target="_blank" rel="noopener">http://localhost:16686</a>访问<code>Jeager UI</code></p>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a><a href="https://github.com/opentracing/specification/blob/master/specification.md" target="_blank" rel="noopener">概念</a></h1><blockquote>
+<p>这些概念可以对照Jeager UI加深/帮助理解</p>
+</blockquote>
+<p>Traces in OpenTracing are defined implicitly by their Spans. In particular, a Trace can be thought of as a directed acyclic graph (DAG) of Spans, where the edges between Spans are called References.</p>
+<p>Each Span encapsulates the following state:</p>
+<ul>
+<li>An operation name</li>
+<li>A start timestamp</li>
+<li>A finish timestamp</li>
+<li>A set of zero or more key:value <code>Span Tags</code>. The keys must be strings. The values may be strings, bools, or numeric types.</li>
+<li>A set of zero or more <code>Span Logs</code>, each of which is itself a key:value map paired with a timestamp. The keys must be strings, though the values may be of any type. Not all OpenTracing implementations must support every value type.</li>
+<li>A <code>SpanContext</code> (see below)</li>
+<li><code>References</code> to zero or more causally-related Spans (via the SpanContext of those related Spans)</li>
+</ul>
+<p>Each SpanContext encapsulates the following state:</p>
+<ul>
+<li>Any OpenTracing-implementation-dependent state (for example, trace and span ids) needed to refer to a distinct Span across a process boundary</li>
+<li>Baggage Items, which are just key:value pairs that cross process boundaries</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Causal relationships between Spans in a single Trace</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        [Span A]  ←←←(the root span)</span><br><span class="line">            |</span><br><span class="line">     +------+------+</span><br><span class="line">     |             |</span><br><span class="line"> [Span B]      [Span C] ←←←(Span C is a `ChildOf` Span A)</span><br><span class="line">     |             |</span><br><span class="line"> [Span D]      +---+-------+</span><br><span class="line">               |           |</span><br><span class="line">           [Span E]    [Span F] &gt;&gt;&gt; [Span G] &gt;&gt;&gt; [Span H]</span><br><span class="line">                                       ↑</span><br><span class="line">                                       ↑</span><br><span class="line">                                       ↑</span><br><span class="line">                         (Span G `FollowsFrom` Span F)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Temporal relationships between Spans in a single Trace</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">––|–––––––|–––––––|–––––––|–––––––|–––––––|–––––––|–––––––|–&gt; time</span><br><span class="line"></span><br><span class="line"> [Span A···················································]</span><br><span class="line">   [Span B··············································]</span><br><span class="line">      [Span D··········································]</span><br><span class="line">    [Span C········································]</span><br><span class="line">         [Span E·······]        [Span F··] [Span G··] [Span H··]</span><br></pre></td></tr></table></figure>
+<p>参考</p>
+<ul>
+<li><a href="https://opentracing.io/docs/getting-started/" target="_blank" rel="noopener">https://opentracing.io/docs/getting-started/</a></li>
+<li><a href="https://github.com/opentracing-contrib/opentracing-specification-zh" target="_blank" rel="noopener">https://github.com/opentracing-contrib/opentracing-specification-zh</a></li>
+<li><a href="https://wu-sheng.gitbooks.io/opentracing-io/content/" target="_blank" rel="noopener">https://wu-sheng.gitbooks.io/opentracing-io/content/</a></li>
+<li><a href="https://github.com/yurishkuro/opentracing-tutorial/tree/master/go" target="_blank" rel="noopener">https://github.com/yurishkuro/opentracing-tutorial/tree/master/go</a></li>
+<li><a href="https://pjw.io/articles/2018/05/08/opentracing-explanations/" target="_blank" rel="noopener">https://pjw.io/articles/2018/05/08/opentracing-explanations/</a></li>
+</ul>
+<h1 id="Golang"><a href="#Golang" class="headerlink" title="Golang"></a>Golang</h1><h2 id="grpc-sample"><a href="#grpc-sample" class="headerlink" title="grpc sample"></a>grpc sample</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ protoc -I ./ helloworld.proto --go_out=plugins=grpc:./</span><br></pre></td></tr></table></figure>
+<ul>
+<li><a href="https://github.com/grpc/grpc-go/blob/master/examples/helloworld/helloworld/helloworld.proto" target="_blank" rel="noopener">https://github.com/grpc/grpc-go/blob/master/examples/helloworld/helloworld/helloworld.proto</a></li>
+<li><a href="https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_client/main.go" target="_blank" rel="noopener">https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_client/main.go</a></li>
+<li><a href="https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_server/main.go" target="_blank" rel="noopener">https://github.com/grpc/grpc-go/blob/master/examples/helloworld/greeter_server/main.go</a></li>
+</ul>
+<h2 id="Jeager-Export"><a href="#Jeager-Export" class="headerlink" title="Jeager Export"></a>Jeager Export</h2><p>参考 <a href="https://github.com/census-ecosystem/opencensus-go-exporter-jaeger/blob/master/example/main.go" target="_blank" rel="noopener">https://github.com/census-ecosystem/opencensus-go-exporter-jaeger/blob/master/example/main.go</a></p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"contrib.go.opencensus.io/exporter/jaeger"</span></span><br><span class="line">	<span class="string">"go.opencensus.io/trace"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">initTracer</span><span class="params">(name, agent <span class="keyword">string</span>, sampling <span class="keyword">float64</span>)</span> <span class="params">(*jaeger.Exporter, error)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	trace.ApplyConfig(trace.Config&#123;DefaultSampler: trace.AlwaysSample()&#125;)</span><br><span class="line">	<span class="comment">// Register the Jaeger exporter to be able to retrieve</span></span><br><span class="line">	<span class="comment">// the collected spans.</span></span><br><span class="line">	exporter, err := jaeger.NewExporter(jaeger.Options&#123;</span><br><span class="line">		CollectorEndpoint: agent,</span><br><span class="line">		Process: jaeger.Process&#123;</span><br><span class="line">			ServiceName: name,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	trace.RegisterExporter(exporter)</span><br><span class="line">	<span class="keyword">return</span> exporter, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 初始化trace服务器</span></span><br><span class="line">	exporter, _ := initTracer(<span class="string">"gotest"</span>, <span class="string">"http://localhost:14268/api/traces"</span>, <span class="number">1</span>)</span><br><span class="line">	<span class="keyword">defer</span> exporter.Flush()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="trace"><a href="#trace" class="headerlink" title="trace"></a>trace</h2><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">dosth</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 一个子span</span></span><br><span class="line">	_, span := trace.StartSpan(ctx, <span class="string">"baidu"</span>)</span><br><span class="line">	span.AddAttributes(trace.StringAttribute(<span class="string">"name"</span>, <span class="string">"doget2"</span>))</span><br><span class="line">	span.SetStatus(trace.Status&#123;Code: trace.StatusCodeOK, Message: <span class="string">"no error"</span>&#125;)</span><br><span class="line">	span.Annotate([]trace.Attribute&#123;</span><br><span class="line">		trace.Int64Attribute(<span class="string">"len"</span>, <span class="keyword">int64</span>(<span class="number">123456</span>)),</span><br><span class="line">		trace.StringAttribute(<span class="string">"name"</span>, <span class="string">"dosth"</span>),</span><br><span class="line">	&#125;, <span class="string">"Annotate"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> span.End()</span><br><span class="line">	http.Get(<span class="string">"http://www.baidu.com"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Http-trace"><a href="#Http-trace" class="headerlink" title="Http trace"></a>Http trace</h2><p>在python做各种三方库注入比较容易, golang需要手动处理, 参考<a href="https://awesomeopensource.com/project/census-instrumentation/opencensus-go#Getting%20Started" target="_blank" rel="noopener">https://awesomeopensource.com/project/census-instrumentation/opencensus-go#Getting%20Started</a></p>
+<ul>
+<li><a href="https://godoc.org/go.opencensus.io/plugin/ochttp" target="_blank" rel="noopener">net/http</a></li>
+<li><a href="https://godoc.org/go.opencensus.io/plugin/ocgrpc" target="_blank" rel="noopener">gRPC</a></li>
+<li><a href="https://godoc.org/github.com/opencensus-integrations/ocsql" target="_blank" rel="noopener">database/sql</a></li>
+<li><a href="https://godoc.org/github.com/go-kit/kit/tracing/opencensus" target="_blank" rel="noopener">Go kit</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/groupcache" target="_blank" rel="noopener">Groupcache</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/caddy" target="_blank" rel="noopener">Caddy webserver</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/mongo-go-driver" target="_blank" rel="noopener">MongoDB</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/redigo" target="_blank" rel="noopener">Redis gomodule/redigo</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/redis" target="_blank" rel="noopener">Redis goredis/redis</a></li>
+<li><a href="https://godoc.org/github.com/orijtech/gomemcache" target="_blank" rel="noopener">Memcache</a></li>
+</ul>
+<h3 id="client"><a href="#client" class="headerlink" title="client"></a>client</h3><p>较为完善的例子可参考<a href="https://cloud.google.com/solutions/using-distributed-tracing-to-observe-microservice-latency-with-opencensus-and-stackdriver-trace" target="_blank" rel="noopener">https://cloud.google.com/solutions/using-distributed-tracing-to-observe-microservice-latency-with-opencensus-and-stackdriver-trace</a></p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">	fmt <span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"go.opencensus.io/plugin/ochttp/propagation/tracecontext"</span></span><br><span class="line">	<span class="string">"go.opencensus.io/trace"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">doget</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 调用子http服务的span</span></span><br><span class="line">	name := <span class="string">"httpget"</span></span><br><span class="line">	_, span := trace.StartSpan(ctx, name)</span><br><span class="line">	url := <span class="string">"http://127.0.0.1:12345/sub"</span></span><br><span class="line">	span.AddAttributes(trace.StringAttribute(<span class="string">"url"</span>, url))</span><br><span class="line">	<span class="keyword">defer</span> span.End()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 调用Http服务</span></span><br><span class="line">	req, err := http.NewRequest(<span class="string">"GET"</span>, url, <span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"%v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	req = req.WithContext(ctx)</span><br><span class="line"></span><br><span class="line">	format := &amp;tracecontext.HTTPFormat&#123;&#125;</span><br><span class="line">	format.SpanContextToRequest(span.SpanContext(), req)</span><br><span class="line"></span><br><span class="line">	client := http.DefaultClient</span><br><span class="line">	resp, err := client.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"%v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line">	s, err := ioutil.ReadAll(resp.Body)</span><br><span class="line">	fmt.Printf(<span class="keyword">string</span>(s))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h3><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">hander</span><span class="params">(ctx context.Context, name <span class="keyword">string</span>)</span> <span class="title">func</span><span class="params">(http.ResponseWriter, *http.Request)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 子服务router</span></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		httpFormat := &amp;tracecontext.HTTPFormat&#123;&#125;</span><br><span class="line">		sc, ok := httpFormat.SpanContextFromRequest(r)</span><br><span class="line">		<span class="keyword">var</span> span *trace.Span = <span class="literal">nil</span></span><br><span class="line">		<span class="keyword">if</span> ok &#123;</span><br><span class="line">			<span class="comment">// 从header里面取spanContext, 做好衔接</span></span><br><span class="line">			ctx, span = trace.StartSpanWithRemoteParent(ctx, name, sc)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			ctx, span = trace.StartSpan(ctx, name)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 增加Tag</span></span><br><span class="line">		span.AddAttributes(trace.StringAttribute(<span class="string">"name"</span>, fmt.Sprintf(<span class="string">"name: %s"</span>, name)))</span><br><span class="line">		span.SetStatus(trace.Status&#123;Code: trace.StatusCodeOK, Message: <span class="string">"no error"</span>&#125;)</span><br><span class="line">		<span class="keyword">defer</span> span.End()</span><br><span class="line"></span><br><span class="line">		fmt.Fprintf(w, <span class="string">"Hello there!\n"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="grpc-trace"><a href="#grpc-trace" class="headerlink" title="grpc trace"></a>grpc trace</h2><p>一个完整的例子可以参考<a href="https://opencensus-website-snapshot.firebaseapp.com/gogrpc/" target="_blank" rel="noopener">https://opencensus-website-snapshot.firebaseapp.com/gogrpc/</a></p>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"go.opencensus.io/plugin/ocgrpc"</span></span><br><span class="line">	<span class="string">"go.opencensus.io/stats/view"</span></span><br><span class="line">	<span class="string">"go.opencensus.io/trace"</span></span><br><span class="line">	grpc <span class="string">"google.golang.org/grpc"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">grpc_client</span><span class="params">(ctx context.Context, address, name <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 一个子span</span></span><br><span class="line">	ctx, span := trace.StartSpan(ctx, name)</span><br><span class="line">	span.AddAttributes(trace.StringAttribute(<span class="string">"grpc"</span>, fmt.Sprintf(<span class="string">"name: %s"</span>, name)))</span><br><span class="line">	<span class="keyword">defer</span> span.End()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := view.Register(ocgrpc.DefaultClientViews...); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"Failed to register ocgrpc client views: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	conn, err := grpc.Dial(</span><br><span class="line">		address,</span><br><span class="line">		grpc.WithStatsHandler(&amp;ocgrpc.ClientHandler&#123;</span><br><span class="line">			StartOptions: trace.StartOptions&#123;</span><br><span class="line">				Sampler: trace.AlwaysSample(),</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;),</span><br><span class="line">		grpc.WithInsecure(),</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"did not connect: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用实际的rpc接口</span></span><br><span class="line">    <span class="comment">// grpc 生成的代码接口</span></span><br><span class="line">	c := NewGreeterClient(conn)</span><br><span class="line">	r, err := c.SayHello(ctx, &amp;HelloRequest&#123;Name: name&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"could not greet: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	log.Printf(<span class="string">"Greeting: %s"</span>, r.GetMessage())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Server-1"><a href="#Server-1" class="headerlink" title="Server"></a>Server</h3><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">grpc_server</span><span class="params">(addr <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	lis, err := net.Listen(<span class="string">"tcp"</span>, addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"failed to listen: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := view.Register(ocgrpc.DefaultServerViews...); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"Failed to register ocgrpc server views: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	s := grpc.NewServer(grpc.StatsHandler(&amp;ocgrpc.ServerHandler&#123;&#125;))</span><br><span class="line">    <span class="comment">// grpc生成的代码</span></span><br><span class="line">	RegisterGreeterServer(s, &amp;server&#123;&#125;)</span><br><span class="line">	<span class="keyword">if</span> err := s.Serve(lis); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"failed to serve: %v"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Flask"><a href="#Flask" class="headerlink" title="Flask"></a>Flask</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Flask==0.12.4</span><br><span class="line">opencensus==0.7.6</span><br><span class="line">opencensus-ext-flask==0.7.3</span><br><span class="line">opencensus-ext-jaeger==0.7.1</span><br><span class="line">opencensus-ext-sqlalchemy==0.1.2</span><br><span class="line">opencensus-ext-grpc==0.7.1</span><br><span class="line">opencensus.ext.requests==0.7.2</span><br></pre></td></tr></table></figure>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">def init_opencensus_tracing(app):</span><br><span class="line">    from opencensus.ext.jaeger.trace_exporter import JaegerExporter</span><br><span class="line">    from opencensus.ext.flask.flask_middleware import FlaskMiddleware</span><br><span class="line">    from opencensus.trace import config_integration, samplers</span><br><span class="line"></span><br><span class="line">    # 配置注入</span><br><span class="line">    INTEGRATIONS = [&apos;sqlalchemy&apos;, &apos;requests&apos;]</span><br><span class="line">    exporter = JaegerExporter(</span><br><span class="line">        service_name=&apos;flask_sample&apos;,</span><br><span class="line">        agent_host_name=&quot;127.0.0.1&quot;,</span><br><span class="line">        agent_port=6831,</span><br><span class="line">    )</span><br><span class="line">    sampler = samplers.ProbabilitySampler(rate=1)</span><br><span class="line">    FlaskMiddleware(</span><br><span class="line">        app,</span><br><span class="line">        exporter=exporter,</span><br><span class="line">        sampler=sampler,</span><br><span class="line">        blacklist_paths=[&apos;health&apos;],</span><br><span class="line">    )</span><br><span class="line">    config_integration.trace_integrations(INTEGRATIONS)</span><br></pre></td></tr></table></figure>
+<p>当使用<code>sqlalchemy</code>/<code>requests</code>做数据库操作/Http(s)操作时, 会自动生成新的<code>span</code></p>
+<h2 id="Python-Grpc客户端"><a href="#Python-Grpc客户端" class="headerlink" title="Python Grpc客户端"></a>Python Grpc客户端</h2><p>grpc不支持<code>配置集成(config integration)</code></p>
+<p>参考<a href="https://github.com/census-instrumentation/opencensus-python/issues/677" target="_blank" rel="noopener">https://github.com/census-instrumentation/opencensus-python/issues/677</a></p>
+<blockquote>
+<p>This seems to be a doc issue, the grpc integration is done by explicitly using the interceptors (refer to the examples) instead of through config_integration.</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ python -m grpc_tools.protoc --python_out ./ \</span><br><span class="line">    --grpc_python_out ./ -I. ./helloworld.proto</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> opencensus.ext.grpc <span class="keyword">import</span> client_interceptor</span><br><span class="line"><span class="keyword">import</span> grpc</span><br><span class="line"><span class="keyword">from</span> .helloworld_pb2 <span class="keyword">import</span> HelloRequest</span><br><span class="line"><span class="keyword">from</span> .helloworld_pb2_grpc <span class="keyword">import</span> GreeterStub</span><br><span class="line"></span><br><span class="line">options = [(<span class="string">"grpc.lb_policy_name"</span>, <span class="string">"round_robin"</span>)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">global</span> qrcoder_client</span><br><span class="line">qchannel = grpc.insecure_channel(<span class="string">"127.0.0.1:12346"</span>, options)</span><br><span class="line"><span class="comment"># 注入trace</span></span><br><span class="line">trace_interceptor = client_interceptor.OpenCensusClientInterceptor(</span><br><span class="line">    host_port=<span class="string">"127.0.0.1:12346"</span></span><br><span class="line">)</span><br><span class="line">qchannel = grpc.intercept_channel(qchannel, trace_interceptor)</span><br><span class="line">qrcoder_client = GreeterStub(qchannel)</span><br><span class="line">qrcoder_client.SayHello(HelloRequest(name=<span class="string">"world"</span>))</span><br></pre></td></tr></table></figure>
+<h1 id="其他Export"><a href="#其他Export" class="headerlink" title="其他Export"></a>其他Export</h1><p>上面一直都使用的<a href="https://www.jaegertracing.io/" target="_blank" rel="noopener">Jaeger</a>, 其他包括参见<a href="https://opencensus.io/exporters/supported-exporters/" target="_blank" rel="noopener">https://opencensus.io/exporters/supported-exporters/</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/02/29/jaeger_basic/" data-id="ckdbgbywo003043pok3owgwlo" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/02/29/jaeger_basic/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/grpc/">grpc</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/02/20/tavern/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">ResfulApi测试框架tavern</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2020/03/08/elasticsearch_basic/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">ElasticSearch学习笔记</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/02/29/jaeger_basic/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

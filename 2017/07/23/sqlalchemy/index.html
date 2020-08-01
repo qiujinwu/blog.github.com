@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Flask sqlalchemy调优总结 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="直接用tcpdump监听数据库端口（mysql为例）可以打印所有的sql语句。（注意修改网卡的名称） king@king:/tmp$ sudo tcpdump -i lo -s 0 -l -w - dst port 3306 | strings | perl -e &apos;while(&amp;lt;&amp;gt;) &amp;#123; chomp; next if /^[^ ]+[ ]*$/;  if(/^(SELECT">
+<meta name="keywords" content="flask,sqlalchemy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flask sqlalchemy调优总结">
+<meta property="og:url" content="http://blog.kimq.cn/2017/07/23/sqlalchemy/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="直接用tcpdump监听数据库端口（mysql为例）可以打印所有的sql语句。（注意修改网卡的名称） king@king:/tmp$ sudo tcpdump -i lo -s 0 -l -w - dst port 3306 | strings | perl -e &apos;while(&amp;lt;&amp;gt;) &amp;#123; chomp; next if /^[^ ]+[ ]*$/;  if(/^(SELECT">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Flask sqlalchemy调优总结">
+<meta name="twitter:description" content="直接用tcpdump监听数据库端口（mysql为例）可以打印所有的sql语句。（注意修改网卡的名称） king@king:/tmp$ sudo tcpdump -i lo -s 0 -l -w - dst port 3306 | strings | perl -e &apos;while(&amp;lt;&amp;gt;) &amp;#123; chomp; next if /^[^ ]+[ ]*$/;  if(/^(SELECT">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-sqlalchemy" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Flask sqlalchemy调优总结
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/07/23/sqlalchemy/" class="article-date"><time datetime="2017-07-23T12:23:11.000Z" itemprop="datePublished">2017-07-23</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>直接用tcpdump监听数据库端口（mysql为例）可以打印所有的sql语句。（注意修改网卡的名称）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp$ sudo tcpdump -i lo -s 0 -l -w - dst port 3306 | strings | perl -e <span class="string">'</span></span><br><span class="line"><span class="string">while(&lt;&gt;) &#123; chomp; next if /^[^ ]+[ ]*$/;</span></span><br><span class="line"><span class="string">  if(/^(SELECT|UPDATE|DELETE|INSERT|SET|COMMIT|ROLLBACK|CREATE|DROP|ALTER)/i) &#123; </span></span><br><span class="line"><span class="string">    if (defined $q) &#123; print "$q\n"; &#125;</span></span><br><span class="line"><span class="string">    $q=$_;</span></span><br><span class="line"><span class="string">  &#125; else &#123;</span></span><br><span class="line"><span class="string">    $_ =~ s/^[ \t]+//; $q.=" $_";</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;'</span></span><br></pre></td></tr></table></figure>
+<p>由于stdout缓存，会有大概率最后几条出不来，（继续执行sql语句就会把这一次没出来的挤出来）</p>
+<p><a href="http://docs.sqlalchemy.org/en/latest/faq/performance.html" target="_blank" rel="noopener">sqlalchemy官网</a>可以设置一些时间，用于监听任务执行的时间。注意</p>
+<ol>
+<li>before_cursor_execute</li>
+<li>after_cursor_execute</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> sqlalchemy <span class="keyword">import</span> event</span><br><span class="line"><span class="keyword">from</span> sqlalchemy.engine <span class="keyword">import</span> Engine</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> logging</span><br><span class="line"></span><br><span class="line">logging.basicConfig()</span><br><span class="line">logger = logging.getLogger(<span class="string">"myapp.sqltime"</span>)</span><br><span class="line">logger.setLevel(logging.DEBUG)</span><br><span class="line"></span><br><span class="line"><span class="meta">@event.listens_for(Engine, "before_cursor_execute")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">before_cursor_execute</span><span class="params">(conn, cursor, statement,</span></span></span><br><span class="line"><span class="function"><span class="params">                        parameters, context, executemany)</span>:</span></span><br><span class="line">    conn.info.setdefault(<span class="string">'query_start_time'</span>, []).append(time.time())</span><br><span class="line">    logger.debug(<span class="string">"Start Query: %s"</span>, statement)</span><br><span class="line"></span><br><span class="line"><span class="meta">@event.listens_for(Engine, "after_cursor_execute")</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">after_cursor_execute</span><span class="params">(conn, cursor, statement,</span></span></span><br><span class="line"><span class="function"><span class="params">                        parameters, context, executemany)</span>:</span></span><br><span class="line">    total = time.time() - conn.info[<span class="string">'query_start_time'</span>].pop(<span class="number">-1</span>)</span><br><span class="line">    logger.debug(<span class="string">"Query Complete!"</span>)</span><br><span class="line">    logger.debug(<span class="string">"Total Time: %f"</span>, total)</span><br></pre></td></tr></table></figure>
+<p>完整的事件文档参考</p>
+<ol>
+<li><a href="http://docs.sqlalchemy.org/en/latest/core/events.html" target="_blank" rel="noopener">http://docs.sqlalchemy.org/en/latest/core/events.html</a></li>
+<li><a href="http://docs.sqlalchemy.org/en/latest/orm/events.html" target="_blank" rel="noopener">http://docs.sqlalchemy.org/en/latest/orm/events.html</a></li>
+<li><a href="http://docs.sqlalchemy.org/en/latest/core/event.html#event-reference" target="_blank" rel="noopener">http://docs.sqlalchemy.org/en/latest/core/event.html#event-reference</a></li>
+</ol>
+<p>使用工具<a href="https://github.com/rkern/line_profiler" target="_blank" rel="noopener">line_profiler</a>分析调用时间，使用非常简单，在需要分析的函数加上【@prifile】注解,</p>
+<p>若使用ide，会提示注解找不到符号，不用管他</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="meta">@profile</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">()</span>:</span></span><br><span class="line">    a = [<span class="number">1</span>]*<span class="number">100</span></span><br><span class="line">    b = [x*x*x <span class="keyword">for</span> x <span class="keyword">in</span> a ]</span><br><span class="line">    c = [x <span class="keyword">for</span> x <span class="keyword">in</span> b]</span><br><span class="line">    d = c*<span class="number">2</span></span><br><span class="line">run()</span><br></pre></td></tr></table></figure>
+<hr>
+<p>安装line_profiler会一并安装一个kernprof.py脚本，需要这个脚本运行我们的程序才会不出错</p>
+<p>在程序退出后，-v参数会指示程序将结果输出到stdout，例如<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Total time: 8.55619 s</span><br><span class="line">File: /home/king/bug/venv/lib/python3.5/site-packages/sqlalchemy/orm/query.py</span><br><span class="line">Function: __iter__ at line 2733</span><br><span class="line"></span><br><span class="line">Line <span class="comment">#      Hits         Time  Per Hit   % Time  Line Contents</span></span><br><span class="line">==============================================================</span><br><span class="line">2733                                            @profile</span><br><span class="line">2734                                            def __iter__(self):</span><br><span class="line">2735      2176      1140139    524.0     13.3       context = self._compile_context()</span><br><span class="line">2736      2176         3682      1.7      0.0       context.statement.use_labels = True</span><br><span class="line">2737      2176         2284      1.0      0.0       <span class="keyword">if</span> self._autoflush and not self._populate_existing:</span><br><span class="line">2738      2176        28075     12.9      0.3           self.session._autoflush()</span><br><span class="line">2739      2176      7382008   3392.5     86.3       <span class="built_in">return</span> self._execute_and_instances(context)</span><br></pre></td></tr></table></figure></p>
+<p>参考<a href="https://www.oschina.net/translate/python-performance-analysis?print" target="_blank" rel="noopener">https://www.oschina.net/translate/python-performance-analysis?print</a></p>
+<p>也可以用cProfile来分析，参考</p>
+<p>只需要在运行时，加上【-m cProfile】python选项<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">python -m cProfile /home/king/code/bug/main.py</span><br></pre></td></tr></table></figure></p>
+<p>然后在需要作分析测试的地方<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">cProfile.run(<span class="string">'requests.get("http://tech.glowing.com")'</span>)</span><br></pre></td></tr></table></figure></p>
+<p>一种更简单的办法<br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> cProfile</span><br><span class="line"><span class="keyword">import</span> io</span><br><span class="line"><span class="keyword">import</span> pstats</span><br><span class="line"><span class="keyword">import</span> contextlib</span><br><span class="line"></span><br><span class="line"><span class="meta">@contextlib.contextmanager</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">profiled</span><span class="params">(limit=<span class="number">20</span>)</span>:</span></span><br><span class="line">    pr = cProfile.Profile()</span><br><span class="line">    pr.enable()</span><br><span class="line">    <span class="keyword">yield</span></span><br><span class="line">    pr.disable()</span><br><span class="line">    s = io.StringIO()</span><br><span class="line">    ps = pstats.Stats(pr, stream=s).sort_stats(<span class="string">'cumulative'</span>)</span><br><span class="line">    ps.print_stats(limit)</span><br><span class="line">    <span class="comment"># uncomment this to see who's calling what</span></span><br><span class="line">    <span class="comment"># ps.print_callers()</span></span><br><span class="line">    print(s.getvalue())</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Test</span><span class="params">(cars)</span>:</span></span><br><span class="line">    <span class="keyword">with</span> profiled(limit=<span class="number">30</span>):</span><br><span class="line">        <span class="keyword">for</span> num <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">20</span>):</span><br><span class="line">            <span class="keyword">for</span> car <span class="keyword">in</span> cars:</span><br><span class="line">                car.test()</span><br></pre></td></tr></table></figure>
+<p>参考</p>
+<ol>
+<li><a href="http://docs.sqlalchemy.org/en/latest/faq/performance.html" target="_blank" rel="noopener">http://docs.sqlalchemy.org/en/latest/faq/performance.html</a></li>
+<li><a href="http://tech.glowing.com/cn/python-profiling/" target="_blank" rel="noopener">http://tech.glowing.com/cn/python-profiling/</a></li>
+<li><a href="http://ju.outofmemory.cn/entry/284150" target="_blank" rel="noopener">http://ju.outofmemory.cn/entry/284150</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/07/23/sqlalchemy/" data-id="ckdbgbyxu005943pod1q2a0yx" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/07/23/sqlalchemy/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flask/">flask</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sqlalchemy/">sqlalchemy</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/07/22/cgi_web-server/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">CGI网关服务器漫谈</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/08/20/golang-3rdtools/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Golang第三方工具</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/07/23/sqlalchemy/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

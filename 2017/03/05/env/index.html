@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>一些环境的配置 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="大部分情况下（特别是生产环境）最好是直接下载docker运行，简单可靠。偶尔为了方便本地测试，直接装在本地也有一定的好处，至少没那么折腾。 比较稳定（更新没那么频繁）的东西，例如nginx，mysql,直接apt-get就行了 JDKjdk默认情况下只有openjdk或者比较老的官方jdk，要安装最新的jdk 1.8，可以 添加jdk的ppa，参考http://tipsonubuntu.com/2">
+<meta name="keywords" content="golang,node">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些环境的配置">
+<meta property="og:url" content="http://blog.kimq.cn/2017/03/05/env/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="大部分情况下（特别是生产环境）最好是直接下载docker运行，简单可靠。偶尔为了方便本地测试，直接装在本地也有一定的好处，至少没那么折腾。 比较稳定（更新没那么频繁）的东西，例如nginx，mysql,直接apt-get就行了 JDKjdk默认情况下只有openjdk或者比较老的官方jdk，要安装最新的jdk 1.8，可以 添加jdk的ppa，参考http://tipsonubuntu.com/2">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一些环境的配置">
+<meta name="twitter:description" content="大部分情况下（特别是生产环境）最好是直接下载docker运行，简单可靠。偶尔为了方便本地测试，直接装在本地也有一定的好处，至少没那么折腾。 比较稳定（更新没那么频繁）的东西，例如nginx，mysql,直接apt-get就行了 JDKjdk默认情况下只有openjdk或者比较老的官方jdk，要安装最新的jdk 1.8，可以 添加jdk的ppa，参考http://tipsonubuntu.com/2">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-env" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      一些环境的配置
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/05/env/" class="article-date"><time datetime="2017-03-05T07:14:24.000Z" itemprop="datePublished">2017-03-05</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大部分情况下（特别是生产环境）最好是直接下载docker运行，简单可靠。偶尔为了方便本地测试，直接装在本地也有一定的好处，至少没那么折腾。</p>
+<p>比较稳定（更新没那么频繁）的东西，例如nginx，mysql,直接apt-get就行了</p>
+<h1 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h1><p>jdk默认情况下只有openjdk或者比较老的官方jdk，要安装最新的jdk 1.8，可以</p>
+<p>添加jdk的ppa，参考<a href="http://tipsonubuntu.com/2016/07/31/install-oracle-java-8-9-ubuntu-16-04-linux-mint-18/" target="_blank" rel="noopener">http://tipsonubuntu.com/2016/07/31/install-oracle-java-8-9-ubuntu-16-04-linux-mint-18/</a></p>
+<p>大部分ppa都需要翻墙，这很坑爹，也可以下载tar.gz包解压并配置环境变量，参考<a href="http://blog.csdn.net/chenruicsdn/article/details/53583950" target="_blank" rel="noopener">http://blog.csdn.net/chenruicsdn/article/details/53583950</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /usr/lib/jvm</span><br><span class="line">sudo tar -zxvf Downloads/jdk-8u112-Linux-x64.tar.gz -C /usr/lib/jvm</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/jdk1.8.0_112</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><p>默认的redis比较老，而有些新特性无法满足其他依赖需要，比如<a href="https://sentry.io/welcome/" target="_blank" rel="noopener">sentry</a>。</p>
+<p>这里使用ppa<a href="http://blog.csdn.net/chenlix/article/details/46696165" target="_blank" rel="noopener">http://blog.csdn.net/chenlix/article/details/46696165</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install -y python-software-properties</span><br><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository -y ppa:rwky/redis</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y redis-server</span><br></pre></td></tr></table></figure>
+<p>关于sentry，可以docker<a href="https://hub.docker.com/_/sentry/" target="_blank" rel="noopener">https://hub.docker.com/_/sentry/</a></p>
+<h1 id="Golang"><a href="#Golang" class="headerlink" title="Golang"></a>Golang</h1><p>去<a href="https://golang.org/dl/" target="_blank" rel="noopener">官网</a>下载最新的包，例如<strong>go1.7.5.linux-amd64.tar.gz</strong>，解压</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> GOROOT=/usr/lib/go/</span><br><span class="line"><span class="built_in">export</span> GOPATH=/home/abc/code/go</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$GOROOT</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<h1 id="Nodejs"><a href="#Nodejs" class="headerlink" title="Nodejs"></a>Nodejs</h1><p>去<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">官网</a>下载最新的包，例如<strong>node-v6.10.0-linux-x64.tar.xz</strong>，解压</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> NODE_HOME=/usr/lib/node</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$NODE_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> NODE_PATH=<span class="variable">$NODE_HOME</span>/lib/node_modules</span><br></pre></td></tr></table></figure>
+<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><p>直接安装<a href="https://docs.docker.com/engine/installation/linux/ubuntu/#install-using-the-repository" target="_blank" rel="noopener">官网</a>的指引安装docker-ce，还是很老旧，可以在apt-get purge卸载已经安装的docker版本，然后从<a href="https://apt.dockerproject.org/repo/pool/main/d/docker-engine/" target="_blank" rel="noopener">https://apt.dockerproject.org/repo/pool/main/d/docker-engine/</a>下载（例如）<a href="https://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.13.1-0~ubuntu-xenial_amd64.deb" target="_blank" rel="noopener">docker-engine_1.13.1-0~ubuntu-xenial_amd64.deb</a>，然后dpkg -i 安装。</p>
+<h2 id="配置阿里云加速"><a href="#配置阿里云加速" class="headerlink" title="配置阿里云加速"></a>配置阿里云加速</h2><p>参考<a href="http://warjiang.github.io/devcat/2016/11/28/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91Docker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/" target="_blank" rel="noopener">http://warjiang.github.io/devcat/2016/11/28/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91Docker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//如果您的系统是 Ubuntu 15.04 16.04，Docker 1.9 以上</span><br><span class="line"></span><br><span class="line">sudo mkdir -p /etc/systemd/system/docker.service.d</span><br><span class="line">sudo tee /etc/systemd/system/docker.service.d/mirror.conf &lt;&lt;-<span class="string">'EOF'</span></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=</span><br><span class="line">ExecStart=/usr/bin/docker daemon -H fd:// --registry-mirror=https://2h3po24q.mirror.aliyuncs.com</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<p>注意，第一个ExecStart=不能省略，参见<a href="http://askubuntu.com/questions/19320/how-to-enable-or-disable-services" target="_blank" rel="noopener">http://askubuntu.com/questions/19320/how-to-enable-or-disable-services</a></p>
+<h1 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h1><p>一般安装其他软件就把Python连带安装进来了，2和3都有，默认是Python2</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100</span><br><span class="line">sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 500</span><br><span class="line"></span><br><span class="line">python --version</span><br><span class="line">Python 3.5.2</span><br></pre></td></tr></table></figure>
+<h1 id="rcconf"><a href="#rcconf" class="headerlink" title="rcconf"></a>rcconf</h1><p>可以用rcconf启用/禁用某些服务的自启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install rcconf</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/05/env/" data-id="ckdbgbyvu001a43poxaeecryt" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/05/env/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/02/18/cookie-local-storage/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Cookie和Storeage对比</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/03/07/drone1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Drone学习笔记</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/03/05/env/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

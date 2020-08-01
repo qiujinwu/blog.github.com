@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>telegraf/influxdb/grafana初探 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装influxdb/grafana直接docker运行最简单 // 下载镜像docker pull influxdbdocker pull grafana/grafana# 运行（第一次）docker run -p 8086:8086 --name influxdb -v $PWD:/var/lib/influxdb influxdbdocker run -p 3000:3000 --name">
+<meta name="keywords" content="influxdb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="telegraf&#x2F;influxdb&#x2F;grafana初探">
+<meta property="og:url" content="http://blog.kimq.cn/2017/12/05/influxdb/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="安装influxdb/grafana直接docker运行最简单 // 下载镜像docker pull influxdbdocker pull grafana/grafana# 运行（第一次）docker run -p 8086:8086 --name influxdb -v $PWD:/var/lib/influxdb influxdbdocker run -p 3000:3000 --name">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="telegraf&#x2F;influxdb&#x2F;grafana初探">
+<meta name="twitter:description" content="安装influxdb/grafana直接docker运行最简单 // 下载镜像docker pull influxdbdocker pull grafana/grafana# 运行（第一次）docker run -p 8086:8086 --name influxdb -v $PWD:/var/lib/influxdb influxdbdocker run -p 3000:3000 --name">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-influxdb" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      telegraf/influxdb/grafana初探
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/12/05/influxdb/" class="article-date"><time datetime="2017-12-05T11:07:03.000Z" itemprop="datePublished">2017-12-05</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/学习笔记/">学习笔记</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>influxdb/grafana直接docker运行最简单</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">// 下载镜像</span><br><span class="line">docker pull influxdb</span><br><span class="line">docker pull grafana/grafana</span><br><span class="line"><span class="comment"># 运行（第一次）</span></span><br><span class="line">docker run -p 8086:8086 --name influxdb -v <span class="variable">$PWD</span>:/var/lib/influxdb influxdb</span><br><span class="line">docker run -p 3000:3000 --name grafana grafana/grafana</span><br><span class="line"><span class="comment"># 创建了容器之后，由于指定了自定义name，后续可以根据这个name直接启动</span></span><br><span class="line">docker start influxdb</span><br><span class="line">docker start grafana</span><br></pre></td></tr></table></figure>
+<p>telegraf直接安装</p>
+<p>下载地址 <a href="https://github.com/influxdata/telegraf/releases" target="_blank" rel="noopener">https://github.com/influxdata/telegraf/releases</a><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo dpkg -i /home/king/telegraf_1.4.5-1_amd64.deb</span><br><span class="line"><span class="comment"># 安装客户端</span></span><br><span class="line">sudo apt-get install influxdb-client</span><br><span class="line"><span class="comment"># docker也是可以的</span></span><br><span class="line"><span class="comment"># https://hub.docker.com/_/telegraf/</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="influxdb"><a href="#influxdb" class="headerlink" title="influxdb"></a>influxdb</h1><h2 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a><a href="https://docs.influxdata.com/influxdb/v0.9/concepts/key_concepts" target="_blank" rel="noopener">基本概念</a></h2><ol>
+<li>dababase 数据库</li>
+<li><a href="https://docs.influxdata.com/influxdb/v0.9/concepts/key_concepts/#measurement" target="_blank" rel="noopener">measurement</a>，数据库表</li>
+<li>points,类比数据表行</li>
+<li>time, 时间戳，由于是时序数据库，每个数据表都会有一列时间戳的列</li>
+<li>field, 字段数据，没有索引，通常根据时间来呈现</li>
+<li>tag, 字段的标签，有索引，可以以此进行过滤</li>
+<li><a href="https://docs.influxdata.com/influxdb/v0.9/concepts/key_concepts/#series" target="_blank" rel="noopener">series</a>, a series is the collection of data that share a retention policy, measurement, and tag set，</li>
+</ol>
+<h2 id="field和tag"><a href="#field和tag" class="headerlink" title="field和tag"></a>field和tag</h2><p>两者除了索引的区别外，本质上是定位的差异，举个例子，有数据</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">时间戳 姓名 城市 收入 支出</span><br></pre></td></tr></table></figure>
+<p><code>收入</code>、<code>支出</code>定位于field，没有实际的规律，一般不会用它来做顾虑（传统的关系数据库，常见的可以根据范围过滤搜索），而<code>姓名</code>、<code>城市</code>定位于Tag，可以理解为这一行（<code>point</code>）的属性，我们会有诸如</p>
+<ol>
+<li>所有人的收入曲线图</li>
+<li>广州、深圳等各个城市的收入，支出曲线图</li>
+<li>甚至只看广州的张三的支出曲线图</li>
+</ol>
+<p><code>Tag</code>一般在一个有限的集合中选取，而不是<code>field</code>那样无明显的规律</p>
+<h2 id="写入数据"><a href="#写入数据" class="headerlink" title="写入数据"></a>写入数据</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建数据库</span></span><br><span class="line">curl -i -XPOST http://localhost:8086/query --data-urlencode <span class="string">"q=CREATE DATABASE telegraf"</span></span><br><span class="line"><span class="comment"># 写入数据，最后的时间戳可以省略，自动用当前时间(test: measurement名称）</span></span><br><span class="line">curl -i -XPOST <span class="string">'http://localhost:8086/write?db=telegraf'</span> --data-binary  \</span><br><span class="line">	<span class="string">'test,tag1=server01,tag2=us-west field1=0.64,field2=11 1434055562000000000'</span></span><br></pre></td></tr></table></figure>
+<p>也可以使用cli工具<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp$ influx </span><br><span class="line">Visit https://enterprise.influxdata.com to register <span class="keyword">for</span> updates,</span><br><span class="line">   InfluxDB server management, and monitoring.</span><br><span class="line">Connected to http://localhost:8086 version 1.4.2</span><br><span class="line">InfluxDB shell 0.10.0</span><br><span class="line">&gt; show databases;</span><br><span class="line">name: databases</span><br><span class="line">---------------</span><br><span class="line">name</span><br><span class="line">_internal</span><br><span class="line">telegraf</span><br><span class="line"></span><br><span class="line">&gt; use telegraf;</span><br><span class="line">Using database telegraf</span><br><span class="line">&gt; show measurements;</span><br><span class="line">name: measurements</span><br><span class="line">------------------</span><br><span class="line">name</span><br><span class="line">money</span><br><span class="line">processes</span><br><span class="line">swap</span><br><span class="line">system</span><br><span class="line"><span class="built_in">test</span></span><br><span class="line"></span><br><span class="line">&gt; show series from money</span><br><span class="line">key</span><br><span class="line">money,city=上海,name=张三</span><br><span class="line">money,city=北京,name=刘七</span><br><span class="line"></span><br><span class="line">&gt; select * from money <span class="built_in">limit</span> 2</span><br><span class="line">name: money</span><br><span class="line">-----------</span><br><span class="line">time			city	<span class="keyword">in</span>	name	out</span><br><span class="line">1512445152435671225	深圳	28	赵六	1</span><br><span class="line">1512445153519585060	上海	76	李四	95</span><br></pre></td></tr></table></figure></p>
+<h2 id="简单的数据源"><a href="#简单的数据源" class="headerlink" title="简单的数据源"></a>简单的数据源</h2><p>不依赖于telegraf采集器，在程序中，也有非常多的api可选,参见<a href="https://docs.influxdata.com/influxdb/v0.9/clients/api/" target="_blank" rel="noopener">https://docs.influxdata.com/influxdb/v0.9/clients/api/</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line">url=<span class="string">"http://localhost:8086/write?db=telegraf"</span></span><br><span class="line">names=(<span class="string">'张三'</span> <span class="string">'李四'</span> <span class="string">'王五'</span> <span class="string">'赵六'</span> <span class="string">'刘七'</span>)</span><br><span class="line">citys=(<span class="string">'深圳'</span> <span class="string">'广州'</span> <span class="string">'北京'</span> <span class="string">'上海'</span> <span class="string">'成都'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">doWrite</span></span>()&#123;</span><br><span class="line">    curl -i -XPOST <span class="string">"<span class="variable">$&#123;url&#125;</span>"</span> --data-binary <span class="string">"money,name="</span><span class="variable">$&#123;1&#125;</span><span class="string">",city="</span><span class="variable">$&#123;2&#125;</span><span class="string">" in="</span><span class="variable">$&#123;3&#125;</span><span class="string">",out="</span><span class="variable">$&#123;4&#125;</span><span class="string">""</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span>((i=0;i&lt;10000;i++))</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">    <span class="keyword">in</span>=$(($(<span class="built_in">echo</span> <span class="variable">$RANDOM</span>) % 100))</span><br><span class="line">    out=$(($(<span class="built_in">echo</span> <span class="variable">$RANDOM</span>) % 100))</span><br><span class="line"></span><br><span class="line">    cityid=$(($(<span class="built_in">echo</span> <span class="variable">$RANDOM</span>) % 5))</span><br><span class="line">    nameid=$(($(<span class="built_in">echo</span> <span class="variable">$RANDOM</span>) % 5))</span><br><span class="line">    doWrite <span class="variable">$&#123;names[nameid]&#125;</span> <span class="variable">$&#123;citys[cityid]&#125;</span> <span class="string">"<span class="variable">$&#123;in&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;out&#125;</span>"</span></span><br><span class="line">    sleep 1</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<h1 id="Telegraf"><a href="#Telegraf" class="headerlink" title="Telegraf"></a><a href="https://github.com/influxdata/telegraf" target="_blank" rel="noopener">Telegraf</a></h1><p>telegraf是一个数据采集器，自身有一些基本的采集功能，比如cpu、内存等。支持插件的设计使得采集范围非常广泛，支持列表见<a href="https://github.com/influxdata/telegraf#input-plugins" target="_blank" rel="noopener">https://github.com/influxdata/telegraf#input-plugins</a></p>
+<p>具体的配置见官方文档，为了对接influxdb，我们先需要修改<code>/etc/telegraf/telegraf.conf</code><br><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Configuration for influxdb server to send metrics to</span></span><br><span class="line"><span class="section">[[outputs.influxdb]]</span></span><br><span class="line">  <span class="comment">## The full HTTP or UDP URL for your InfluxDB instance.</span></span><br><span class="line">  <span class="comment">##</span></span><br><span class="line">  <span class="comment">## Multiple urls can be specified as part of the same cluster,</span></span><br><span class="line">  <span class="comment">## this means that only ONE of the urls will be written to each interval.</span></span><br><span class="line">  <span class="comment"># urls = ["udp://localhost:8089"] # UDP endpoint example                      </span></span><br><span class="line">  urls = ["http://localhost:8086"] # required</span><br><span class="line">  <span class="comment">## The target database for metrics (telegraf will create it if not exists).   </span></span><br><span class="line">  database = "telegraf" # required</span><br></pre></td></tr></table></figure></p>
+<p>直接运行<code>telegraf</code>命令启动服务器（为什么没有/etc/init.d/xx）</p>
+<h1 id="grafana"><a href="#grafana" class="headerlink" title="grafana"></a><a href="https://grafana.com/" target="_blank" rel="noopener">grafana</a></h1><p>grafana本身支持很多后端，包括influxdb，它是启动之后再进行参数配置。</p>
+<p>首先配置数据源,influxdb参考<a href="http://docs.grafana.org/features/datasources/influxdb/" target="_blank" rel="noopener">http://docs.grafana.org/features/datasources/influxdb/</a></p>
+<p>然后添加dashboard-panel。在panel的metrics里有各种参数（本质上就是一个sql的语义），以及一些聚合函数支持</p>
+<p>完善权限控制</p>
+<p>这三个东西和elk技(全)术(家)栈(桶)有些有意思的对比，<a href="http://www.infoq.com/cn/articles/grafana-vs-kibana-the-key-differences-to-know" target="_blank" rel="noopener">这里</a>有一个grafana和kibana的比较</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="http://www.jianshu.com/p/dfd329d30891" target="_blank" rel="noopener">http://www.jianshu.com/p/dfd329d30891</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/12/05/influxdb/" data-id="ckdbgbywk002x43po26zrh1w8" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/12/05/influxdb/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/influxdb/">influxdb</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/12/02/antd/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">antd随笔</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/12/06/ssh-tunnel/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">SSH隧道</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/12/05/influxdb/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

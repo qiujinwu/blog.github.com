@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Ansible实践 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装$ sudo apt-get install software-properties-common$ sudo apt-add-repository ppa:ansible/ansible$ sudo apt-get update$ sudo apt-get install ansible 配置$ cat /etc/ansible/hosts  | sed -e &quot;/^#/d&quot; -e &quot;/^$">
+<meta name="keywords" content="ansible">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ansible实践">
+<meta property="og:url" content="http://blog.kimq.cn/2020/06/10/ansible/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="安装$ sudo apt-get install software-properties-common$ sudo apt-add-repository ppa:ansible/ansible$ sudo apt-get update$ sudo apt-get install ansible 配置$ cat /etc/ansible/hosts  | sed -e &quot;/^#/d&quot; -e &quot;/^$">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ansible实践">
+<meta name="twitter:description" content="安装$ sudo apt-get install software-properties-common$ sudo apt-add-repository ppa:ansible/ansible$ sudo apt-get update$ sudo apt-get install ansible 配置$ cat /etc/ansible/hosts  | sed -e &quot;/^#/d&quot; -e &quot;/^$">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-ansible" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Ansible实践
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/06/10/ansible/" class="article-date"><time datetime="2020-06-10T16:00:00.000Z" itemprop="datePublished">2020-06-11</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install software-properties-common</span><br><span class="line">$ sudo apt-add-repository ppa:ansible/ansible</span><br><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install ansible</span><br></pre></td></tr></table></figure>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat /etc/ansible/hosts  | sed -e <span class="string">"/^#/d"</span> -e <span class="string">"/^$/d"</span></span><br><span class="line">localhost ansible_connection=<span class="built_in">local</span></span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ansible all -a &quot;whoami&quot;</span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br></pre></td></tr></table></figure>
+<h1 id="配置-1"><a href="#配置-1" class="headerlink" title="配置"></a>配置</h1><p>文件路径<code>/etc/ansible/hosts</code></p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">192.168.1.50</span><br><span class="line">aserver.example.org</span><br><span class="line">bserver.example.org</span><br></pre></td></tr></table></figure>
+<p>ansible 典型参数</p>
+<ul>
+<li>可用性<code>-m ping</code></li>
+<li>执行commands <code>-a cmd</code></li>
+<li>全局替换ssh登录用户 <code>-u</code></li>
+<li>全局替换ssh key <code>--private-key</code></li>
+<li>sudo <code>--sudo</code>, <code>--sudo-user root2</code></li>
+<li><code>--list-hosts</code> 列出hosts</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 第一个参数有个特例，all表示所有</span></span><br><span class="line">$ ansible localhost  -m ping</span><br><span class="line">localhost | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"ping"</span>: <span class="string">"pong"</span></span><br><span class="line">&#125;</span><br><span class="line">$ ansible all -a <span class="string">"whoami"</span></span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">$ sudo ansible all -a <span class="string">"whoami"</span> -u root --sudo</span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">root</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出特定name的hosts</span></span><br><span class="line">$ ansible <span class="built_in">test</span> --list-hosts</span><br><span class="line">  hosts (2):</span><br><span class="line">    virtualbox</span><br><span class="line">    localhost</span><br></pre></td></tr></table></figure>
+<h2 id="ssh-key"><a href="#ssh-key" class="headerlink" title="ssh key"></a>ssh key</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ssh-keygen </span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/king/.ssh/id_rsa): /home/king/.ssh/ansible</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase): </span><br><span class="line">Enter same passphrase again: </span><br><span class="line">Your identification has been saved <span class="keyword">in</span> /home/king/.ssh/ansible.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> /home/king/.ssh/ansible.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:T1liGGmbLRZI4lKIIdWn3gvWg8h/6F7hi/tgpFsNbPk king@king</span><br><span class="line">The key<span class="string">'s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|o+.oo.....       |</span></span><br><span class="line"><span class="string">|o .o..o +o       |</span></span><br><span class="line"><span class="string">|  . .o ..=o .    |</span></span><br><span class="line"><span class="string">|   o..  =..+     |</span></span><br><span class="line"><span class="string">| . o*+..S.o      |</span></span><br><span class="line"><span class="string">|  o+==+. o       |</span></span><br><span class="line"><span class="string">|  .o+oEo  .      |</span></span><br><span class="line"><span class="string">|   +o+o.         |</span></span><br><span class="line"><span class="string">|  .o=+o          |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br><span class="line"><span class="string">$ ssh-copy-id -i ~/.ssh/ansible -o "PubkeyAuthentication no" king@192.168.2.131</span></span><br><span class="line"><span class="string">/usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/king/.ssh/ansible.pub"</span></span><br><span class="line"><span class="string">/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed</span></span><br><span class="line"><span class="string">/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys</span></span><br><span class="line"><span class="string">king@192.168.2.131'</span>s password: </span><br><span class="line">Number of key(s) added: 1</span><br><span class="line">Now try logging into the machine, with:   <span class="string">"ssh -o 'PubkeyAuthentication no' 'king@192.168.2.131'"</span></span><br><span class="line">and check to make sure that only the key(s) you wanted were added.</span><br><span class="line"><span class="comment"># 注意`SSH_AUTH_SOCK`</span></span><br><span class="line">$ SSH_AUTH_SOCK=0  ssh -i /home/king/.ssh/ansible  king@192.168.2.131</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ SSH_AUTH_SOCK=0 ansible 192.168.2.131 -a whoami --private-key=/home/king/.ssh/ansible </span><br><span class="line">192.168.2.131 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br></pre></td></tr></table></figure>
+<h1 id="配置-2"><a href="#配置-2" class="headerlink" title="配置"></a>配置</h1><ul>
+<li>ansible_ssh_host 将要连接的远程主机名.与你想要设定的主机的别名不同的话,可通过此变量设置.</li>
+<li>ansible_ssh_port ssh端口号.如果不是默认的端口号,通过此变量设置.</li>
+<li>ansible_ssh_user 默认的 ssh 用户名</li>
+<li>ansible_ssh_pass ssh 密码(这种方式并不安全,我们强烈建议使用 –ask-pass 或 SSH 密钥)</li>
+<li>ansible_sudo_pass sudo 密码(这种方式并不安全,我们强烈建议使用 –ask-sudo-pass)</li>
+<li>ansible_sudo_exe (new in version 1.8) sudo 命令路径(适用于1.8及以上版本)</li>
+<li>ansible_connection 与主机的连接类型.比如:local, ssh 或者 paramiko. Ansible 1.2 以前默认使用 paramiko.1.2 以后默认使用 ‘smart’,’smart’ 方式会根据是否支持 ControlPersist, 来判断’ssh’ 方式是否可行.</li>
+<li>ansible_ssh_private_key_file ssh 使用的私钥文件.适用于有多个密钥,而你不想使用 SSH 代理的情况.</li>
+<li>ansible_shell_type 目标系统的shell类型.默认情况下,命令的执行使用 ‘sh’ 语法,可设置为 ‘csh’ 或 ‘fish’.</li>
+</ul>
+<p>修改<code>/etc/ansible/hosts</code><br><figure class="highlight"><table><tr><td class="code"><pre><span class="line">192.168.2.131 ansible_ssh_user=king ansible_ssh_private_key_file=/home/king/.ssh/ansible</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ SSH_AUTH_SOCK=0 ansible all -a whoami </span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">192.168.2.131 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br></pre></td></tr></table></figure>
+<h2 id="组和别名"><a href="#组和别名" class="headerlink" title="组和别名"></a>组和别名</h2><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="section">[test]</span></span><br><span class="line"><span class="comment">#192.168.2.131 ansible_ssh_user=king ansible_ssh_private_key_file=/home/king/ansible</span></span><br><span class="line">virtualbox ansible_ssh_host=192.168.2.131 ansible_ssh_user=king ansible_ssh_private_key_file=/home/king/ansible</span><br><span class="line">localhost              ansible_connection=local</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ SSH_AUTH_SOCK=0 ansible <span class="built_in">test</span> -a whoami </span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">192.168.2.131 | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">$ SSH_AUTH_SOCK=0 ansible <span class="built_in">test</span> -a whoami </span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">virtualbox | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br></pre></td></tr></table></figure>
+<h3 id="主机-amp-组变量"><a href="#主机-amp-组变量" class="headerlink" title="主机&amp;组变量"></a>主机&amp;组变量</h3><p><code>/etc/ansible/hosts</code> 每个主机支持一系列参数, 如果一个组的参数有重复, 可以做成<code>组变量</code><br><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="section">[bastion]</span></span><br><span class="line">b1 ansible_ssh_user=admin ansible_ssh_private_key_file=/home/king/.ssh/bastion</span><br><span class="line">b2 ansible_ssh_user=admin ansible_ssh_private_key_file=/home/king/.ssh/bastion</span><br><span class="line">b3 ansible_ssh_user=admin ansible_ssh_private_key_file=/home/king/.ssh/bastion</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[bastion]</span></span><br><span class="line">b1 </span><br><span class="line">b2 </span><br><span class="line">b3 </span><br><span class="line"></span><br><span class="line"><span class="section">[bastion:vars]</span></span><br><span class="line"><span class="attr">ansible_ssh_user</span>=admin </span><br><span class="line"><span class="attr">ansible_ssh_private_key_file</span>=/home/king/.ssh/bastion</span><br></pre></td></tr></table></figure>
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><ul>
+<li><code>ansible-doc -l</code> 来列出支持的模块</li>
+<li><code>ansible-doc -s command</code> 列出特定模块的指引</li>
+</ul>
+<blockquote>
+<p>默认ansible使用的模块是<code>command</code>，即可以执行一些<code>shell</code>命令。shell和command的用法基本一样，实际上shell模块执行命令的方式是在远程使用<code>/bin/sh</code>来执行的</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ansible <span class="built_in">test</span> -m <span class="built_in">command</span> -a whoami</span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">virtualbox | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">$ ansible <span class="built_in">test</span> -m shell -a whoami</span><br><span class="line">localhost | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br><span class="line"></span><br><span class="line">virtualbox | SUCCESS | rc=0 &gt;&gt;</span><br><span class="line">king</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>最开始的<code>ping</code>也是一个特定的模块</p>
+</blockquote>
+<h2 id="copy"><a href="#copy" class="headerlink" title="copy"></a>copy</h2><p>拷贝文件到服务器, 会自动判断是否有修改</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ ansible virtualbox -m copy -a src=&quot;~/1.pdf dest=/tmp mode=0770 owner=king group=fa backup=yes&quot;</span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;checksum&quot;: &quot;429b1cd33dcb3e71e9975e424994906f10c6d98d&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/1.pdf&quot;, </span><br><span class="line">    &quot;gid&quot;: 1000, </span><br><span class="line">    &quot;group&quot;: &quot;fa&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0770&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;king&quot;, </span><br><span class="line">    &quot;path&quot;: &quot;/tmp/1.pdf&quot;, </span><br><span class="line">    &quot;size&quot;: 56111, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 1000</span><br><span class="line">&#125;</span><br><span class="line">$ ansible virtualbox -m copy -a src=&quot;~/1.pdf dest=/tmp mode=0770 owner=king group=fa backup=yes&quot;</span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: false, </span><br><span class="line">    &quot;checksum&quot;: &quot;429b1cd33dcb3e71e9975e424994906f10c6d98d&quot;, </span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/1.pdf&quot;, </span><br><span class="line">    &quot;gid&quot;: 1000, </span><br><span class="line">    &quot;group&quot;: &quot;fa&quot;, </span><br><span class="line">    &quot;mode&quot;: &quot;0770&quot;, </span><br><span class="line">    &quot;owner&quot;: &quot;king&quot;, </span><br><span class="line">    &quot;path&quot;: &quot;/tmp/1.pdf&quot;, </span><br><span class="line">    &quot;size&quot;: 56111, </span><br><span class="line">    &quot;state&quot;: &quot;file&quot;, </span><br><span class="line">    &quot;uid&quot;: 1000</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># 目录也支持</span><br><span class="line">$ ansible virtualbox -m copy -a src=&quot;~/s dest=/tmp&quot;</span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    &quot;changed&quot;: true, </span><br><span class="line">    &quot;dest&quot;: &quot;/tmp/&quot;, </span><br><span class="line">    &quot;src&quot;: &quot;/home/king/s&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果使用”/“结尾，则拷贝的是目录中的文件，如果不以斜杠结尾，则拷贝的是目录加目录中的文件。</p>
+</blockquote>
+<h2 id="file"><a href="#file" class="headerlink" title="file"></a>file</h2><p>管理文件、目录的属性，也可以创建文件或目录。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">ansible-doc -s file</span><br><span class="line">- name: Sets attributes of files</span><br><span class="line">  action: file</span><br><span class="line">      group       # file/directory的所属组</span><br><span class="line">      owner       # file/directory的所有者</span><br><span class="line">      mode        # 修改权限，格式可以是0644、&apos;u+rwx&apos;或&apos;u=rw,g=r,o=r&apos;等</span><br><span class="line">      path=       # 指定待操作的文件，可使用别名&apos;dest&apos;或&apos;name&apos;来替代path</span><br><span class="line">      recurse     # (默认no)递归修改文件的属性信息，要求state=directory</span><br><span class="line">      src         # 创建链接时使用，指定链接的源文件</span><br><span class="line">      state       # directory:如果目录不存在则递归创建</span><br><span class="line">                  # file:文件不存在时，不会被创建(默认值)</span><br><span class="line">                  # touch:touch由path指定的文件，即创建一个新文件，或修改其mtime和atime</span><br><span class="line">                  # link:修改或创建软链接</span><br><span class="line">                  # hard:修改或创建硬链接</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ansible virtualbox -m file -a <span class="string">'path=/tmp/x/y/z state=directory owner=king group=fa mode=0755 recurse=yes'</span></span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"gid"</span>: 1000, </span><br><span class="line">    <span class="string">"group"</span>: <span class="string">"fa"</span>, </span><br><span class="line">    <span class="string">"mode"</span>: <span class="string">"0755"</span>, </span><br><span class="line">    <span class="string">"owner"</span>: <span class="string">"king"</span>, </span><br><span class="line">    <span class="string">"path"</span>: <span class="string">"/tmp/x/y/z"</span>, </span><br><span class="line">    <span class="string">"size"</span>: 4096, </span><br><span class="line">    <span class="string">"state"</span>: <span class="string">"directory"</span>, </span><br><span class="line">    <span class="string">"uid"</span>: 1000</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="fetch"><a href="#fetch" class="headerlink" title="fetch"></a>fetch</h2><p>和<code>copy</code>工作方式类似，只不过是从远程主机将文件拉取到本地端，存储时使用主机名作为目录树，且只能拉取文件不能拉取目录。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ansible-doc -s fetch</span><br><span class="line">- name: Fetches a file from remote nodes</span><br><span class="line">  action: fetch</span><br><span class="line">      dest=               <span class="comment"># 本地存储拉取文件的目录。例如dest=/data，src=/etc/fstab，</span></span><br><span class="line">                          <span class="comment"># 远程主机名host.exp.com，则保存的路径为/data/host.exp.com/etc/fstab。</span></span><br><span class="line">      fail_on_missing     <span class="comment"># 当设置为yes时，如果拉取的源文件不存在，则此任务失败。默认为no。</span></span><br><span class="line">      flat                <span class="comment"># 改变拉取后的路径存储方式。如果设置为yes，且当dest以"/"结尾时，将直接把源文件</span></span><br><span class="line">                          <span class="comment"># 的basename存储在dest下。显然，应该考虑多个主机拉取时的文件覆盖情况。</span></span><br><span class="line">      src=                <span class="comment"># 远程主机上的源文件。只能是文件，不支持目录。在未来的版本中可能会支持目录递归拉取。</span></span><br><span class="line">      validate_checksum   <span class="comment"># fetch到文件后，检查其md5和源文件是否相同。</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ansible virtualbox -m fetch -a <span class="string">"src=/tmp/1.pdf dest=/tmp/"</span></span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"checksum"</span>: <span class="string">"429b1cd33dcb3e71e9975e424994906f10c6d98d"</span>, </span><br><span class="line">    <span class="string">"dest"</span>: <span class="string">"/tmp/virtualbox/tmp/1.pdf"</span>, </span><br><span class="line">    <span class="string">"md5sum"</span>: <span class="string">"d7fa85f4857527c3a58290a0be2b679a"</span>, </span><br><span class="line">    <span class="string">"remote_checksum"</span>: <span class="string">"429b1cd33dcb3e71e9975e424994906f10c6d98d"</span>, </span><br><span class="line">    <span class="string">"remote_md5sum"</span>: null</span><br><span class="line">&#125;</span><br><span class="line">$ ansible virtualbox -m fetch -a <span class="string">"src=/tmp/1.pdf dest=/tmp/ flat=yes"</span></span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"checksum"</span>: <span class="string">"429b1cd33dcb3e71e9975e424994906f10c6d98d"</span>, </span><br><span class="line">    <span class="string">"dest"</span>: <span class="string">"/tmp/1.pdf"</span>, </span><br><span class="line">    <span class="string">"md5sum"</span>: <span class="string">"d7fa85f4857527c3a58290a0be2b679a"</span>, </span><br><span class="line">    <span class="string">"remote_checksum"</span>: <span class="string">"429b1cd33dcb3e71e9975e424994906f10c6d98d"</span>, </span><br><span class="line">    <span class="string">"remote_md5sum"</span>: null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="apt"><a href="#apt" class="headerlink" title="apt"></a>apt</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装 yes/safe/full/dist</span></span><br><span class="line">$ ansible virtualbox -m apt -a <span class="string">"name=dos2unix update_cache=yes"</span> --sudo --ask-sudo-pass</span><br><span class="line">SUDO password: </span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"cache_update_time"</span>: 1591944887, </span><br><span class="line">    <span class="string">"cache_updated"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"stderr"</span>: <span class="string">""</span>, </span><br><span class="line">    <span class="string">"stdout"</span>: <span class="string">"正在读取软件包列表..."</span></span><br><span class="line"><span class="comment"># 移除</span></span><br><span class="line">$ ansible virtualbox -m apt -a <span class="string">"name=dos2unix state=absent"</span> --sudo --ask-sudo-pass</span><br><span class="line"><span class="comment"># 安装 latest/absent/present</span></span><br><span class="line">$ ansible virtualbox -m apt -a <span class="string">"name=dos2unix state=present"</span> --sudo --ask-sudo-pass</span><br></pre></td></tr></table></figure>
+<h2 id="service"><a href="#service" class="headerlink" title="service"></a>service</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># running,started,stopped,restarted,reloaded</span></span><br><span class="line">$ ansible virtualbox -m service -a <span class="string">"name=nginx state=stopped "</span> --sudo --ask-sudo-pass</span><br><span class="line">SUDO password: </span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"nginx"</span>, </span><br><span class="line">    <span class="string">"state"</span>: <span class="string">"stopped"</span></span><br><span class="line">&#125;</span><br><span class="line">$ ansible virtualbox -m service -a <span class="string">"name=nginx state=stopped "</span> --sudo --ask-sudo-pass</span><br><span class="line">SUDO password: </span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"nginx"</span>, </span><br><span class="line">    <span class="string">"state"</span>: <span class="string">"stopped"</span></span><br><span class="line">&#125;</span><br><span class="line">$ ansible virtualbox -m service -a <span class="string">"name=nginx state=started "</span> --sudo --ask-sudo-pass</span><br><span class="line">SUDO password: </span><br><span class="line">virtualbox | SUCCESS =&gt; &#123;</span><br><span class="line">    <span class="string">"changed"</span>: <span class="literal">true</span>, </span><br><span class="line">    <span class="string">"name"</span>: <span class="string">"nginx"</span>, </span><br><span class="line">    <span class="string">"state"</span>: <span class="string">"started"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="playbook"><a href="#playbook" class="headerlink" title="playbook"></a>playbook</h2><p>一个playboook包含多个play, 每个play包含多个节</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">virtualbox</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">execute</span> <span class="string">date</span> <span class="string">cmd</span></span><br><span class="line">      <span class="attr">command:</span> <span class="string">/bin/date</span></span><br><span class="line">      <span class="attr">register:</span> <span class="string">date</span> <span class="comment"># 注册到一个变量, 以便打印stdout</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">execute</span> <span class="string">shell</span> <span class="string">whoami</span></span><br><span class="line">      <span class="attr">shell:</span> <span class="string">whoami</span></span><br><span class="line">      <span class="attr">register:</span> <span class="string">whoami</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> <span class="string">var=date.stdout_lines</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> <span class="string">msg="&#123;&#123;</span> <span class="string">whoami.stdout</span> <span class="string">&#125;&#125;"</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">hosts:</span> <span class="string">virtualbox</span></span><br><span class="line">  <span class="attr">tasks:</span> </span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">execute</span> <span class="string">date</span> <span class="string">cmd</span></span><br><span class="line">      <span class="attr">service:</span> <span class="string">name=nginx</span> <span class="string">state=started</span></span><br><span class="line">      <span class="attr">register:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">debug:</span> <span class="string">msg="&#123;&#123;</span> <span class="string">nginx</span> <span class="string">&#125;&#125;"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ansible-playbook a.yaml </span><br><span class="line"></span><br><span class="line">PLAY ***************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [setup] *******************************************************************</span><br><span class="line">ok: [virtualbox]</span><br><span class="line"></span><br><span class="line">TASK [execute date cmd] ********************************************************</span><br><span class="line">changed: [virtualbox]</span><br><span class="line"></span><br><span class="line">TASK [execute shell whoami] ****************************************************</span><br><span class="line">changed: [virtualbox]</span><br><span class="line"></span><br><span class="line">TASK [debug] *******************************************************************</span><br><span class="line">ok: [virtualbox] =&gt; &#123;</span><br><span class="line">    <span class="string">"date.stdout_lines"</span>: [</span><br><span class="line">        <span class="string">"2020年 06月 12日 星期五 15:50:36 CST"</span></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">TASK [debug] *******************************************************************</span><br><span class="line">ok: [virtualbox] =&gt; &#123;</span><br><span class="line">    <span class="string">"msg"</span>: <span class="string">"king"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PLAY ***************************************************************************</span><br><span class="line"></span><br><span class="line">TASK [setup] *******************************************************************</span><br><span class="line">ok: [virtualbox]</span><br><span class="line"></span><br><span class="line">TASK [execute date cmd] ********************************************************</span><br><span class="line">ok: [virtualbox]</span><br><span class="line"></span><br><span class="line">TASK [debug] *******************************************************************</span><br><span class="line">ok: [virtualbox] =&gt; &#123;</span><br><span class="line">    <span class="string">"msg"</span>: &#123;</span><br><span class="line">        <span class="string">"changed"</span>: <span class="literal">false</span>, </span><br><span class="line">        <span class="string">"name"</span>: <span class="string">"nginx"</span>, </span><br><span class="line">        <span class="string">"state"</span>: <span class="string">"started"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">PLAY RECAP *********************************************************************</span><br><span class="line">virtualbox                 : ok=8    changed=2    unreachable=0    failed=0</span><br></pre></td></tr></table></figure>
+<h1 id="Bastion"><a href="#Bastion" class="headerlink" title="Bastion"></a>Bastion</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[server]</span><br><span class="line">server1 ansible_ssh_host=10.2.40.11</span><br><span class="line">server2 ansible_ssh_host=10.2.40.22 </span><br><span class="line">server3 ansible_ssh_host=10.2.40.33</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[server:vars]</span><br><span class="line">ansible_ssh_user=admin </span><br><span class="line">ansible_ssh_private_key_file=/home/king/.ssh/bastion</span><br><span class="line">ansible_ssh_common_args=&apos; -o ProxyCommand=&quot;ssh -W %h:%p bastion_admin@bastion_ip&quot;&apos;</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://ansible-tran.readthedocs.io/en/latest/docs/intro_getting_started.html#id1" target="_blank" rel="noopener">新手上路</a></li>
+<li><a href="https://askubuntu.com/questions/762541/ubuntu-16-04-ssh-sign-and-send-pubkey-signing-failed-agent-refused-operation" target="_blank" rel="noopener">https://askubuntu.com/questions/762541/ubuntu-16-04-ssh-sign-and-send-pubkey-signing-failed-agent-refused-operation</a></li>
+<li><a href="https://blog.scottlowe.org/2015/12/24/running-ansible-through-ssh-bastion-host/" target="_blank" rel="noopener">Running Ansible Through an SSH Bastion Host</a></li>
+<li><a href="https://www.cnblogs.com/f-ck-need-u/p/7553186.html" target="_blank" rel="noopener">Ansible系列(一)：基本配置和使用</a></li>
+<li><a href="https://www.cnblogs.com/f-ck-need-u/p/7550603.html" target="_blank" rel="noopener">Ansible系列(二)：选项和常用模块</a></li>
+<li><a href="https://www.w3cschool.cn/automate_with_ansible/automate_with_ansible-db6727oq.html" target="_blank" rel="noopener">https://www.w3cschool.cn/automate_with_ansible/automate_with_ansible-db6727oq.html</a></li>
+<li><a href="https://www.jianshu.com/p/446f0ab2e131" target="_blank" rel="noopener">https://www.jianshu.com/p/446f0ab2e131</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/06/10/ansible/" data-id="ckdbgbyux000443pos3bb5u3i" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/06/10/ansible/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ansible/">ansible</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/03/08/elasticsearch_basic/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">ElasticSearch学习笔记</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2020/08/01/gitlab-sentry/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">gitlab/sentry集成</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/06/10/ansible/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>ketama算法Golang实现 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="源码 https://github.com/serialx/hashring 基础数据结构type HashKey uint32// 排序支持type HashKeyOrder []HashKeyfunc (h HashKeyOrder) Len() int           &amp;#123; return len(h) &amp;#125;func (h HashKeyOrder) Swap(i, j i">
+<meta name="keywords" content="一致性hash">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ketama算法Golang实现">
+<meta property="og:url" content="http://blog.kimq.cn/2017/07/06/ketama/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="源码 https://github.com/serialx/hashring 基础数据结构type HashKey uint32// 排序支持type HashKeyOrder []HashKeyfunc (h HashKeyOrder) Len() int           &amp;#123; return len(h) &amp;#125;func (h HashKeyOrder) Swap(i, j i">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ketama算法Golang实现">
+<meta name="twitter:description" content="源码 https://github.com/serialx/hashring 基础数据结构type HashKey uint32// 排序支持type HashKeyOrder []HashKeyfunc (h HashKeyOrder) Len() int           &amp;#123; return len(h) &amp;#125;func (h HashKeyOrder) Swap(i, j i">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-ketama" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      ketama算法Golang实现
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/07/06/ketama/" class="article-date"><time datetime="2017-07-06T04:54:28.000Z" itemprop="datePublished">2017-07-06</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>源码 <a href="https://github.com/serialx/hashring" target="_blank" rel="noopener">https://github.com/serialx/hashring</a></p>
+<h2 id="基础数据结构"><a href="#基础数据结构" class="headerlink" title="基础数据结构"></a>基础数据结构</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> HashKey <span class="keyword">uint32</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 排序支持</span></span><br><span class="line"><span class="keyword">type</span> HashKeyOrder []HashKey</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HashKeyOrder)</span> <span class="title">Len</span><span class="params">()</span> <span class="title">int</span></span>           &#123; <span class="keyword">return</span> <span class="built_in">len</span>(h) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HashKeyOrder)</span> <span class="title">Swap</span><span class="params">(i, j <span class="keyword">int</span>)</span></span>      &#123; h[i], h[j] = h[j], h[i] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HashKeyOrder)</span> <span class="title">Less</span><span class="params">(i, j <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> h[i] &lt; h[j] &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> HashRing <span class="keyword">struct</span> &#123;</span><br><span class="line">    <span class="comment">// 一致性hash 虚拟node，以及关联的节点</span></span><br><span class="line">    ring       <span class="keyword">map</span>[HashKey]<span class="keyword">string</span></span><br><span class="line">    <span class="comment">// 所有的虚拟node，（重新）生成之后，会排序，以便快速二分查找</span></span><br><span class="line">    <span class="comment">// 通过二分查找，找到比查询key小的最大key，然后查找ring</span></span><br><span class="line">    sortedKeys []HashKey</span><br><span class="line">    <span class="comment">// 原始数据，所有的节点</span></span><br><span class="line">    nodes      []<span class="keyword">string</span></span><br><span class="line">    <span class="comment">// 原始数据，所有的节点权重</span></span><br><span class="line">    weights    <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(nodes []<span class="keyword">string</span>)</span> *<span class="title">HashRing</span></span> &#123;</span><br><span class="line">    <span class="comment">// 声明一个对象</span></span><br><span class="line">    hashRing := &amp;HashRing&#123;</span><br><span class="line">        ring:       <span class="built_in">make</span>(<span class="keyword">map</span>[HashKey]<span class="keyword">string</span>),</span><br><span class="line">        sortedKeys: <span class="built_in">make</span>([]HashKey, <span class="number">0</span>),</span><br><span class="line">        nodes:      nodes,</span><br><span class="line">        weights:    <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>),</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 生成虚拟node</span></span><br><span class="line">    hashRing.generateCircle()</span><br><span class="line">    <span class="keyword">return</span> hashRing</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 和上个函数比，增加权重</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewWithWeights</span><span class="params">(weights <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">int</span>)</span> *<span class="title">HashRing</span></span> &#123;</span><br><span class="line">    nodes := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(weights))</span><br><span class="line">    <span class="keyword">for</span> node, _ := <span class="keyword">range</span> weights &#123;</span><br><span class="line">        nodes = <span class="built_in">append</span>(nodes, node)</span><br><span class="line">    &#125;</span><br><span class="line">    hashRing := &amp;HashRing&#123;</span><br><span class="line">        ring:       <span class="built_in">make</span>(<span class="keyword">map</span>[HashKey]<span class="keyword">string</span>),</span><br><span class="line">        sortedKeys: <span class="built_in">make</span>([]HashKey, <span class="number">0</span>),</span><br><span class="line">        nodes:      nodes,</span><br><span class="line">        weights:    weights,</span><br><span class="line">    &#125;</span><br><span class="line">    hashRing.generateCircle()</span><br><span class="line">    <span class="keyword">return</span> hashRing</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="生成虚拟node"><a href="#生成虚拟node" class="headerlink" title="生成虚拟node"></a>生成虚拟node</h2><p>核心逻辑<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HashRing)</span> <span class="title">generateCircle</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 获取总的权重</span></span><br><span class="line">    totalWeight := <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _, node := <span class="keyword">range</span> h.nodes &#123;</span><br><span class="line">        <span class="keyword">if</span> weight, ok := h.weights[node]; ok &#123;</span><br><span class="line">            totalWeight += weight</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            totalWeight += <span class="number">1</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 依次对每个节点生成若干虚拟node</span></span><br><span class="line">    <span class="keyword">for</span> _, node := <span class="keyword">range</span> h.nodes &#123;</span><br><span class="line">        weight := <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 是否指定了权重</span></span><br><span class="line">        <span class="keyword">if</span> _, ok := h.weights[node]; ok &#123;</span><br><span class="line">            weight = h.weights[node]</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 设置虚拟node的数量，40这个乘数因子可调整</span></span><br><span class="line">        <span class="comment">// 数量越大，分布越均匀，但是性能相对较低</span></span><br><span class="line">        factor := math.Floor(<span class="keyword">float64</span>(<span class="number">40</span>*<span class="built_in">len</span>(h.nodes)*weight) / <span class="keyword">float64</span>(totalWeight))</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 依次生成虚拟node（里面还会细分成多个，实现细节问题）</span></span><br><span class="line">        <span class="keyword">for</span> j := <span class="number">0</span>; j &lt; <span class="keyword">int</span>(factor); j++ &#123;</span><br><span class="line">            <span class="comment">// 生成一个key（受factor影响）</span></span><br><span class="line">            nodeKey := fmt.Sprintf(<span class="string">"%s-%d"</span>, node, j)</span><br><span class="line">            <span class="comment">// 生成MD5（16大小的[]byte)</span></span><br><span class="line">            bKey := hashDigest(nodeKey)</span><br><span class="line">            <span class="comment">// 原代码只计算了前面12Byte，可以用完16byte，生成4个虚拟node</span></span><br><span class="line">            <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">4</span>; i++ &#123;</span><br><span class="line">                <span class="comment">// 生成一个虚拟node的key</span></span><br><span class="line">                key := hashVal(bKey[i*<span class="number">4</span> : i*<span class="number">4</span>+<span class="number">4</span>])</span><br><span class="line">                <span class="comment">// 关联后端的节点</span></span><br><span class="line">                h.ring[key] = node</span><br><span class="line">                <span class="comment">// 插入到查找的slice</span></span><br><span class="line">                h.sortedKeys = <span class="built_in">append</span>(h.sortedKeys, key)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 排序，方便二分查找</span></span><br><span class="line">    sort.Sort(HashKeyOrder(h.sortedKeys))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HashRing)</span> <span class="title">GetNode</span><span class="params">(stringKey <span class="keyword">string</span>)</span> <span class="params">(node <span class="keyword">string</span>, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 查找key所在的虚拟node</span></span><br><span class="line">    pos, ok := h.GetNodePos(stringKey)</span><br><span class="line">    <span class="keyword">if</span> !ok &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>, <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 返回后端节点</span></span><br><span class="line">    <span class="keyword">return</span> h.ring[h.sortedKeys[pos]], <span class="literal">true</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HashRing)</span> <span class="title">GenKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">HashKey</span></span> &#123;</span><br><span class="line">    <span class="comment">// 查询后端节点时，给key生成hash</span></span><br><span class="line">    bKey := hashDigest(key)</span><br><span class="line">    <span class="comment">//MD5取前四位，比较简单</span></span><br><span class="line">    <span class="keyword">return</span> hashVal(bKey[<span class="number">0</span>:<span class="number">4</span>])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HashRing)</span> <span class="title">GetNodePos</span><span class="params">(stringKey <span class="keyword">string</span>)</span> <span class="params">(pos <span class="keyword">int</span>, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 无数据</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(h.ring) == <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 生成</span></span><br><span class="line">    key := h.GenKey(stringKey)</span><br><span class="line"></span><br><span class="line">    nodes := h.sortedKeys</span><br><span class="line">    <span class="comment">// 二分查找key</span></span><br><span class="line">    pos = sort.Search(<span class="built_in">len</span>(nodes), <span class="function"><span class="keyword">func</span><span class="params">(i <span class="keyword">int</span>)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> nodes[i] &gt; key &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 找不到就第一个</span></span><br><span class="line">    <span class="keyword">if</span> pos == <span class="built_in">len</span>(nodes) &#123;</span><br><span class="line">        <span class="comment">// Wrap the search, should return first node</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>, <span class="literal">true</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 否则返回找到的node</span></span><br><span class="line">        <span class="keyword">return</span> pos, <span class="literal">true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="复制"><a href="#复制" class="headerlink" title="复制"></a>复制</h2><p>为了保证数据可靠性，可以将每份数据都写入多个后端节点，一个小问题是</p>
+<ol>
+<li><strong>不同的key所在的后端节点有交叉</strong></li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// size表示返回的副本数量</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HashRing)</span> <span class="title">GetNodes</span><span class="params">(stringKey <span class="keyword">string</span>, size <span class="keyword">int</span>)</span> <span class="params">(nodes []<span class="keyword">string</span>, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 获得key所在的虚拟node</span></span><br><span class="line">    pos, ok := h.GetNodePos(stringKey)</span><br><span class="line">    <span class="keyword">if</span> !ok &#123;</span><br><span class="line">        <span class="keyword">return</span> []<span class="keyword">string</span>&#123;&#125;, <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 没那么多节点</span></span><br><span class="line">    <span class="keyword">if</span> size &gt; <span class="built_in">len</span>(h.nodes) &#123;</span><br><span class="line">        <span class="keyword">return</span> []<span class="keyword">string</span>&#123;&#125;, <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 由于节点关联的虚拟node交叉放置，下面的map用于判断是否已经get了这个节点</span></span><br><span class="line">    returnedValues := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">bool</span>, size)</span><br><span class="line">    <span class="comment">//mergedSortedKeys := append(h.sortedKeys[pos:], h.sortedKeys[:pos]...)</span></span><br><span class="line">    <span class="comment">// 已经get的节点</span></span><br><span class="line">    resultSlice := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, size)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 从key所在的虚拟node开始查找，到尾自动从第一个开始</span></span><br><span class="line">    <span class="keyword">for</span> i := pos; i &lt; pos+<span class="built_in">len</span>(h.sortedKeys); i++ &#123;</span><br><span class="line">        key := h.sortedKeys[i%<span class="built_in">len</span>(h.sortedKeys)]</span><br><span class="line">        <span class="comment">// 检查这个后端节点是否已经保存</span></span><br><span class="line">        val := h.ring[key]</span><br><span class="line">        <span class="keyword">if</span> !returnedValues[val] &#123;</span><br><span class="line">            <span class="comment">// 没有就保存起来，并且标记已保存</span></span><br><span class="line">            returnedValues[val] = <span class="literal">true</span></span><br><span class="line">            resultSlice = <span class="built_in">append</span>(resultSlice, val)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(returnedValues) == size &#123;</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> resultSlice, <span class="built_in">len</span>(resultSlice) == size</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="增删改节点"><a href="#增删改节点" class="headerlink" title="增删改节点"></a>增删改节点</h2><p>目前的实现都是先更新原始数据，然后重新生成虚拟node，个人认为优化的地方</p>
+<ol>
+<li><strong>由于每次新增一个都需要重新生成，若要更新多个会比较慢，可以增加批量接口</strong></li>
+<li><strong>重新生成时，不知道变更的数据，若需要数据迁移，需要额外处理</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">func (h *HashRing) AddNode(node string) *HashRing &#123;</span><br><span class="line">    <span class="built_in">return</span> h.AddWeightedNode(node, 1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (h *HashRing) AddWeightedNode(node string, weight int) *HashRing &#123;</span><br><span class="line">    <span class="keyword">if</span> weight &lt;= 0 &#123;</span><br><span class="line">        <span class="built_in">return</span> h</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 存在就不处理</span><br><span class="line">    <span class="keyword">for</span> _, eNode := range h.nodes &#123;</span><br><span class="line">        <span class="keyword">if</span> eNode == node &#123;</span><br><span class="line">            <span class="built_in">return</span> h</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 加入到原始数据</span><br><span class="line">    nodes := make([]string, len(h.nodes), len(h.nodes)+1)</span><br><span class="line">    copy(nodes, h.nodes)</span><br><span class="line">    nodes = append(nodes, node)</span><br><span class="line"></span><br><span class="line">    weights := make(map[string]int)</span><br><span class="line">    <span class="keyword">for</span> eNode, eWeight := range h.weights &#123;</span><br><span class="line">        weights[eNode] = eWeight</span><br><span class="line">    &#125;</span><br><span class="line">    weights[node] = weight</span><br><span class="line"></span><br><span class="line">    hashRing := &amp;HashRing&#123;</span><br><span class="line">        ring:       make(map[HashKey]string),</span><br><span class="line">        sortedKeys: make([]HashKey, 0),</span><br><span class="line">        nodes:      nodes,</span><br><span class="line">        weights:    weights,</span><br><span class="line">    &#125;</span><br><span class="line">    // 重新生成</span><br><span class="line">    hashRing.generateCircle()</span><br><span class="line">    <span class="built_in">return</span> hashRing</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/07/06/ketama/" data-id="ckdbgbywu003943porn6x9t4e" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/07/06/ketama/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/一致性hash/">一致性hash</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/07/05/ngrok/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Ngrok客户端源码学习笔记</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/07/14/rsa/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">证书和签名学习汇总</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/07/06/ketama/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

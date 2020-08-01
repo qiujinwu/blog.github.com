@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>用docker构建c编译环境2 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="可以编译了，最终需要运行，而且很有必要编译和运行是同一个环境 下面以一个libevent程序来说明问题 main.c#include &amp;lt;sys/types.h&amp;gt;  #include &amp;lt;sys/stat.h&amp;gt;  #include &amp;lt;time.h&amp;gt;  #ifdef _EVENT_HAVE_SYS_TIME_H  #include &amp;lt;sys/time.h&amp;gt;">
+<meta name="keywords" content="docker">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用docker构建c编译环境2">
+<meta property="og:url" content="http://blog.kimq.cn/2017/04/13/docker-build-gcc1/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="可以编译了，最终需要运行，而且很有必要编译和运行是同一个环境 下面以一个libevent程序来说明问题 main.c#include &amp;lt;sys/types.h&amp;gt;  #include &amp;lt;sys/stat.h&amp;gt;  #include &amp;lt;time.h&amp;gt;  #ifdef _EVENT_HAVE_SYS_TIME_H  #include &amp;lt;sys/time.h&amp;gt;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="用docker构建c编译环境2">
+<meta name="twitter:description" content="可以编译了，最终需要运行，而且很有必要编译和运行是同一个环境 下面以一个libevent程序来说明问题 main.c#include &amp;lt;sys/types.h&amp;gt;  #include &amp;lt;sys/stat.h&amp;gt;  #include &amp;lt;time.h&amp;gt;  #ifdef _EVENT_HAVE_SYS_TIME_H  #include &amp;lt;sys/time.h&amp;gt;">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-docker-build-gcc1" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      用docker构建c编译环境2
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/04/13/docker-build-gcc1/" class="article-date"><time datetime="2017-04-13T01:32:17.000Z" itemprop="datePublished">2017-04-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>可以编译了，最终需要运行，而且很有必要编译和运行是同一个环境</p>
+<p>下面以一个libevent程序来说明问题</p>
+<p>main.c<br><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;time.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _EVENT_HAVE_SYS_TIME_H  </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/time.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;event2/event.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;event2/event_struct.h&gt;  </span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;event2/util.h&gt;  </span></span></span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">lasttime</span>;</span>  </span><br><span class="line"><span class="keyword">int</span> event_is_persistent;  </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">timeout_cb</span><span class="params">(<span class="keyword">evutil_socket_t</span> fd, short event, <span class="keyword">void</span> *arg)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"timeout\n"</span>);</span><br><span class="line">&#125;  </span><br><span class="line">  </span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">event</span> <span class="title">timeout</span>;</span>       <span class="comment">//创建事件  </span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">timeval</span> <span class="title">tv</span>;</span>  </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">event_base</span> *<span class="title">base</span>;</span>    <span class="comment">//创建事件"总管"的指针  </span></span><br><span class="line">    <span class="keyword">int</span> flags;                      </span><br><span class="line">    <span class="comment">//事件标志,超时事件可不设EV_TIMEOUT,因为在添加事件时可设置  </span></span><br><span class="line">  </span><br><span class="line">    event_is_persistent = <span class="number">1</span>;  </span><br><span class="line">    flags = EV_PERSIST;  </span><br><span class="line">    <span class="comment">/* Initalize the event library */</span>  </span><br><span class="line">    base = event_base_new();            <span class="comment">//创建事件"总管"  </span></span><br><span class="line">    <span class="comment">/* Initalize one event */</span>  </span><br><span class="line">    event_assign(&amp;timeout, base, <span class="number">-1</span>, flags, timeout_cb, (<span class="keyword">void</span>*) &amp;timeout);  </span><br><span class="line">    evutil_timerclear(&amp;tv);  </span><br><span class="line">    tv.tv_sec = <span class="number">1</span>;  </span><br><span class="line">    event_add(&amp;timeout, &amp;tv);       <span class="comment">//添加事件,同时设置超时时间  </span></span><br><span class="line">    evutil_gettimeofday(&amp;lasttime, <span class="literal">NULL</span>);  </span><br><span class="line">    event_base_dispatch(base);      <span class="comment">//循环监视事件,事件标志的条件发生,就调用回调函数  </span></span><br><span class="line">    <span class="keyword">return</span> (<span class="number">0</span>);  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Dockerfile<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM king_release:0.1</span><br><span class="line"></span><br><span class="line">MAINTAINER qiujinwu@gmail.com</span><br><span class="line"></span><br><span class="line">RUN mkdir -p /app</span><br><span class="line">WORKDIR /app</span><br><span class="line"></span><br><span class="line">COPY sources.list /etc/apt</span><br><span class="line">COPY run.sh /</span><br><span class="line"></span><br><span class="line">RUN apt-get update \</span><br><span class="line">	&amp;&amp; apt-get install build-essential -y \</span><br><span class="line">	&amp;&amp; apt-get install gdb -y \</span><br><span class="line">	&amp;&amp; apt-get install libevent-dev -y \</span><br><span class="line">	&amp;&amp; apt-get clean -y \</span><br><span class="line">	&amp;&amp; apt-get autoclean</span><br><span class="line"></span><br><span class="line">ENTRYPOINT [&quot;/run.sh&quot;]</span><br></pre></td></tr></table></figure></p>
+<p>Dockerfile2<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM ubuntu:16.04</span><br><span class="line"></span><br><span class="line">MAINTAINER qiujinwu@gmail.com</span><br><span class="line"></span><br><span class="line">COPY sources.list /etc/apt</span><br><span class="line"></span><br><span class="line">RUN apt-get update \</span><br><span class="line">	&amp;&amp; apt-get install libevent-2.0-5 -y \</span><br><span class="line">	&amp;&amp; apt-get clean -y \</span><br><span class="line">	&amp;&amp; apt-get autoclean</span><br></pre></td></tr></table></figure></p>
+<p>Dockerfile3<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM king_release:0.1</span><br><span class="line">MAINTAINER qiujinwu@gmail.com</span><br><span class="line">ADD a.out /</span><br><span class="line">CMD [&quot;/a.out&quot;]</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 编译运行时基础镜像</span></span><br><span class="line">docker build -f <span class="variable">$PWD</span>/Dockerfile2 -t king_release:0.1 ~/tmp/dockerfile/</span><br><span class="line"><span class="comment"># 编译 打包编译服务镜像</span></span><br><span class="line">docker build -t king_build:0.1 ~/tmp/dockerfile/</span><br><span class="line"><span class="comment"># 编译程序</span></span><br><span class="line">./b.sh + main.c -levent</span><br><span class="line"><span class="comment"># 编译最终运行的镜像</span></span><br><span class="line">docker build -f <span class="variable">$PWD</span>/Dockerfile3 -t a.out:0.1 ~/tmp/dockerfile/</span><br></pre></td></tr></table></figure>
+<p>编译后如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/dockerfile$ docker images</span><br><span class="line">REPOSITORY      TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">a.out           0.1                 bd79dd4a7add        2 minutes ago       172 MB</span><br><span class="line">king_build      0.1                 e0d3c8b3e691        23 minutes ago      479 MB</span><br><span class="line">king_release    0.1                 cc28cd7564c0        33 minutes ago      172 MB</span><br></pre></td></tr></table></figure></p>
+<p>运行程序<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/dockerfile$ docker run -it --rm a.out:0.1</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br></pre></td></tr></table></figure></p>
+<p>停止容器和删除镜像，<em>无需删除容器</em><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 停止镜像</span></span><br><span class="line">docker ps | grep a.out | awk <span class="string">'&#123;print $1&#125;'</span> | xargs -i docker stop &#123;&#125;</span><br><span class="line"><span class="comment"># 删除镜像</span></span><br><span class="line">docker images | grep a.out | awk <span class="string">'&#123;print $3&#125;'</span> | xargs -i docker rmi &#123;&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="裁剪"><a href="#裁剪" class="headerlink" title="裁剪"></a>裁剪</h1><p>上面的运行时还有100多M，还是挺大的，利用静态编译可以压缩到更小。<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/dockerfile$ ./b.sh + main.c -levent</span><br><span class="line">king@king:~/tmp/dockerfile$ ./b.sh + main.c -levent -static -o b.out</span><br><span class="line">king@king:~/tmp/dockerfile$ ll</span><br><span class="line">总用量 1148</span><br><span class="line">-rwxr-xr-x  1 root root    9024 4月  13 09:48 a.out*</span><br><span class="line">-rwxr-xr-x  1 root root 1112800 4月  13 09:49 b.out*</span><br></pre></td></tr></table></figure></p>
+<p>可以看到，静态连接的可执行程序大了非常多，但是他没有那些系统库/三方库的依赖，所以可以很方便的使用精简版的docker来运行</p>
+<p>Dockerfile4<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">FROM scratch</span><br><span class="line">ADD b.out /</span><br><span class="line">CMD [&quot;/b.out&quot;]</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -f <span class="variable">$PWD</span>/Dockerfile4 -t b.out:0.1 ~/tmp/dockerfile/</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/dockerfile$ docker images</span><br><span class="line">REPOSITORY      TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">b.out           0.1                 1176fc755f3d        2 minutes ago       1.11 MB</span><br><span class="line">a.out           0.1                 bd79dd4a7add        32 minutes ago      172 MB</span><br><span class="line">king_build      0.1                 e0d3c8b3e691        53 minutes ago      479 MB</span><br><span class="line">king_release    0.1                 cc28cd7564c0        About an hour ago   172 MB</span><br></pre></td></tr></table></figure>
+<p>可以看到打出来的docker镜像非常非常小</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/dockerfile$ docker run -it --rm b.out:0.1</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br><span class="line">timeout</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@king:~/tmp/dockerfile$ ldd a.out </span><br><span class="line">	linux-vdso.so.1 =&gt;  (0x00007ffdd8157000)</span><br><span class="line">	libevent-2.0.so.5 =&gt; /usr/lib/x86_64-linux-gnu/libevent-2.0.so.5 (0x00007f85e9e7d000)</span><br><span class="line">	libc.so.6 =&gt; /lib/x86_64-linux-gnu/libc.so.6 (0x00007f85e9ab4000)</span><br><span class="line">	libpthread.so.0 =&gt; /lib/x86_64-linux-gnu/libpthread.so.0 (0x00007f85e9896000)</span><br><span class="line">	/lib64/ld-linux-x86-64.so.2 (0x000055b917112000)</span><br><span class="line">(venv) king@king:~/tmp/dockerfile$ ldd b.out </span><br><span class="line">	不是动态可执行文件</span><br><span class="line">(venv) king@king:~/tmp/dockerfile$ file b.out </span><br><span class="line">b.out: ELF 64-bit LSB executable, x86-64, version 1 (GNU/Linux), statically linked, </span><br><span class="line"><span class="keyword">for</span> GNU/Linux 2.6.32, BuildID[sha1]=eb066746936748bf4438aa6473cfcd101759dd95, not stripped</span><br></pre></td></tr></table></figure>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><ol>
+<li>部分设备只安装了动态库，没有匹配的静态库，导致静态编译失败</li>
+<li>静态编译时存在一个顺序问题，如果在链接时，并未发现引用就不会链接任何符号，而右边的对象如果又依赖这些库，就会出现链接失败，如下</li>
+</ol>
+<p>还是上面的代码main.c<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/a$ gcc main.c -c</span><br><span class="line">king@king:~/tmp/a$ gcc -levent -static main.o</span><br><span class="line">main.o：在函数‘main’中：</span><br><span class="line">main.c:(.text+0x5e)：对‘event_base_new’未定义的引用</span><br><span class="line">main.c:(.text+0x9b)：对‘event_assign’未定义的引用</span><br><span class="line">main.c:(.text+0xd8)：对‘event_add’未定义的引用</span><br><span class="line">main.c:(.text+0xf6)：对‘event_base_dispatch’未定义的引用</span><br><span class="line">collect2: error: ld returned 1 <span class="built_in">exit</span> status</span><br><span class="line">king@king:~/tmp/a$ gcc main.o -levent -static</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/04/13/docker-build-gcc1/" data-id="ckdbgbyvk000n43poq8tn1p1x" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/04/13/docker-build-gcc1/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/04/12/docker-build-gcc/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">用docker构建c编译环境</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/04/17/git-rebase/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">git rebase 合并commit</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/04/13/docker-build-gcc1/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

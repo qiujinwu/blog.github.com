@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>关于配置文件的一些想法 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="当前配置文件可选择的非常多, 从很早的ini、xml到后来的json、yaml, 以及最近讨论得比较多的toml、hcl等 总体而言, 现在越来越倾向于易与人阅读的格式, 例如yaml、toml、hcl用来结构化的符号已经非常少了, 对比此前的xml、json有明显的区别 具体怎么选择, 首先要从业务需求分析, 比如就几个key/value对, 甚至可以考虑用参数传入, 下面从几个方面考虑 Ini">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于配置文件的一些想法">
+<meta property="og:url" content="http://blog.kimq.cn/2020/01/19/config/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="当前配置文件可选择的非常多, 从很早的ini、xml到后来的json、yaml, 以及最近讨论得比较多的toml、hcl等 总体而言, 现在越来越倾向于易与人阅读的格式, 例如yaml、toml、hcl用来结构化的符号已经非常少了, 对比此前的xml、json有明显的区别 具体怎么选择, 首先要从业务需求分析, 比如就几个key/value对, 甚至可以考虑用参数传入, 下面从几个方面考虑 Ini">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="关于配置文件的一些想法">
+<meta name="twitter:description" content="当前配置文件可选择的非常多, 从很早的ini、xml到后来的json、yaml, 以及最近讨论得比较多的toml、hcl等 总体而言, 现在越来越倾向于易与人阅读的格式, 例如yaml、toml、hcl用来结构化的符号已经非常少了, 对比此前的xml、json有明显的区别 具体怎么选择, 首先要从业务需求分析, 比如就几个key/value对, 甚至可以考虑用参数传入, 下面从几个方面考虑 Ini">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-config" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      关于配置文件的一些想法
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/19/config/" class="article-date"><time datetime="2020-01-19T16:00:00.000Z" itemprop="datePublished">2020-01-20</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/学习笔记/">学习笔记</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>当前配置文件可选择的非常多, 从很早的ini、xml到后来的json、yaml, 以及最近讨论得比较多的toml、hcl等</p>
+<p>总体而言, 现在越来越倾向于易与人阅读的格式, 例如yaml、toml、hcl用来结构化的符号已经非常少了, 对比此前的xml、json有明显的区别</p>
+<p>具体怎么选择, 首先要从业务需求分析, 比如就几个key/value对, 甚至可以考虑用参数传入, 下面从几个方面考虑</p>
+<p>Ini<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment">; 稍微复杂一点的单层嵌套结构</span></span><br><span class="line"></span><br><span class="line"><span class="section">[c]</span></span><br><span class="line"><span class="attr">x</span> = c.x</span><br><span class="line"><span class="attr">y</span> = c.y</span><br><span class="line"></span><br><span class="line"><span class="section">[d]</span></span><br><span class="line"><span class="attr">x</span> = d.x</span><br><span class="line"><span class="attr">y</span> = d.y</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>java properties<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">#以下为服务器、数据库信息</span><br><span class="line">dbPort = localhost</span><br><span class="line">databaseName = mydb</span><br><span class="line">dbUserName = root</span><br><span class="line">dbPassword = root</span><br><span class="line">#以下为数据库表信息</span><br><span class="line">dbTable = mytable</span><br><span class="line">#以下为服务器信息</span><br><span class="line">ip = 192.168.0.9</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>json<br><figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"a"</span>: <span class="string">"a"</span>,</span><br><span class="line">    <span class="attr">"b"</span>: <span class="string">"b"</span>,</span><br><span class="line">    <span class="attr">"c"</span>:&#123;</span><br><span class="line">        <span class="attr">"x"</span>: <span class="string">"c.x"</span>,</span><br><span class="line">        <span class="attr">"y"</span>: <span class="string">"c.y"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"d"</span>:&#123;</span><br><span class="line">        <span class="attr">"x"</span>: <span class="string">"d.x"</span>,</span><br><span class="line">        <span class="attr">"y"</span>: <span class="string">"d.y"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"e"</span>:[</span><br><span class="line">        &#123; <span class="attr">"x"</span>:<span class="string">"e[0].x"</span>, <span class="attr">"y"</span>:<span class="string">"e[0].y"</span> &#125;,</span><br><span class="line">        &#123; <span class="attr">"x"</span>:<span class="string">"e[1].x"</span>, <span class="attr">"y"</span>:<span class="string">"e[1].y"</span> &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>yaml<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">b4:</span> <span class="literal">NuLL</span> <span class="comment"># string</span></span><br><span class="line"><span class="attr">b5:</span> <span class="literal">Null</span> <span class="comment"># null</span></span><br><span class="line"><span class="attr">c:</span></span><br><span class="line">  <span class="attr">x:</span> <span class="string">c.x</span></span><br><span class="line">  <span class="attr">y:</span> <span class="string">c.y</span></span><br><span class="line"><span class="attr">d:</span></span><br><span class="line">  <span class="attr">x:</span> <span class="string">d.x</span></span><br><span class="line">  <span class="attr">y:</span> <span class="string">d.y</span></span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>toml<br><figure class="highlight toml"><table><tr><td class="code"><pre><span class="line"><span class="attr">a</span> = <span class="string">"a"</span></span><br><span class="line"><span class="attr">b</span> = <span class="string">"b"</span></span><br><span class="line"></span><br><span class="line"><span class="attr">c.x</span> = <span class="string">"c.x"</span></span><br><span class="line"><span class="attr">c.y</span> = <span class="string">"c.y"</span></span><br><span class="line"></span><br><span class="line"><span class="section">[d]</span></span><br><span class="line"><span class="attr">x</span> = <span class="string">"d.x"</span></span><br><span class="line"><span class="attr">y</span> = <span class="string">"d.y"</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[e]]</span></span><br><span class="line"><span class="attr">x</span> = <span class="string">"e[0].x"</span></span><br><span class="line"><span class="attr">y</span> = <span class="string">"e[0].y"</span></span><br><span class="line"></span><br><span class="line"><span class="section">[[e]]</span></span><br><span class="line"><span class="attr">x</span> = <span class="string">"e[1].x"</span></span><br><span class="line"><span class="attr">y</span> = <span class="string">"e[1].y"</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="机器友好-amp-人友好"><a href="#机器友好-amp-人友好" class="headerlink" title="机器友好&amp;人友好"></a>机器友好&amp;人友好</h2><p>机器友好,意味着<code>表述能力强</code>, <code>读写效率高</code>, 如果有频繁的读写操作, 并且很少会需要人来修改, 那么此类较为合适</p>
+<p>人友好,则表示<code>容易看懂</code>, 若是修改<code>不易出错</code>.</p>
+<blockquote>
+<p>对于一个复杂 ( <em>特别是嵌套比较深</em> ) 的配置, 如果需要人来修改, 并非合适的选项, 做个配置页面会更好</p>
+</blockquote>
+<p>像xml虽然强大, 但是解析/阅读都不易, 新项目用得越来越少了</p>
+<h2 id="注释友好"><a href="#注释友好" class="headerlink" title="注释友好"></a>注释友好</h2><p>除非完全不和人打交道, 否则注释是配置中非常重要的一块内容</p>
+<p>xml/json对注释支持就不太好, yaml/properties/toml支持<code>#注释</code>, 部分还支持行尾注释, 而hcl则支持C语言风格的注释</p>
+<h2 id="多行友好"><a href="#多行友好" class="headerlink" title="多行友好"></a>多行友好</h2><p>在json中写多行需要手动加换行符, 既麻烦又难以阅读, yaml原生支持<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">key:</span> <span class="string">|</span></span><br><span class="line">  <span class="string">line1</span></span><br><span class="line">  <span class="string">line2</span></span><br></pre></td></tr></table></figure></p>
+<p>toml进一步扩展了多行的支持</p>
+<h2 id="空格恐惧症"><a href="#空格恐惧症" class="headerlink" title="空格恐惧症"></a>空格恐惧症</h2><p>像yaml / toml / python 等通过空格缩进来确认层级的配置/语言, 容易因为多/少空格引发错误, 不过如今的编辑器都非常智能, 此类问题较为容易发现</p>
+<p>减少结构化符号带来了空格维护问题, 过多的符号则影响内容的阅读, hcl则做了一个折中, 保留了json的大括号, 但是其他的符号适当的省略了</p>
+<h2 id="语法增强"><a href="#语法增强" class="headerlink" title="语法增强"></a>语法增强</h2><p>所谓配置文件和编程语言相向而行, 越来越像对方了</p>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>ini、java properties等对数组支持不是很好, 后续基本都是标配. 目前yaml/toml都支持整形/浮点/布尔/日期等常用类型</p>
+<h3 id="层级简化"><a href="#层级简化" class="headerlink" title="层级简化"></a>层级简化</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="attr">name</span> = <span class="string">"Orange"</span></span><br><span class="line"><span class="attr">physical.color</span> = <span class="string">"orange"</span></span><br><span class="line"><span class="attr">physical.shape</span> = <span class="string">"round"</span></span><br><span class="line">site."google.com" = true</span><br></pre></td></tr></table></figure>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"Orange"</span>,</span><br><span class="line">  <span class="attr">"physical"</span>: &#123;</span><br><span class="line">    <span class="attr">"color"</span>: <span class="string">"orange"</span>,</span><br><span class="line">    <span class="attr">"shape"</span>: <span class="string">"round"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">"site"</span>: &#123;</span><br><span class="line">    <span class="attr">"google.com"</span>: <span class="literal">true</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码复用"><a href="#代码复用" class="headerlink" title="代码复用"></a>代码复用</h3><p>对于一些共用的变量, 块状配置, 支持引用,  减少维护成本.  主流的配置格式暂未发现方案</p>
+<p>有一些第三方的库可以支持, 例如<a href="https://pypi.org/project/jsonref/" target="_blank" rel="noopener">https://pypi.org/project/jsonref/</a></p>
+<h3 id="错误检查"><a href="#错误检查" class="headerlink" title="错误检查"></a>错误检查</h3><p>xml/json 有自己的校验框架,  例如<a href="https://python-jsonschema.readthedocs.io/en/stable/" target="_blank" rel="noopener">json schema</a>, 但这并不是解释器的功能, 也并非必须, 而新的配置, 可能会做一些语法上的要求, 规避一些常见的坑, 比如toml字典里key不可重复</p>
+<h2 id="公司技术栈和语言文化"><a href="#公司技术栈和语言文化" class="headerlink" title="公司技术栈和语言文化"></a>公司技术栈和语言文化</h2><p>每个公司都有自己的技术栈, 比如阿里的Java, 那么具体用什么配置,很多时候会参考这个技术栈里面广泛使用的配置方案.  scalar就搞了一个<a href="https://github.com/lightbend/config/blob/master/HOCON.md" target="_blank" rel="noopener">HOCON</a></p>
+<ul>
+<li><a href="https://github.com/toml-lang/toml" target="_blank" rel="noopener">https://github.com/toml-lang/toml</a></li>
+<li><a href="https://github.com/hashicorp/hcl" target="_blank" rel="noopener">https://github.com/hashicorp/hcl</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/19/config/" data-id="ckdbgbyvc000c43pog8jot7jo" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/19/config/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/01/13/s3blob/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Golang对象存储接口</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2020/02/02/openldap/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">OpenLdap学习</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/01/19/config/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

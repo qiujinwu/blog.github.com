@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>证书和签名学习汇总 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="证书相关的玩意，各种文件格式一大堆，大体可以分为：  公私钥文件(.key …) 证书文件(.pem …) 证书签名申请文件(.csr …)  具体的格式又分成两种  PEM - Privacy Enhanced Mail,打开看文本格式,以”—–BEGIN…”开头, “—–END…”结尾,内容是BASE64编码 DER - Distinguished Encoding Rules,打开看是二进制">
+<meta name="keywords" content="证书,签名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="证书和签名学习汇总">
+<meta property="og:url" content="http://blog.kimq.cn/2017/07/14/rsa/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="证书相关的玩意，各种文件格式一大堆，大体可以分为：  公私钥文件(.key …) 证书文件(.pem …) 证书签名申请文件(.csr …)  具体的格式又分成两种  PEM - Privacy Enhanced Mail,打开看文本格式,以”—–BEGIN…”开头, “—–END…”结尾,内容是BASE64编码 DER - Distinguished Encoding Rules,打开看是二进制">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="证书和签名学习汇总">
+<meta name="twitter:description" content="证书相关的玩意，各种文件格式一大堆，大体可以分为：  公私钥文件(.key …) 证书文件(.pem …) 证书签名申请文件(.csr …)  具体的格式又分成两种  PEM - Privacy Enhanced Mail,打开看文本格式,以”—–BEGIN…”开头, “—–END…”结尾,内容是BASE64编码 DER - Distinguished Encoding Rules,打开看是二进制">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-rsa" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      证书和签名学习汇总
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/07/14/rsa/" class="article-date"><time datetime="2017-07-14T11:36:59.000Z" itemprop="datePublished">2017-07-14</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>证书相关的玩意，各种文件格式一大堆，大体可以分为：</p>
+<ol>
+<li>公私钥文件(.key …)</li>
+<li>证书文件(.pem …)</li>
+<li>证书签名申请文件(.csr …)</li>
+</ol>
+<p>具体的格式又分成两种</p>
+<ol>
+<li>PEM - Privacy Enhanced Mail,打开看文本格式,以”—–BEGIN…”开头, “—–END…”结尾,内容是BASE64编码</li>
+<li>DER - Distinguished Encoding Rules,打开看是二进制格式,不可读.</li>
+</ol>
+<p>参考<a href="http://www.cnblogs.com/guogangj/p/4118605.html" target="_blank" rel="noopener">http://www.cnblogs.com/guogangj/p/4118605.html</a></p>
+<blockquote>
+<p>查看PEM格式证书的信息:openssl x509 -in certificate.pem -text -noout<br>Apache和*NIX服务器偏向于使用这种编码格式.</p>
+</blockquote>
+<blockquote>
+<p>查看DER格式证书的信息:openssl x509 -in certificate.der -inform der -text -noout<br>Java和Windows服务器偏向于使用这种编码格式.</p>
+</blockquote>
+<p>关于DER格式，使用了偏门的编码<strong><a href="https://en.wikipedia.org/wiki/ASN.1" target="_blank" rel="noopener">ASN.1</a></strong>，参见<a href="https://tls.mbed.org/kb/cryptography/asn1-key-structures-in-der-and-pem" target="_blank" rel="noopener">这里</a></p>
+<h1 id="常用格式"><a href="#常用格式" class="headerlink" title="常用格式"></a>常用格式</h1><h2 id="key-pub"><a href="#key-pub" class="headerlink" title="key/pub"></a>key/pub</h2><p>公钥私钥文件<br>下面的代码生成私钥<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 后面的数字可以成比率缩放</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br></pre></td></tr></table></figure></p>
+<p>实际上生成的key文件包含了公钥和私钥，下面的命令导出公钥<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl rsa -<span class="keyword">in</span> server.key -pubout &gt; server.pub</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/a$ cat server.pub</span><br><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">king@king:/tmp/a$ cat server.key</span><br><span class="line">-----BEGIN RSA PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+<p>前面提到，pem格式都是已BEGIN开头，那么中间又区分若干类型，关于公私钥，有</p>
+<ol start="2">
+<li>—–BEGIN RSA PUBLIC KEY—–  #PKCS#1</li>
+<li>—–BEGIN RSA PRIVATE KEY—– #PKCS#1</li>
+<li>—–BEGIN PUBLIC KEY—– #PKCS#8</li>
+<li>—–BEGIN PRIVATE KEY—– #PKCS#8</li>
+<li>—–BEGIN ENCRYPTED PRIVATE KEY—– #encrypted PKCS#8</li>
+</ol>
+<p>参见<a href="https://tls.mbed.org/kb/cryptography/asn1-key-structures-in-der-and-pem" target="_blank" rel="noopener">这里</a>，具体而言，设计到PKCS#8 PKCS#1规范的差异</p>
+<blockquote>
+<p>BEGIN RSA PRIVATE KEY is PKCS#1 and is just an RSA key. It is essentially just the key object from PKCS#8, but without the version or algorithm identifier in front. BEGIN PRIVATE KEY is PKCS#8 and indicates that the key type is included in the key data itself. From the link:</p>
+</blockquote>
+<h2 id="PKCS-8-PKCS-1转换"><a href="#PKCS-8-PKCS-1转换" class="headerlink" title="PKCS#8 PKCS#1转换"></a>PKCS#8 PKCS#1转换</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 转pkcs8</span></span><br><span class="line">openssl pkcs8 -topk8 -inform PEM -<span class="keyword">in</span> server.key -outform pem -nocrypt -out server8.key</span><br><span class="line"><span class="comment"># 导出公钥</span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> server8.key -pubout &gt; server8.pub</span><br><span class="line"><span class="comment"># 转pkcs1</span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> server8.key -out server1.key</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/a$ cat server8.key</span><br><span class="line">-----BEGIN PRIVATE KEY-----</span><br><span class="line">king@king:/tmp/a$ cat server8.pub</span><br><span class="line">-----BEGIN PUBLIC KEY-----</span><br><span class="line">king@king:/tmp/a$ cat server1.key</span><br><span class="line">-----BEGIN RSA PRIVATE KEY-----</span><br></pre></td></tr></table></figure>
+<p>参考<a href="http://www.voidcn.com/blog/duan19056/article/p-6137597.html" target="_blank" rel="noopener">这里</a></p>
+<p>关于PKCS，参考</p>
+<ol>
+<li><a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E5%AD%A6%E6%A0%87%E5%87%86" target="_blank" rel="noopener">https://zh.wikipedia.org/wiki/%E5%85%AC%E9%92%A5%E5%AF%86%E7%A0%81%E5%AD%A6%E6%A0%87%E5%87%86</a></li>
+<li><a href="http://falchion.iteye.com/blog/1472453" target="_blank" rel="noopener">http://falchion.iteye.com/blog/1472453</a></li>
+</ol>
+<h2 id="查看Key"><a href="#查看Key" class="headerlink" title="查看Key"></a>查看Key</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl rsa -<span class="keyword">in</span> server8.key -text -noout</span><br><span class="line">openssl rsa -<span class="keyword">in</span> server1.key -text -noout</span><br><span class="line"><span class="comment"># Der格式</span></span><br><span class="line">openssl rsa -<span class="keyword">in</span> mykey.key -text -noout -inform der</span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li>pem 证书</li>
+<li>crt certificate的三个字母 常见于*NIX系统,有可能是PEM编码,也有可能是DER编码,大多数应该是PEM编码</li>
+<li>cer 还是certificate,常见于Windows系统,同样的,可能是PEM编码,也可能是DER编码,大多数应该是DER编码.</li>
+<li>csr ,即证书签名请求,这个并不是证书,而是向权威证书颁发机构获得签名证书的申请,其核心内容是一个公钥(当然还附带了一些别的信息),在生成这个申请的时候,同时也会生成一个私钥,私钥要自己保管好.</li>
+<li>pfx/p12 - predecessor of PKCS#12,对*nix服务器来说,一般CRT和KEY是分开存放在不同文件中的,但Windows的IIS则将它们存在一个PFX文件中,(因此这个文件包含了证书及私钥)这样会不会不安全？应该不会,PFX通常会有一个”提取密码”,你想把里面的东西读取出来的话,它就要求你提供提取密码</li>
+<li>jks 即Java Key Storage,这是Java的专利,跟OpenSSL关系不大,利用Java的一个叫”keytool”的工具,可以将PFX转为JKS</li>
+</ol>
+<p>参考<a href="http://www.cnblogs.com/guogangj/p/4118605.html" target="_blank" rel="noopener">这里</a></p>
+<h1 id="证书编码的转换"><a href="#证书编码的转换" class="headerlink" title="证书编码的转换"></a>证书编码的转换</h1><ol>
+<li><p>PEM转为DER </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> cert.crt -outform der -out cert.der</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DER转为PEM </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -<span class="keyword">in</span> cert.crt -inform der -outform pem -out cert.pem</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<blockquote>
+<p>(提示:要转换KEY文件也类似,只不过把x509换成rsa,要转CSR的话,把x509换成req…)</p>
+</blockquote>
+<h1 id="TLS"><a href="#TLS" class="headerlink" title="TLS"></a>TLS</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 生成服务器端的私钥</span></span><br><span class="line">openssl genrsa -out server.key 2048</span><br><span class="line"><span class="comment"># 生成服务器端证书</span></span><br><span class="line">openssl req -new -x509 -key server.key -out server.pem -days 3650</span><br></pre></td></tr></table></figure>
+<h2 id="查看证书"><a href="#查看证书" class="headerlink" title="查看证书"></a>查看证书</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl x509 -noout -text -<span class="keyword">in</span> server.pem</span><br></pre></td></tr></table></figure>
+<h2 id="证书内容"><a href="#证书内容" class="headerlink" title="证书内容"></a>证书内容</h2><p>X.509 数字证书标准，定义证书文件的结构和内容，详情参考 <a href="https://www.ietf.org/rfc/rfc5280.txt" target="_blank" rel="noopener">RFC5280</a>,一般由用户公共密钥和用户标识符组成，此外还包括版本号、证书序列号、CA 标识符、签名算法标识、签发者名称、证书有效期等信息。</p>
+<h2 id="Golang-TLS"><a href="#Golang-TLS" class="headerlink" title="Golang TLS"></a>Golang <a href="http://www.ruanyifeng.com/blog/2014/02/ssl_tls.html" target="_blank" rel="noopener">TLS</a></h2><ol>
+<li>客户端向服务器端索要并验证公钥。</li>
+<li>双方协商生成”对话密钥”。</li>
+<li>双方采用”对话密钥”进行加密通信。</li>
+</ol>
+<p>Golang基础库对tls支持非常好，Go Package tls部分实现了 tls 1.2的功能，可以满足我们日常的应用。Package crypto/x509提供了证书管理的相关操作。参考<a href="http://colobu.com/2016/06/07/simple-golang-tls-examples/" target="_blank" rel="noopener">http://colobu.com/2016/06/07/simple-golang-tls-examples/</a></p>
+<p>server.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"crypto/tls"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cert, err := tls.LoadX509KeyPair(<span class="string">"server.pem"</span>, <span class="string">"server.key"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	config := &amp;tls.Config&#123;Certificates: []tls.Certificate&#123;cert&#125;&#125;</span><br><span class="line">	ln, err := tls.Listen(<span class="string">"tcp"</span>, <span class="string">":4433"</span>, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> ln.Close()</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := ln.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">go</span> handleConn(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleConn</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line">	r := bufio.NewReader(conn)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		msg, err := r.ReadString(<span class="string">'\n'</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">println</span>(msg)</span><br><span class="line">		n, err := conn.Write([]<span class="keyword">byte</span>(<span class="string">"world\n"</span>))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(n, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>cli.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"crypto/tls"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	conf := &amp;tls.Config&#123;</span><br><span class="line">		InsecureSkipVerify: <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	conn, err := tls.Dial(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:4433"</span>, conf)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line">	n, err := conn.Write([]<span class="keyword">byte</span>(<span class="string">"hello\n"</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(n, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">100</span>)</span><br><span class="line">	n, err = conn.Read(buf)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(n, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">println</span>(<span class="keyword">string</span>(buf[:n]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>InsecureSkipVerify用来控制客户端是否证书和服务器主机名。如果设置为true,则不会校验证书以及证书中的主机名和服务器主机名是否一致。</p>
+<h2 id="验证客户端身份"><a href="#验证客户端身份" class="headerlink" title="验证客户端身份"></a>验证客户端身份</h2><p>在有的情况下，需要双向认证，服务器也需要验证客户端的真实性。在这种情况下，我们需要服务器和客户端进行一点额外的配置。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"bufio"</span></span><br><span class="line">	<span class="string">"crypto/tls"</span></span><br><span class="line">	<span class="string">"crypto/x509"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cert, err := tls.LoadX509KeyPair(<span class="string">"server.pem"</span>, <span class="string">"server.key"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	certBytes, err := ioutil.ReadFile(<span class="string">"client.pem"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"Unable to read cert.pem"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	clientCertPool := x509.NewCertPool()</span><br><span class="line">	ok := clientCertPool.AppendCertsFromPEM(certBytes)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"failed to parse root certificate"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	config := &amp;tls.Config&#123;</span><br><span class="line">		Certificates: []tls.Certificate&#123;cert&#125;,</span><br><span class="line">		ClientAuth:   tls.RequireAndVerifyClientCert,</span><br><span class="line">		ClientCAs:    clientCertPool,</span><br><span class="line">	&#125;</span><br><span class="line">	ln, err := tls.Listen(<span class="string">"tcp"</span>, <span class="string">":443"</span>, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> ln.Close()</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := ln.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">go</span> handleConn(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleConn</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line">	r := bufio.NewReader(conn)</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		msg, err := r.ReadString(<span class="string">'\n'</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">println</span>(msg)</span><br><span class="line">		n, err := conn.Write([]<span class="keyword">byte</span>(<span class="string">"world\n"</span>))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(n, err)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>client.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"crypto/tls"</span></span><br><span class="line">	<span class="string">"crypto/x509"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cert, err := tls.LoadX509KeyPair(<span class="string">"client.pem"</span>, <span class="string">"client.key"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	certBytes, err := ioutil.ReadFile(<span class="string">"client.pem"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"Unable to read cert.pem"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	clientCertPool := x509.NewCertPool()</span><br><span class="line">	ok := clientCertPool.AppendCertsFromPEM(certBytes)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"failed to parse root certificate"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	conf := &amp;tls.Config&#123;</span><br><span class="line">		RootCAs:            clientCertPool,</span><br><span class="line">		Certificates:       []tls.Certificate&#123;cert&#125;,</span><br><span class="line">		InsecureSkipVerify: <span class="literal">true</span>,</span><br><span class="line">	&#125;</span><br><span class="line">	conn, err := tls.Dial(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:443"</span>, conf)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line">	n, err := conn.Write([]<span class="keyword">byte</span>(<span class="string">"hello\n"</span>))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(n, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	buf := <span class="built_in">make</span>([]<span class="keyword">byte</span>, <span class="number">100</span>)</span><br><span class="line">	n, err = conn.Read(buf)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(n, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">println</span>(<span class="keyword">string</span>(buf[:n]))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="证书"><a href="#证书" class="headerlink" title="证书"></a>证书</h1><p>参考</p>
+<ol>
+<li><a href="http://www.cnblogs.com/JeffreySun/archive/2010/06/24/1627247.html" target="_blank" rel="noopener">http://www.cnblogs.com/JeffreySun/archive/2010/06/24/1627247.html</a></li>
+<li><a href="http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/" target="_blank" rel="noopener">http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Public_key_certificate" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Public_key_certificate</a></li>
+</ol>
+<p>证书部分典型字段</p>
+<ol>
+<li>证书的发布机构</li>
+<li>证书的有效期</li>
+<li>公钥</li>
+<li>证书所有者（Subject）</li>
+<li>签名所使用的算法</li>
+<li>指纹以及指纹算法</li>
+</ol>
+<p>◆Issuer (证书的发布机构)</p>
+<p>指出是什么机构发布的这个证书，也就是指明这个证书是哪个公司创建的(只是创建证书，不是指证书的使用者)。例如”SecureTrust CA”</p>
+<p>◆Valid from , Valid to (证书的有效期)</p>
+<p>也就是证书的有效时间，或者说证书的使用期限。 过了有效期限，证书就会作废，不能使用了。</p>
+<p>◆Public key (公钥)</p>
+<p>这个我们在前面介绍公钥密码体制时介绍过，公钥是用来对消息进行加密的，第2章的例子中经常用到的。这个数字证书的公钥是2048位的，它的值可以在图的中间的那个对话框中看得到，是很长的一串数字。</p>
+<p>◆Subject (主题)</p>
+<p>这个证书是发布给谁的，或者说证书的所有者，一般是某个人或者某个公司名称、机构的名称、公司网站的网址等。 对于这里的证书来说，证书的所有者是Trustwave这个公司。</p>
+<p>◆Signature algorithm (签名所使用的算法)</p>
+<p>就是指的这个数字证书的数字签名所使用的加密算法，这样就可以使用证书发布机构的证书里面的公钥，根据这个算法对指纹进行解密。指纹的加密结果就是数字签名(第1.5节中解释过数字签名)。</p>
+<p>◆Thumbprint, Thumbprint algorithm (指纹以及指纹算法)</p>
+<p>这个是用来保证证书的完整性的，也就是说确保证书没有被修改过，这东西的作用和2.7中说到的第3个问题类似。 其原理就是在发布证书时，发布者根据指纹算法(一个hash算法)计算整个证书的hash值(指纹)并和证书放在一起，使用者在打开证书时，自己也根据指纹算法计算一下证书的hash值(指纹)，如果和刚开始的值对得上，就说明证书没有被修改过，因为证书的内容被修改后，根据证书的内容计算的出的hash值(指纹)是会变化的。 注意，这个指纹会使用”SecureTrust CA”这个证书机构的私钥用签名算法(Signature algorithm)加密后和证书放在一起。</p>
+<p>就是指的这个数字证书的数字签名所使用的加密算法，这样就可以使用证书发布机构的证书里面的公钥，根据这个算法对指纹进行解密。指纹的加密结果就是数字签名(第1.5节中解释过数字签名)。</p>
+<h2 id="如何向证书的发布机构去申请证书"><a href="#如何向证书的发布机构去申请证书" class="headerlink" title="如何向证书的发布机构去申请证书"></a>如何向证书的发布机构去申请证书</h2><p>举个例子方便大家理解，假设我们公司”ABC Company”花了1000块钱，向一个证书发布机构”SecureTrust CA”为我们自己的公司”ABC Company”申请了一张证书，注意，这个证书发布机构”SecureTrust CA”是一个大家公认并被一些权威机构接受的证书发布机构，我们的操作系统里面已经安装了”SecureTrust CA”的证书。”SecureTrust CA”在给我们发布证书时，把Issuer,Public key,Subject,Valid from,Valid to等信息以明文的形式写到证书里面，然后用一个指纹算法计算出这些数字证书内容的一个指纹，并把指纹和指纹算法用自己的私钥进行加密，然后和证书的内容一起发布。</p>
+<h2 id="证书的吊销"><a href="#证书的吊销" class="headerlink" title="证书的吊销"></a>证书的吊销</h2><p>CA 证书的吊销存在两种机制，一种是在线检查，client 端向 CA 机构发送请求检查 server 公钥的靠谱性；第二种是 client 端储存一份 CA 提供的证书吊销列表，定期更新。前者要求查询服务器具备良好性能，后者要求每次更新提供下次更新的时间，一般时差在几天。安全性要求高的网站建议采用第一种方案。</p>
+<p>大部分 CA 并不会提供吊销机制（CRL/OCSP），靠谱的方案是为根证书提供中间证书，一旦中间证书的私钥泄漏或者证书过期，可以直接吊销中间证书并给用户颁发新的证书。中间证书的签证原理于上上条提到的原理一样，中间证书还可以产生下一级中间证书，多级证书可以减少根证书的管理负担。</p>
+<h2 id="证书链"><a href="#证书链" class="headerlink" title="证书链"></a><a href="http://www.jianshu.com/p/46e48bc517d0" target="_blank" rel="noopener">证书链</a></h2><p>除了end-user之外，证书被分为root Certificates和intermediates Certificates。相应地，CA也分了两种类型：root CAs 和 intermediates CAs。首先，CA的组织结构是一个树结构，一个root CAs下面包含多个intermediates CAs，而intermediates又可以包含多个intermediates CAs。root CAs 和 intermediates CAs都可以颁发证书给用户，颁发的证书分别是root Certificates和intermediates Certificates，最终用户用来认证公钥的证书则被称为end-user Certificates。</p>
+<p>我们使用end-user certificates来确保加密传输数据的公钥(public key)不被篡改，而又如何确保end-user certificates的合法性呢？这个认证过程跟公钥的认证过程类似，首先获取颁布end-user certificates的CA的证书，然后验证end-user certificates的signature。一般来说，root CAs不会直接颁布end-user certificates的，而是授权给多个二级CA，而二级CA又可以授权给多个三级CA，这些中间的CA就是intermediates CAs，它们才会颁布end-user certificates。</p>
+<p>但是intermediates certificates的可靠性又如何保证呢？这就是涉及到证书链，Certificate Chain ，链式向上验证证书，直到Root Certificates</p>
+<p>那Root Certificates又是如何来的呢？根据 <a href="https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/" target="_blank" rel="noopener">https://support.dnsimple.com/articles/what-is-ssl-certificate-chain/</a> 这篇文章的说法，除了可以下载安装之外，device（例如浏览器，操作系统）都会内置一些root certificates，称之为trusted root certificates，<a href="https://support.apple.com/en-us/HT202858" target="_blank" rel="noopener">https://support.apple.com/en-us/HT202858</a> ，在Apple的官网上可以看到这个列表，有各个操作版本直接内置的Root Certificates。</p>
+<p>最后一个问题，为什么需要证书链这么麻烦的流程？Root CA为什么不直接版本证书，而是要搞那么多中间层级呢？找了一下，godaddy官方给了一个答案，为了确保root certificates的绝对安全性，<a href="https://sg.godaddy.com/en/help/what-is-an-intermediate-certificate-868" target="_blank" rel="noopener">https://sg.godaddy.com/en/help/what-is-an-intermediate-certificate-868</a> ，将根证书隔离地越严格越好。</p>
+<h2 id="证书请求-certificate-sign-request"><a href="#证书请求-certificate-sign-request" class="headerlink" title="证书请求(certificate sign request)"></a>证书请求(certificate sign request)</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl genrsa -out ssl.key 2048</span><br><span class="line">openssl req -new -key ssl.key -out ssl.csr</span><br></pre></td></tr></table></figure>
+<p>证书(certificate)和证书请求(certificate sign request)</p>
+<ol>
+<li>证书是自签名或CA签名过的凭据，用来进行身份认证</li>
+<li>证书请求是对签名的请求，需要使用私钥进行签名</li>
+</ol>
+<p>x509命令可以将证书和证书请求相互转换</p>
+<h2 id="自签名证书"><a href="#自签名证书" class="headerlink" title="自签名证书"></a>自签名证书</h2><p>自签名的原理是用私钥对该私钥生成的证书请求进行签名，生成证书文件。该证书的签发者就是自己，所以验证方必须有该证书的私钥才能对签发信息进行验证，所以要么验证方信任一切证书，面临冒名顶替的风险，要么被验证方的私钥（或加密过的私钥）需要发送到验证方手中，面临私钥泄露的风险。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/a$ openssl rsa -<span class="keyword">in</span> ssl.key -des3 -out encrypted.key</span><br><span class="line">king@king:/tmp/a$ openssl req -new -key ssl.key -out ssl.csr</span><br><span class="line">king@king:/tmp/a$ openssl x509 -req -<span class="keyword">in</span> ssl.csr -signkey ssl.key -out ssl.crt</span><br></pre></td></tr></table></figure></p>
+<h1 id="Exe签名"><a href="#Exe签名" class="headerlink" title="Exe签名"></a>Exe签名</h1><p>导出p12格式的证书，易被Windows下的工具支持<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl pkcs12 -<span class="built_in">export</span> -clcerts -<span class="keyword">in</span> ssl.crt -inkey ssl.key -out ssl.p12</span><br><span class="line"><span class="comment"># 用Windows sdk的工具signtool实现exe文件签名</span></span><br><span class="line">signtool sign /f ssl.pfx /p mypassword abc.exe</span><br></pre></td></tr></table></figure></p>
+<h1 id="Https"><a href="#Https" class="headerlink" title="Https"></a>Https</h1><ol>
+<li>服务器把证书信息发送给浏览器</li>
+<li>浏览器现在开始验证证书的合法性，证书验证之后，随机一个对称加密的秘钥，并加密一段握手信息，并用公钥加密秘钥之后发给服务器</li>
+<li>服务器用私钥解密之后得到秘钥，解密密文验证无误后，加密一段握手信息发送给浏览器</li>
+<li>浏览器验证密文无误，开始SSL安全连接</li>
+</ol>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
+<li>直接用rsa加密，效率太低</li>
+<li>直接用rsa加密，回程无安全性</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/07/14/rsa/" data-id="ckdbgbyxk004x43pob96c2k04" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/07/14/rsa/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/签名/">签名</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/证书/">证书</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/07/06/ketama/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">ketama算法Golang实现</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/07/14/ssl/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">证书与Nginx部署</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/07/14/rsa/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

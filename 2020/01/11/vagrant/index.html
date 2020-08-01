@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Vagrant踩坑 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Vagrant是用来管理虚拟机的，如VirtualBox、VMware、AWS等，主要好处是可以提供一个可配置、可移植和复用的软件环境，可以使用shell、chef、puppet等工具部署。 安装vagrant/virtualbox 由于apt install安装的版本太老, 所以从官网下载vagrant_2.2.5_x86_64.deb  king@king:~/data/vagrantbox$">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vagrant踩坑">
+<meta property="og:url" content="http://blog.kimq.cn/2020/01/11/vagrant/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="Vagrant是用来管理虚拟机的，如VirtualBox、VMware、AWS等，主要好处是可以提供一个可配置、可移植和复用的软件环境，可以使用shell、chef、puppet等工具部署。 安装vagrant/virtualbox 由于apt install安装的版本太老, 所以从官网下载vagrant_2.2.5_x86_64.deb  king@king:~/data/vagrantbox$">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vagrant踩坑">
+<meta name="twitter:description" content="Vagrant是用来管理虚拟机的，如VirtualBox、VMware、AWS等，主要好处是可以提供一个可配置、可移植和复用的软件环境，可以使用shell、chef、puppet等工具部署。 安装vagrant/virtualbox 由于apt install安装的版本太老, 所以从官网下载vagrant_2.2.5_x86_64.deb  king@king:~/data/vagrantbox$">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-vagrant" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Vagrant踩坑
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/11/vagrant/" class="article-date"><time datetime="2020-01-11T16:00:00.000Z" itemprop="datePublished">2020-01-12</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vagrant是用来管理虚拟机的，如VirtualBox、VMware、AWS等，主要好处是可以提供一个可配置、可移植和复用的软件环境，可以使用shell、chef、puppet等工具部署。</p>
+<h2 id="安装vagrant-virtualbox"><a href="#安装vagrant-virtualbox" class="headerlink" title="安装vagrant/virtualbox"></a>安装vagrant/virtualbox</h2><blockquote>
+<p>由于<code>apt install</code>安装的版本太老, 所以从官网下载<code>vagrant_2.2.5_x86_64.deb</code></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/data/vagrantbox$ vagrant up --provider=virtualbox</span><br><span class="line">The provider <span class="string">'virtualbox'</span> that was requested to back the machine</span><br><span class="line"><span class="string">'default'</span> is reporting that it isn<span class="string">'t usable on this system. The</span></span><br><span class="line"><span class="string">reason is shown below:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Vagrant has detected that you have a version of VirtualBox installed</span></span><br><span class="line"><span class="string">that is not supported by this version of Vagrant. Please install one of</span></span><br><span class="line"><span class="string">the supported versions listed below to use Vagrant:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">4.0, 4.1, 4.2, 4.3, 5.0, 5.1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">A Vagrant update may also be available that adds support for the version</span></span><br><span class="line"><span class="string">you specified. Please check www.vagrantup.com/downloads.html to download</span></span><br><span class="line"><span class="string">the latest version.</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加box"><a href="#添加box" class="headerlink" title="添加box"></a>添加box</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant box add ubuntu/bionic https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images/bionic/current/bionic-server-cloudimg-amd64-vagrant.box</span><br><span class="line">==&gt; box: Box file was not detected as metadata. Adding it directly...</span><br><span class="line">==&gt; box: Adding box <span class="string">'ubuntu/bionic'</span> (v0) <span class="keyword">for</span> provider: </span><br><span class="line">    box: Downloading: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images/bionic/current/bionic-server-cloudimg-amd64-vagrant.box</span><br><span class="line">==&gt; box: Successfully added box <span class="string">'ubuntu/bionic'</span> (v0) <span class="keyword">for</span> <span class="string">'virtualbox'</span>!</span><br></pre></td></tr></table></figure>
+<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant box update</span><br></pre></td></tr></table></figure>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir vagrantbox</span><br><span class="line">$ <span class="built_in">cd</span> vagrantbox/</span><br><span class="line">$ vagrant init ubuntu/bionic</span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br><span class="line">$ ls</span><br><span class="line">Vagrantfile</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant up --provider=virtualbox</span><br><span class="line">Bringing machine <span class="string">'default'</span> up with <span class="string">'virtualbox'</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">'ubuntu/bionic'</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Checking <span class="keyword">if</span> box <span class="string">'ubuntu/bionic'</span> version <span class="string">'20190729'</span> is up to date...</span><br><span class="line">==&gt; default: Setting the name of the VM: vagrantbox_default_1564392888222_56525</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 22 (guest) =&gt; 2222 (host) (adapter 1)</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">    default: </span><br><span class="line">    default: Vagrant insecure key detected. Vagrant will automatically replace</span><br><span class="line">    default: this with a newly generated keypair <span class="keyword">for</span> better security.</span><br><span class="line">    default: </span><br><span class="line">    default: Inserting generated public key within guest...</span><br><span class="line">    default: Removing insecure key from the guest <span class="keyword">if</span> it<span class="string">'s present...</span></span><br><span class="line"><span class="string">    default: Key inserted! Disconnecting and reconnecting using new SSH key...</span></span><br><span class="line"><span class="string">==&gt; default: Machine booted and ready!</span></span><br><span class="line"><span class="string">==&gt; default: Checking for guest additions in VM...</span></span><br><span class="line"><span class="string">    default: The guest additions on this VM do not match the installed version of</span></span><br><span class="line"><span class="string">    default: VirtualBox! In most cases this is fine, but in rare cases it can</span></span><br><span class="line"><span class="string">    default: prevent things such as shared folders from working properly. If you see</span></span><br><span class="line"><span class="string">    default: shared folder errors, please make sure the guest additions within the</span></span><br><span class="line"><span class="string">    default: virtual machine match the version of VirtualBox you have installed on</span></span><br><span class="line"><span class="string">    default: your host and reload your VM.</span></span><br><span class="line"><span class="string">    default: </span></span><br><span class="line"><span class="string">    default: Guest Additions Version: 5.2.22</span></span><br><span class="line"><span class="string">    default: VirtualBox Version: 6.0</span></span><br><span class="line"><span class="string">==&gt; default: Mounting shared folders...</span></span><br><span class="line"><span class="string">    default: /vagrant =&gt; /home/king/data/vagrantbox</span></span><br></pre></td></tr></table></figure>
+<h2 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ps aufx | grep virtualbox</span><br><span class="line">king \_ grep --color=auto virtualbox</span><br><span class="line">king  \_ /usr/lib/virtualbox/VBoxXPCOMIPCD</span><br><span class="line">king    \_ /usr/lib/virtualbox/VBoxSVC --auto-shutdown</span><br><span class="line">king     \_ /usr/lib/virtualbox/VBoxHeadless --comment vagrantbox_default_1564392888222_56525 --startvm 315ba5d9-fb4c-40ca-acf4-97dc75db70c7 --vrde config</span><br></pre></td></tr></table></figure>
+<h2 id="进入shell"><a href="#进入shell" class="headerlink" title="进入shell"></a>进入shell</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant ssh</span><br><span class="line">Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-56-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">vagrant@ubuntu:~$ <span class="built_in">pwd</span></span><br><span class="line">/home/vagrant</span><br><span class="line">vagrant@ubuntu:~$ <span class="built_in">logout</span></span><br><span class="line">Connection to 127.0.0.1 closed.</span><br></pre></td></tr></table></figure>
+<h2 id="关机-amp-销毁"><a href="#关机-amp-销毁" class="headerlink" title="关机&amp;销毁"></a>关机&amp;销毁</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant halt</span><br><span class="line">==&gt; default: Attempting graceful shutdown of VM...</span><br><span class="line">$ vagrant destroy</span><br><span class="line">    default: Are you sure you want to destroy the <span class="string">'default'</span> VM? [y/N] y</span><br><span class="line">==&gt; default: Destroying VM and associated drives...</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://www.vagrantup.com/" target="_blank" rel="noopener">https://www.vagrantup.com/</a></li>
+<li><a href="https://www.cnblogs.com/hafiz/p/9175484.html" target="_blank" rel="noopener">https://www.cnblogs.com/hafiz/p/9175484.html</a></li>
+<li><a href="https://segmentfault.com/a/1190000000264347" target="_blank" rel="noopener">https://segmentfault.com/a/1190000000264347</a></li>
+<li><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md" target="_blank" rel="noopener">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/11/vagrant/" data-id="ckdbgbyya005z43pow88swjmi" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/11/vagrant/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/01/10/landslide/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">使用landslide生成幻灯片</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2020/01/12/goversion/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Go编译时变量</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/01/11/vagrant/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

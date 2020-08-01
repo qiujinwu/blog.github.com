@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>gitlab/sentry集成 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="gitlab/sentry都通过docker在本机运行, 本机docker 接口ip地址172.17.0.1 参考旧文  搭建gitlab测试环境 Sentry  运行运行Sentry为了避免端口冲突, sentry端口改成8081 docker run -d --name my-sentry -e SENTRY_SECRET_KEY=&amp;apos;&amp;lt;KEY&amp;gt;&amp;apos; \	-p 80">
+<meta name="keywords" content="gitlab,sentry">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gitlab&#x2F;sentry集成">
+<meta property="og:url" content="http://blog.kimq.cn/2020/08/01/gitlab-sentry/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="gitlab/sentry都通过docker在本机运行, 本机docker 接口ip地址172.17.0.1 参考旧文  搭建gitlab测试环境 Sentry  运行运行Sentry为了避免端口冲突, sentry端口改成8081 docker run -d --name my-sentry -e SENTRY_SECRET_KEY=&amp;apos;&amp;lt;KEY&amp;gt;&amp;apos; \	-p 80">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gitlab&#x2F;sentry集成">
+<meta name="twitter:description" content="gitlab/sentry都通过docker在本机运行, 本机docker 接口ip地址172.17.0.1 参考旧文  搭建gitlab测试环境 Sentry  运行运行Sentry为了避免端口冲突, sentry端口改成8081 docker run -d --name my-sentry -e SENTRY_SECRET_KEY=&amp;apos;&amp;lt;KEY&amp;gt;&amp;apos; \	-p 80">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-gitlab-sentry" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      gitlab/sentry集成
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/08/01/gitlab-sentry/" class="article-date"><time datetime="2020-08-01T02:36:35.000Z" itemprop="datePublished">2020-08-01</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>gitlab/sentry都通过docker在本机运行, 本机docker 接口ip地址<code>172.17.0.1</code></p>
+<p>参考旧文</p>
+<ul>
+<li><a href="https://blog.kimq.cn/2017/06/19/gitlab-env/">搭建gitlab测试环境</a></li>
+<li><a href="https://blog.kimq.cn/2017/03/10/sentry/">Sentry</a></li>
+</ul>
+<h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><h2 id="运行Sentry"><a href="#运行Sentry" class="headerlink" title="运行Sentry"></a>运行Sentry</h2><p>为了避免端口冲突, sentry端口改成8081</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -d --name my-sentry -e SENTRY_SECRET_KEY=&apos;&lt;KEY&gt;&apos; \</span><br><span class="line">	-p 8081:9000 \</span><br><span class="line">	--link sentry-redis:redis --link sentry-postgres:postgres sentry:9.1.2</span><br></pre></td></tr></table></figure>
+<h2 id="运行Gitlab"><a href="#运行Gitlab" class="headerlink" title="运行Gitlab"></a>运行Gitlab</h2><ul>
+<li>这里指定了ce的版本, 避免新版本再测试出现不一致</li>
+<li>通过参数指定了<code>hostname</code>为docker的ip</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -it --rm  \</span><br><span class="line">    --hostname 172.17.0.1 \</span><br><span class="line">    --publish 8080:80 --publish 2222:22 \</span><br><span class="line">    --name gitlab \</span><br><span class="line">    --volume /gitlab/config:/etc/gitlab \</span><br><span class="line">    --volume /gitlab/logs:/var/log/gitlab \</span><br><span class="line">    --volume /gitlab/data:/var/opt/gitlab \</span><br><span class="line">    gitlab/gitlab-ce:12.9.10-ce.0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>22端口容易被现有服务占用, 这里使用<code>2222端口</code>用作代码传输的ssl通道</p>
+</blockquote>
+<p>可以修改本机的<code>~/.ssh/config</code>, 参考<a href="https://stackoverflow.com/questions/3596260/git-remote-add-with-other-ssh-port" target="_blank" rel="noopener">这里</a><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat ~/.ssh/config </span><br><span class="line">HOST 172.17.0.1</span><br><span class="line">    Port 2222</span><br></pre></td></tr></table></figure></p>
+<h1 id="gitlab集成sentry"><a href="#gitlab集成sentry" class="headerlink" title="gitlab集成sentry"></a>gitlab集成sentry</h1><blockquote>
+<p>可以查看对应proj的问题,以及作出处理</p>
+</blockquote>
+<p>就是gitlab里面使用sentry的功能, 所以需要去sentry<code>赋(授)能(权)</code></p>
+<ul>
+<li>登录sentry</li>
+<li>左上角 - 个人中心 - 下拉菜单 - API key</li>
+<li>打开页面, 找到或者创建auth token, 需要<code>project:read, event:read</code> 两个权限</li>
+</ul>
+<p>完整流程, 可以查看<a href="https://docs.gitlab.com/ee/operations/error_tracking.html" target="_blank" rel="noopener">Gitlab Error Tracking</a></p>
+<h2 id="gitlab-proj启用error-tracking"><a href="#gitlab-proj启用error-tracking" class="headerlink" title="gitlab proj启用error tracking"></a>gitlab proj启用<code>error tracking</code></h2><ul>
+<li>Navigate to your project’s <code>Settings &gt; Operations</code>.</li>
+<li>Ensure that the <code>Active</code> checkbox is set.</li>
+<li>In the Sentry API URL field, enter your Sentry hostname. For example, enter <a href="https://sentry.example.com" target="_blank" rel="noopener">https://sentry.example.com</a> (本例<code>http://172.17.0.1:8081/</code>) if this is the address at which your Sentry instance is available. For the SaaS version of Sentry, the hostname will be <a href="https://sentry.io" target="_blank" rel="noopener">https://sentry.io</a>.</li>
+<li>In the Auth Token field, enter the token you <code>previously generated</code>(见上一步生成的token).</li>
+<li>Click the Connect button to test the connection to Sentry and populate the Project dropdown.</li>
+<li>From the Project dropdown, choose a <code>Sentry project</code> to link to your GitLab project.</li>
+<li>Click <code>Save changes</code> for the changes to take effect.</li>
+<li>You can now visit <code>Operations &gt; Error Tracking</code> in your project’s sidebar to view a list of Sentry errors.</li>
+</ul>
+<p>到此, 我们可以在gitlab看到对应项目的所有senry 问题记录, 对于<code>gitlab-ce:12.9.10-ce.0</code> , 最上面可以<code>查看/过滤</code>问题, 也可以<code>忽略/解决</code>问题, 也可以基于问题新建一个<code>gitlab issue</code></p>
+<blockquote>
+<p>这些操作需要额外的<code>event:admin</code> 权限</p>
+</blockquote>
+<p>而更早的<code>gitlab-ce:12.3.5-ce.0</code> 就只有一个简单的列表</p>
+<blockquote>
+<p>对于本机自建的gitlab, 有可能报错<code>Connection has failed. Re-check Auth Token and try again</code>, 参考<a href="https://gitlab.com/gitlab-org/gitlab/-/issues/32314" target="_blank" rel="noopener">这里</a></p>
+</blockquote>
+<p>GitLab -&gt; Admim area -&gt; Settings -&gt; Network -&gt; Outbound requests -&gt; Allow requests to the local network from hooks and services</p>
+<p>By checking both boxes, everything worked as documented.</p>
+<h1 id="Sentry-集成-gitlab"><a href="#Sentry-集成-gitlab" class="headerlink" title="Sentry 集成 gitlab"></a>Sentry 集成 gitlab</h1><blockquote>
+<p>可以直接在sentry创建gitlab issue</p>
+</blockquote>
+<ul>
+<li>In Sentry, navigate to Organization <code>Settings &gt; Integrations</code>.</li>
+<li>Within Integrations, find the <code>GitLab icon</code> and click Install.</li>
+<li>In the resulting modal, click <code>Add Installation</code>.</li>
+<li>In the pop-up window, complete the instructions to create a Sentry app within GitLab. Once you’re finished, click Next.</li>
+<li>Fill out the resulting GitLab Configuration form with the following information:<ul>
+<li>The GitLab URL is the base URL for your GitLab instance. If using gitlab.com, enter <a href="http://172.17.0.1:8080" target="_blank" rel="noopener">http://172.17.0.1:8080</a></li>
+<li>Find the GitLab Group Path in your group’s GitLab page. 自定, 必须gitlab存在</li>
+<li>Find the GitLab Application ID and Secret in the Sentry app within GitLab.<ul>
+<li>GitLab Application ID : gitlab生成 - GitLab Application Secret : gitlab生成</li>
+</ul>
+</li>
+<li>Use this information to fill out the GitLab Configuration and click Submit.</li>
+</ul>
+</li>
+<li>In the resulting panel, click <code>Authorize</code>.</li>
+<li>In Sentry, return to Organization Settings &gt; Integrations. You’ll see a new instance of GitLab underneath the list of integrations.</li>
+<li>Next to your GitLab Instance, click Configure. It’s important to configure to receive the full benefits of commit tracking.</li>
+<li>On the resulting page, click Add Repository to select which repositories in which you’d like to begin tracking commits.</li>
+</ul>
+<p>完整记录参考<a href="https://docs.sentry.io/workflow/integrations/gitlab/" target="_blank" rel="noopener">integrations gitlab</a></p>
+<h2 id="生成gitlab-application"><a href="#生成gitlab-application" class="headerlink" title="生成gitlab application"></a>生成gitlab application</h2><p>具体的流程参考 <a href="https://docs.gitlab.com/ee/integration/oauth_provider.html" target="_blank" rel="noopener">GitLab as OAuth2 authentication service provider</a></p>
+<ul>
+<li>Name : Sentry (自定义)</li>
+<li>Redirect URI : <a href="http://172.17.0.1:8081/extensions/gitlab/setup/" target="_blank" rel="noopener">http://172.17.0.1:8081/extensions/gitlab/setup/</a></li>
+<li>Scopes : <code>api</code></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://docs.gitlab.com/ee/operations/error_tracking.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/operations/error_tracking.html</a></li>
+<li><a href="https://docs.gitlab.com/ee/integration/oauth_provider.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/integration/oauth_provider.html</a></li>
+<li><a href="https://docs.sentry.io/workflow/integrations/gitlab/" target="_blank" rel="noopener">https://docs.sentry.io/workflow/integrations/gitlab/</a></li>
+<li><a href="https://gitlab.com/gitlab-org/gitlab/-/issues/32314" target="_blank" rel="noopener">https://gitlab.com/gitlab-org/gitlab/-/issues/32314</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/08/01/gitlab-sentry/" data-id="ckdbgbyvz001j43poalktwudl" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/08/01/gitlab-sentry/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gitlab/">gitlab</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sentry/">sentry</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/06/10/ansible/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Ansible实践</span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/08/01/gitlab-sentry/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

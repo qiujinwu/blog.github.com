@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Kelly源码剖析 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Kelly是基于golang的一个简单的web框架 背景作为web后端开发，标准的net/http非常高效灵活，足以适用非常多的场景，当然也有很多周边待补充，这就出现了各种web框架，甚至出现了替代默认的Http库的valyala/fasthttp golang目前百花齐放，个人主要了解到的是两个项目  beego: simple &amp;amp; powerful Go app framework g">
+<meta name="keywords" content="golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kelly源码剖析">
+<meta property="og:url" content="http://blog.kimq.cn/2017/10/18/kelly-src/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="Kelly是基于golang的一个简单的web框架 背景作为web后端开发，标准的net/http非常高效灵活，足以适用非常多的场景，当然也有很多周边待补充，这就出现了各种web框架，甚至出现了替代默认的Http库的valyala/fasthttp golang目前百花齐放，个人主要了解到的是两个项目  beego: simple &amp;amp; powerful Go app framework g">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Kelly源码剖析">
+<meta name="twitter:description" content="Kelly是基于golang的一个简单的web框架 背景作为web后端开发，标准的net/http非常高效灵活，足以适用非常多的场景，当然也有很多周边待补充，这就出现了各种web框架，甚至出现了替代默认的Http库的valyala/fasthttp golang目前百花齐放，个人主要了解到的是两个项目  beego: simple &amp;amp; powerful Go app framework g">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-kelly-src" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Kelly源码剖析
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/10/18/kelly-src/" class="article-date"><time datetime="2017-10-18T12:36:15.000Z" itemprop="datePublished">2017-10-18</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/qjw/kelly" target="_blank" rel="noopener">Kelly</a>是基于golang的一个简单的web框架</p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>作为web后端开发，标准的<a href="https://golang.org/pkg/net/http/" target="_blank" rel="noopener">net/http</a>非常高效灵活，足以适用非常多的场景，当然也有很多周边待补充，这就出现了各种web框架，甚至出现了替代默认的Http库的<a href="https://github.com/valyala/fasthttp" target="_blank" rel="noopener">valyala/fasthttp</a></p>
+<p>golang目前百花齐放，个人主要了解到的是两个项目</p>
+<ol>
+<li><a href="https://beego.me/" target="_blank" rel="noopener">beego: simple &amp; powerful Go app framework</a></li>
+<li><a href="https://github.com/gin-gonic/gin" target="_blank" rel="noopener">gin-gonic/gin</a></li>
+</ol>
+<p>beego没有实际用过，听说是大而全的项目，对开发者友好。不过由于了解甚少，草率评论并不合适，这里不作过多说明。</p>
+<p>本着刨根问底的学习态度，最开始了解的是<a href="https://github.com/philsong/martini" target="_blank" rel="noopener">martini</a>，后查证效率偏低（大量用到<a href="https://golang.org/pkg/reflect/" target="_blank" rel="noopener">反射/reflect</a>），所以就进一步学习了<a href="https://github.com/gin-gonic/gin" target="_blank" rel="noopener">gin-gonic/gin</a>。</p>
+<p>后者小巧灵活，学习成本低，并且提供了很多实用的补充，例如</p>
+<ol>
+<li>路由和中间件核心框架，路由基于<a href="https://github.com/julienschmidt/httprouter" target="_blank" rel="noopener">julienschmidt/httprouter</a></li>
+<li>gin.Context</li>
+<li>binding</li>
+<li>校验，基于<a href="https://gopkg.in/go-playground/validator.v9" target="_blank" rel="noopener">go-playground/validator.v9</a></li>
+<li>Http Request工具函数，获取param/path/form/header/cookie等</li>
+<li>Http Response工具函数，设置cookie，header，返回xml/json，返回template支持等</li>
+<li>内建的几个常用中间件</li>
+</ol>
+<p>martini/gin都包含非常多的中间件，两者迁移非常容易，参考</p>
+<ol>
+<li><a href="https://github.com/codegangsta/martini-contrib" target="_blank" rel="noopener">https://github.com/codegangsta/martini-contrib</a></li>
+<li><a href="https://github.com/gin-gonic/contrib" target="_blank" rel="noopener">https://github.com/gin-gonic/contrib</a></li>
+<li><a href="https://github.com/gin-contrib" target="_blank" rel="noopener">https://github.com/gin-contrib</a></li>
+</ol>
+<p>用久了，也发现gin也有一些问题</p>
+<ol>
+<li>依赖还是偏多（<em>虽然和很多库相比算较少的</em>），就写个hello world都下载半天依赖</li>
+<li>第三方middleware有的依赖gopkg.in的代码，另外一些依赖github.com的代码</li>
+<li>gin.Context对Golang标准库<a href="https://golang.org/pkg/context/" target="_blank" rel="noopener">context</a>不友好</li>
+<li>binding有一些问题，本人的优化版本在<a href="https://github.com/qjw/go-gin-binding" target="_blank" rel="noopener">https://github.com/qjw/go-gin-binding</a></li>
+<li>虽然middleware很多，但选择性太多，质量参差不齐，不好选择，另外太多的第三方依赖不如将大部分常用的集成到一起来的方便。</li>
+</ol>
+<p>经过多方对比考察，认为<a href="https://github.com/urfave/negroni" target="_blank" rel="noopener">urfave/negroni</a>作为路由/中间件基础框架非常合适，（<em>看看原型就知道他对<a href="https://golang.org/pkg/context/" target="_blank" rel="noopener">context</a>有多友好</em>）所以折腾就开始了。</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">  ServeHTTP(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>经过综合评估，决定自己弄个类似于gin的框架</p>
+<p>原则是尽量踏着巨人的肩膀，避免一些通用组件重复造轮子，聚焦于优秀智慧的集成</p>
+<h1 id="安装测试"><a href="#安装测试" class="headerlink" title="安装测试"></a>安装测试</h1><p>安装kelly<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get github.com/qjw/kelly</span><br></pre></td></tr></table></figure></p>
+<p>运行sample<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">go get github.com/qjw/kelly/sample</span><br></pre></td></tr></table></figure></p>
+<p>具体参考<a href="https://github.com/qjw/kelly#运行sample" target="_blank" rel="noopener">https://github.com/qjw/kelly#运行sample</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 运行sample</span></span><br><span class="line">king@king:~/tmp/gopath/bin$ ./sample</span><br><span class="line">[negroni] listening on :9090</span><br></pre></td></tr></table></figure>
+<h2 id="源码结构"><a href="#源码结构" class="headerlink" title="源码结构"></a>源码结构</h2><ol>
+<li>.(当前目录)：核心代码</li>
+<li>binding：数据绑定支持，必需，自动安装</li>
+<li>render：响应输出支持，必须，自动安装，例如响应json/xml/html/text/模板/二进制，以及重定向等</li>
+<li>sample：测试代码</li>
+<li>sample-conf：测试代码</li>
+<li>toolkits：可选的辅助工具集，例如二维码/验证码/模板引擎，</li>
+<li>sessions：session/flash/认证/权限控制，可选，依赖redis</li>
+<li>middleware：各种中间件，可选</li>
+<li>middleware/swagger：swagger支持</li>
+</ol>
+<h1 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h1><p>使用<a href="https://github.com/julienschmidt/httprouter" target="_blank" rel="noopener">https://github.com/julienschmidt/httprouter</a></p>
+<p>router需要支持以下特性</p>
+<ol>
+<li>各种http方法</li>
+<li>Path变量</li>
+<li>多级路由</li>
+</ol>
+<p>httprouter并不原生多级路由，所以这里做了些扩展【<strong>留意代码中的注释，下同</strong>】</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Router <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 支持的http方法，支持链式调用</span></span><br><span class="line">	GET(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	HEAD(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	OPTIONS(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	POST(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	PUT(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	PATCH(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">	DELETE(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;	</span><br><span class="line">	<span class="comment">// 共享的全局httprouter</span></span><br><span class="line">	rt *httprouter.Router</span><br><span class="line">	<span class="comment">// 当前rouer路径</span></span><br><span class="line">	path <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 绝对路径</span></span><br><span class="line">	absolutePath <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">GET</span><span class="params">(path <span class="keyword">string</span>, handles ...HandlerFunc)</span> <span class="title">Router</span></span> &#123;</span><br><span class="line">	<span class="comment">// 留意rt.rt.GET作为参数传入</span></span><br><span class="line">	<span class="keyword">return</span> rt.methodImp(rt.rt.GET, <span class="string">"GET"</span>, path, handles...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">methodImp</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	handle <span class="keyword">func</span>(path <span class="keyword">string</span>, handle httprouter.Handle)</span>,</span></span><br><span class="line">	method <span class="keyword">string</span>,</span><br><span class="line">	path <span class="keyword">string</span>,</span><br><span class="line">	handles ...HandlerFunc) Router &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 增加计数</span></span><br><span class="line">	rt.endpoints = <span class="built_in">append</span>(rt.endpoints, &amp;endpoint&#123;</span><br><span class="line">		method:  method,</span><br><span class="line">		path:    path,</span><br><span class="line">		handles: handles,</span><br><span class="line">		endPointRegisterCB: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="comment">// 在调用传入的handle函数前，已经加上了rt.absolutePath</span></span><br><span class="line">			handle(rt.absolutePath+path, rt.wrapHandle(handles...))</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">return</span> rt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>kelly的router都共享一个全局的httprouter对象，并且各自保存自己的所处的路径（path），在绑定特定的http请求时，自动加上自己的前缀，再绑定到原生的httprouter上去</p>
+<h1 id="Callback和Context"><a href="#Callback和Context" class="headerlink" title="Callback和Context"></a>Callback和Context</h1><p>golang自带的net/http callback为<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Handler <span class="keyword">interface</span> &#123;</span><br><span class="line">    ServeHTTP(ResponseWriter, *Request)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(ResponseWriter, *Request)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w ResponseWriter, r *Request)</span></span> &#123;</span><br><span class="line">	f(w, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Context则是一个输入（Request），一个输出/响应（ResponseWriter），这种方法有很好的灵活性，不过易用性稍弱</p>
+<p>kelly借鉴gin的做法<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(c *Context)</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(f HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	f(newContext(w, r, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>其中最关键的就是这个Context，因为web编程大部分工作（刨去业务代码），最重要的还是解析输入，构建输出，这些都是基于http请求，这就是Context的抽象<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Context <span class="keyword">struct</span> &#123;</span><br><span class="line">	http.ResponseWriter</span><br><span class="line">	r *http.Request</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 下一个处理逻辑，用于middleware</span></span><br><span class="line">	next http.HandlerFunc</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 用于支持设置context数据</span></span><br><span class="line">	dataContext</span><br><span class="line">	<span class="comment">// render</span></span><br><span class="line">	renderOp</span><br><span class="line">	<span class="comment">// request</span></span><br><span class="line">	request</span><br><span class="line">	<span class="comment">// binder</span></span><br><span class="line">	binder</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>可以看到Context除了包装了http.Request和http.ResponseWriter之外，还有一些</p>
+<ol>
+<li>dataContext ：支持请求context，用于在中间件链传递数据。<strong>参见源码目录render</strong></li>
+<li>renderOp ：格式化输出支持（例如xml/json等）</li>
+<li>binder ： 数据绑定支持，<strong>参见源码目录binding</strong></li>
+<li>request ：输入（获取参数）支持</li>
+</ol>
+<p>binder和request在于，前者是自动将http请求的输入绑定到一个golang struct，并且依据规则进行校验，提高开发效率。后者则属于一些工具函数，例如获取某个param/path/form参数，或者获取某个cookie。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> binder <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 绑定一个对象，根据Content-type自动判断类型</span></span><br><span class="line">	Bind(<span class="keyword">interface</span>&#123;&#125;) (error, []<span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 绑定json，从body取数据</span></span><br><span class="line">	BindJson(<span class="keyword">interface</span>&#123;&#125;) (error, []<span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 绑定xml，从body取数据</span></span><br><span class="line">	BindXml(<span class="keyword">interface</span>&#123;&#125;) (error, []<span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 绑定form，从body/query取数据</span></span><br><span class="line">	BindForm(<span class="keyword">interface</span>&#123;&#125;) (error, []<span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 绑定path变量</span></span><br><span class="line">	BindPath(<span class="keyword">interface</span>&#123;&#125;) (error, []<span class="keyword">string</span>)</span><br><span class="line"></span><br><span class="line">	GetBindParameter() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	GetBindJsonParameter() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	GetBindXmlParameter() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	GetBindFormParameter() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	GetBindPathParameter() <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> request <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 根据key获取cookie值</span></span><br><span class="line">	GetCookie(<span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取cookie值，若不存在，则返回默认值</span></span><br><span class="line">	GetDefaultCookie(<span class="keyword">string</span>, <span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 根据key获取cookie值，若不存在，则panic</span></span><br><span class="line">	MustGetCookie(<span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据key获取header值</span></span><br><span class="line">	GetHeader(<span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取header值，若不存在，则返回默认值</span></span><br><span class="line">	GetDefaultHeader(<span class="keyword">string</span>, <span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 根据key获取header值，若不存在，则panic</span></span><br><span class="line">	MustGetHeader(<span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// Content-Type</span></span><br><span class="line">	ContentType() <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据key获取PATH变量值</span></span><br><span class="line">	GetPathVarible(<span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取PATH变量值，若不存在，则panic</span></span><br><span class="line">	MustGetPathVarible(<span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据key获取QUERY变量值，可能包含多个（http://127.0.0.1:9090/path/abc?abc=bbb&amp;abc=aaa）</span></span><br><span class="line">	GetMultiQueryVarible(<span class="keyword">string</span>) ([]<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取QUERY变量值，仅返回第一个</span></span><br><span class="line">	GetQueryVarible(<span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取QUERY变量值，仅返回第一个,若不存在，则返回默认值</span></span><br><span class="line">	GetDefaultQueryVarible(<span class="keyword">string</span>, <span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 根据key获取QUERY变量值，仅返回第一个,若不存在，则panic</span></span><br><span class="line">	MustGetQueryVarible(<span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 根据key获取FORM变量值，可能get可能包含多个</span></span><br><span class="line">	GetMultiFormVarible(<span class="keyword">string</span>) ([]<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取FORM变量值，仅返回第一个</span></span><br><span class="line">	GetFormVarible(<span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br><span class="line">	<span class="comment">// 根据key获取FORM变量值，仅返回第一个,若不存在，则返回默认值</span></span><br><span class="line">	GetDefaultFormVarible(<span class="keyword">string</span>, <span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 根据key获取FORM变量值，仅返回第一个,若不存在，则panic</span></span><br><span class="line">	MustGetFormVarible(<span class="keyword">string</span>) <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// @ref http.Request.ParseMultipartForm</span></span><br><span class="line">	ParseMultipartForm() error</span><br><span class="line">	<span class="comment">// 获取（上传的）文件信息</span></span><br><span class="line">	GetFileVarible(<span class="keyword">string</span>) (multipart.File, *multipart.FileHeader, error)</span><br><span class="line">	MustGetFileVarible(<span class="keyword">string</span>) (multipart.File, *multipart.FileHeader)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>render处理常见的xml/json等之外，还有比如设置cookie/header等操作，完成的功能列表如下<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> renderOp <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 返回紧凑的json</span></span><br><span class="line">	WriteJson(<span class="keyword">int</span>, <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="comment">// 返回xml</span></span><br><span class="line">	WriteXml(<span class="keyword">int</span>, <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="comment">// 返回html</span></span><br><span class="line">	WriteHtml(<span class="keyword">int</span>, <span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 返回模板html</span></span><br><span class="line">	WriteTemplateHtml(<span class="keyword">int</span>, *template.Template, <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="comment">// 返回格式化的json</span></span><br><span class="line">	WriteIndentedJson(<span class="keyword">int</span>, <span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="comment">// 返回文本</span></span><br><span class="line">	WriteString(<span class="keyword">int</span>, <span class="keyword">string</span>, ...<span class="keyword">interface</span>&#123;&#125;)</span><br><span class="line">	<span class="comment">// 返回二进制数据</span></span><br><span class="line">	WriteData(<span class="keyword">int</span>, <span class="keyword">string</span>, []<span class="keyword">byte</span>)</span><br><span class="line">	<span class="comment">// 返回重定向</span></span><br><span class="line">	Redirect(<span class="keyword">int</span>, <span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 设置header</span></span><br><span class="line">	SetHeader(<span class="keyword">string</span>, <span class="keyword">string</span>)</span><br><span class="line">	<span class="comment">// 设置cookie</span></span><br><span class="line">	SetCookie(<span class="keyword">string</span>, <span class="keyword">string</span>, <span class="keyword">int</span>, <span class="keyword">string</span>, <span class="keyword">string</span>, <span class="keyword">bool</span>, <span class="keyword">bool</span>)</span><br><span class="line"></span><br><span class="line">	Abort(<span class="keyword">int</span>, <span class="keyword">string</span>)</span><br><span class="line">	ResponseStatusOK()</span><br><span class="line">	ResponseStatusBadRequest(error)</span><br><span class="line">	ResponseStatusUnauthorized(error)</span><br><span class="line">	ResponseStatusForbidden(error)</span><br><span class="line">	ResponseStatusNotFound(error)</span><br><span class="line">	ResponseStatusInternalServerError(error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>这里的WriteTemplateHtml使用golang内置的模板引擎，由于功能有限，在【toolkits/template】中基于第三方引擎实现更为强大的功能</strong></p>
+<p>context则比较简单，只是一个数据的get/set<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> dataContext <span class="keyword">interface</span> &#123;</span><br><span class="line">	Set(<span class="keyword">interface</span>&#123;&#125;, <span class="keyword">interface</span>&#123;&#125;) dataContext</span><br><span class="line">	Get(<span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">	MustGet(<span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="中间件框架"><a href="#中间件框架" class="headerlink" title="中间件框架"></a>中间件框架</h1><p>好的中间件框架是一个web框架灵活性的重要标志，目前主流的框架大部分都支持中间件扩展，并且有丰富的第三方中间件。为了方便移植其他框架的中间件，一般都容易兼容标准的net/http接口。</p>
+<p>标准的net/http默认不支持读写自定义数据，这很大程度影响中间件的灵活性，当然可以用标准库<a href="https://golang.org/pkg/context/" target="_blank" rel="noopener">context</a>进行扩充，由于需要替换原有的reqeust，对程序结构影响很大，参见<a href="http://www.flysnow.org/2017/07/29/go-classic-libs-gorilla-context.html#新的替代者" target="_blank" rel="noopener">http://www.flysnow.org/2017/07/29/go-classic-libs-gorilla-context.html#新的替代者</a>。经过调研，选用<a href="https://github.com/urfave/negroni" target="_blank" rel="noopener">https://github.com/urfave/negroni</a></p>
+<p>negroni原型如下<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> HandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h HandlerFunc)</span> <span class="title">ServeHTTP</span><span class="params">(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span></span> &#123;</span><br><span class="line">	h(rw, r, next)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>negroni中间件默认不会传递调用，而是需要手动触发调用参数next，所以当使用context添加data并替换了http.Request对象时，处理起来就很轻松和自然</strong>。</p>
+<h2 id="回调调用链"><a href="#回调调用链" class="headerlink" title="回调调用链"></a>回调调用链</h2><p>kelly的入口在kelly.Run<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">type</span> kellyImp <span class="keyword">struct</span> &#123;</span><br><span class="line">	*router</span><br><span class="line">	n *negroni.Negroni</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(k *kellyImp)</span> <span class="title">Run</span><span class="params">(addr ...<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 运行negroni.Negroni.Run</span></span><br><span class="line">	k.n.Run(addr...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newImp</span><span class="params">(n *negroni.Negroni, handlers ...HandlerFunc)</span> <span class="title">Kelly</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建negroni.Negroni回调</span></span><br><span class="line">	rt := newRouterImp(handlers...)</span><br><span class="line">	ky := &amp;kellyImp&#123;</span><br><span class="line">		router: rt,</span><br><span class="line">		n:      n,</span><br><span class="line">	&#125;</span><br><span class="line">	ky.n = n</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// negroni触发之后，会进入rt</span></span><br><span class="line">	n.UseHandler(rt)</span><br><span class="line">	<span class="keyword">return</span> ky</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当kelly收到http请求，先触发negroni.Negroni的回调，这个回调在router定义</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newRouterImp</span><span class="params">(handlers ...HandlerFunc)</span> *<span class="title">router</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建全局的httprouter对象</span></span><br><span class="line">	httpRt := httprouter.New()</span><br><span class="line">	<span class="comment">// 创建根router对象</span></span><br><span class="line">	rt := &amp;router&#123;</span><br><span class="line">		rt:           httpRt,</span><br><span class="line">		path:         <span class="string">""</span>, <span class="comment">// 根router路径是空的</span></span><br><span class="line">		absolutePath: <span class="string">""</span>,</span><br><span class="line">		dataContext:  newMapContext(),</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> rt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而router又将请求转发到了全局的httprouter对象，参见下面代码</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">ServeHTTP</span><span class="params">(rw http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	rt.rt.ServeHTTP(rw, r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终就触发了我们在注册http方法时设置到httprouter的回调中</p>
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><ol>
+<li>有两种方式设置中间件，在创建router时，传入</li>
+<li>创建之后，调用Use</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建根router</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClassic</span><span class="params">(handlers ...HandlerFunc)</span> <span class="title">Kelly</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newImp(negroni.Classic(), handlers...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建根router</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(handlers ...HandlerFunc)</span> <span class="title">Kelly</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> newImp(negroni.New(negroni.NewRecovery()), handlers...)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Router <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 新建子router</span></span><br><span class="line">	Group(<span class="keyword">string</span>, ...HandlerFunc) Router</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 动态插入中间件</span></span><br><span class="line">	Use(...HandlerFunc) Router</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于httprouter并没有对中间件的支持，所以需要继续作转换</p>
+<p>最外层的注册，使用了kelly的回调原型<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 中间件</span></span><br><span class="line">	middlewares []HandlerFunc</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 所有的子Group</span></span><br><span class="line">	groups []*router</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 父Group</span></span><br><span class="line">	parent *router</span><br><span class="line"></span><br><span class="line">	endpoints []*endpoint</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">GET</span><span class="params">(path <span class="keyword">string</span>, handles ...HandlerFunc)</span> <span class="title">Router</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> rt.methodImp(rt.rt.GET, <span class="string">"GET"</span>, path, handles...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>留意<strong>结构中的endPointRegisterCB成员</strong>和<strong>rt.wrapHandle(handles…)</strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">methodImp</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	handle <span class="keyword">func</span>(path <span class="keyword">string</span>, handle httprouter.Handle)</span>,</span></span><br><span class="line">	method <span class="keyword">string</span>,</span><br><span class="line">	path <span class="keyword">string</span>,</span><br><span class="line">	handles ...HandlerFunc) Router &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 将注册信息加入到endpoints成员中，</span></span><br><span class="line">	rt.endpoints = <span class="built_in">append</span>(rt.endpoints, &amp;endpoint&#123;</span><br><span class="line">		method:  method,</span><br><span class="line">		path:    path,</span><br><span class="line">		handles: handles,</span><br><span class="line">		endPointRegisterCB: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="comment">// 注册回调，</span></span><br><span class="line">			handle(rt.absolutePath+path, rt.wrapHandle(handles...))</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">return</span> rt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在kelly进入主循环之前，会完成调用。<strong>留意doBeforeRun</strong><br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(k *kellyImp)</span> <span class="title">Run</span><span class="params">(addr ...<span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> k.n == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"invalid kelly"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	k.router.doBeforeRun()</span><br><span class="line">	k.n.Run(addr...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">doBeforeRun</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 先注册自己的endpoints</span></span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> rt.endpoints &#123;</span><br><span class="line">		v.run()</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 先注册儿子们的endpoints</span></span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> rt.groups &#123;</span><br><span class="line">		v.doBeforeRun()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(this *endpoint)</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> DebugFlag &amp;&amp; this.endPointRegisterCB == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"invalid endpoint"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 直接调用创建时的函数，并且清空，避免重复调用</span></span><br><span class="line">	this.endPointRegisterCB()</span><br><span class="line">	this.endPointRegisterCB = <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>之所以通过这种方式，在最后一步统一注册，是为了支持创建router之后使用Use方法动态添加中间件的情形</strong></p>
+<h2 id="Callback转换"><a href="#Callback转换" class="headerlink" title="Callback转换"></a>Callback转换</h2><p>在endPointRegisterCB中，注册的回调需要原型【httprouter.Handle】，而我们传入的是【kelly.HandlerFunc数组】，通过下面的函数转换<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">wrapHandle</span><span class="params">(handles ...HandlerFunc)</span> <span class="title">httprouter</span>.<span class="title">Handle</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建一个negroni实例</span></span><br><span class="line">	tmpHandle := negroni.New()</span><br><span class="line">	<span class="comment">// 将父router的中间件（【kelly.HandlerFunc数组】）注册到negroni</span></span><br><span class="line">	rt.wrapParentHandle(tmpHandle)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 注册当前router的中间件到negroni</span></span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> rt.middlewares &#123;</span><br><span class="line">		tmpHandle.UseFunc(wrapHandlerFunc(v))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 注册特定方法的中间件到negroni</span></span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> handles &#123;</span><br><span class="line">		tmpHandle.UseFunc(wrapHandlerFunc(v))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回一个httprouter的回调</span></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(wr http.ResponseWriter, r *http.Request, params httprouter.Params)</span></span> &#123;</span><br><span class="line">		<span class="comment">// 将请求转到negroni</span></span><br><span class="line">		tmpHandle.ServeHTTP(wr, r)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">wrapParentHandle</span><span class="params">(n *negroni.Negroni)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> rt.parent != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// 让父router优先注册自己的中间件</span></span><br><span class="line">		rt.parent.wrapParentHandle(n)</span><br><span class="line">		<span class="comment">// 注册parent的中间件</span></span><br><span class="line">		<span class="keyword">for</span> _, v := <span class="keyword">range</span> rt.parent.middlewares &#123;</span><br><span class="line">			n.UseFunc(wrapHandlerFunc(v))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>大体的思路就是每次注册http方法，就生成一个negroni对象，并且注册祖宗十八代的中间件、自己的中间件和自己的处理函数，然后转成httprouter的回调注册。</p>
+<p>而negroni包装kelly.HandlerFunc回调时，同样需要一层转换<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">wrapHandlerFunc</span><span class="params">(f HandlerFunc)</span> <span class="title">negroni</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(rw http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span></span> &#123;</span><br><span class="line">		f(newContext(rw, r, next))</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>留意这个next</strong>，为了支持中间件链继续运行，需要保存这个next</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newContext</span><span class="params">(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span> *<span class="title">Context</span></span> &#123;</span><br><span class="line">	c := &amp;Context&#123;</span><br><span class="line">		next:           next,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Context)</span> <span class="title">InvokeNext</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> c.next != <span class="literal">nil</span> &#123;</span><br><span class="line">		c.next.ServeHTTP(c, c.Request())</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"invalid invoke next"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>一个请求进来，先走negroni，转发到httprouter，httprouter根据路由规则找到对应的negroni回调，然后触发每一个中间件回调，最后到业务回调。这个过程中，需要将negroni参数转换成kelly.HandlerFunc</p>
+<p>这整个过程中存在</p>
+<ol>
+<li>额外的内存消耗，每个请求都会有一个negroni实例</li>
+<li>函数调用栈过长带来的cpu消耗</li>
+<li>每个中间件/回调都伴随这一个kelly.Context对象的创建（创建本身比较简单）</li>
+</ol>
+<h1 id="Path变量"><a href="#Path变量" class="headerlink" title="Path变量"></a>Path变量</h1><p>path变量 httprouter支持，具体存储在回调的第三个参数中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Handle <span class="function"><span class="keyword">func</span><span class="params">(http.ResponseWriter, *http.Request, Params)</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Param <span class="keyword">struct</span> &#123;</span><br><span class="line">	Key   <span class="keyword">string</span></span><br><span class="line">	Value <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Params []Param</span><br></pre></td></tr></table></figure>
+<p>回到函数wrapHandle，<strong>留意mapContextFilter</strong><br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">wrapHandle</span><span class="params">(handles ...HandlerFunc)</span> <span class="title">httprouter</span>.<span class="title">Handle</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(wr http.ResponseWriter, r *http.Request, params httprouter.Params)</span></span> &#123;</span><br><span class="line">		r = mapContextFilter(wr, r, params)</span><br><span class="line">		tmpHandle.ServeHTTP(wr, r)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>实际上就是将这个params参数通过标准库<a href="https://golang.org/pkg/context/" target="_blank" rel="noopener">context</a>存入request对象中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> contextMap <span class="keyword">map</span>[<span class="keyword">interface</span>&#123;&#125;]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">mapContextFilter</span><span class="params">(_ http.ResponseWriter, r *http.Request, params httprouter.Params)</span> *<span class="title">http</span>.<span class="title">Request</span></span>&#123;</span><br><span class="line">	contextMap := contextMap&#123;</span><br><span class="line">		pathParamID: params,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> contextSet(r, contextKey, contextMap)</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">contextSet</span><span class="params">(r *http.Request, key, value <span class="keyword">interface</span>&#123;&#125;)</span> *<span class="title">http</span>.<span class="title">Request</span></span> &#123;</span><br><span class="line">	ctx := context.WithValue(r.Context(), key, value)</span><br><span class="line">	<span class="keyword">return</span> r.WithContext(ctx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="取变量"><a href="#取变量" class="headerlink" title="取变量"></a>取变量</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">contextMustGet</span><span class="params">(r *http.Request, key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	v := r.Context().Value(key)</span><br><span class="line">	<span class="keyword">if</span> v == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Errorf(<span class="string">"get context value fail by '%v'"</span>, key))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> v</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getPathParams</span><span class="params">(r *http.Request)</span> <span class="title">httprouter</span>.<span class="title">Params</span></span>&#123;</span><br><span class="line">	datas := contextMustGet(r, contextKey).(contextMap)</span><br><span class="line">	<span class="comment">// 这个pathParamID是一个全局常量</span></span><br><span class="line">	<span class="keyword">return</span> datas[pathParamID].(httprouter.Params)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r requestImp)</span> <span class="title">GetPathVarible</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">	params := getPathParams(r.Request)</span><br><span class="line">	val := params.ByName(name)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(val) &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> val, <span class="literal">nil</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> val, fmt.Errorf(<span class="string">"can not get path varibel by '%v'"</span>, name)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Context数据"><a href="#Context数据" class="headerlink" title="Context数据"></a>Context数据</h1><p>由于kelly.Context在整个调用链并非连续(而是每个negroni调用动态创建的)，所以不能简单地在里面加一个map之类的成员</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newContext</span><span class="params">(w http.ResponseWriter, r *http.Request, next http.HandlerFunc)</span> *<span class="title">Context</span></span> &#123;</span><br><span class="line">	c := &amp;Context&#123;</span><br><span class="line">		dataContext:    newMapHttpContext(r),</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以和path变量一样，同样将一个map对象绑定到request对象<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> mapHttpContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	r *http.Request</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *mapHttpContext)</span> <span class="title">Set</span><span class="params">(key, value <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">dataContext</span></span> &#123;</span><br><span class="line">	datas := contextMustGet(c.r, contextKey).(contextMap)</span><br><span class="line">	datas[key] = value</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c mapHttpContext)</span> <span class="title">Get</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	datas := contextMustGet(c.r, contextKey).(contextMap)</span><br><span class="line">	<span class="keyword">if</span> data, ok := datas[key]; ok &#123;</span><br><span class="line">		<span class="keyword">return</span> data</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newMapHttpContext</span><span class="params">(r *http.Request)</span> <span class="title">dataContext</span></span> &#123;</span><br><span class="line">	c := &amp;mapHttpContext&#123;</span><br><span class="line">		r: r,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h1><p>中间件可以在每个请求之前做些处理，甚至拦截，<strong>注解则在每次注册Http请求时做些处理</strong>，比如swagger就依赖于这种场景</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Router <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 添加全局的 注解 函数。该router下面和子（孙）router下面的endpoint注册都会被触发</span></span><br><span class="line">	GlobalAnnotation(handles ...AnnotationHandlerFunc) Router</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 添加临时 注解 函数，只对使用返回的AnnotationRouter对象进行注册的endpoint有效</span></span><br><span class="line">	Annotation(handles ...AnnotationHandlerFunc) AnnotationRouter</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 用于支持设置context数据</span></span><br><span class="line">	dataContext</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> AnnotationHandlerFunc <span class="function"><span class="keyword">func</span><span class="params">(c *AnnotationContext)</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> AnnotationContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	r       Router</span><br><span class="line">	method  <span class="keyword">string</span></span><br><span class="line">	path    <span class="keyword">string</span></span><br><span class="line">	<span class="comment">// 不包含中间件</span></span><br><span class="line">	handles []HandlerFunc</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="注册filter"><a href="#注册filter" class="headerlink" title="注册filter"></a>注册filter</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">GlobalAnnotation</span><span class="params">(handles ...AnnotationHandlerFunc)</span> <span class="params">(r Router)</span></span> &#123;</span><br><span class="line">	r = rt</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(rt.epMiddlewares) == <span class="number">0</span> &#123;</span><br><span class="line">		rt.epMiddlewares = <span class="built_in">make</span>([]AnnotationHandlerFunc, <span class="built_in">len</span>(handles))</span><br><span class="line">		<span class="built_in">copy</span>(rt.epMiddlewares, handles)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">for</span> _, item := <span class="keyword">range</span> handles &#123;</span><br><span class="line">			rt.epMiddlewares = <span class="built_in">append</span>(rt.epMiddlewares, item)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>只是简单地将他存到成员epMiddlewares中</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// endpoint钩子函数</span></span><br><span class="line">	epMiddlewares []AnnotationHandlerFunc</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 被子类覆盖的方法，</span></span><br><span class="line">	overiteInvokeAnnotation <span class="function"><span class="keyword">func</span><span class="params">(c *AnnotationContext)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="触发"><a href="#触发" class="headerlink" title="触发"></a>触发</h2><p>创建router时，会指定rt。在doBeforeRun时，会完成注入<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newRouterImp</span><span class="params">(handlers ...HandlerFunc)</span> *<span class="title">router</span></span> &#123;</span><br><span class="line">	rt := &amp;router&#123;&#125;</span><br><span class="line">	rt.overiteInvokeAnnotation = rt.invokeAnnotation</span><br><span class="line">	<span class="keyword">return</span> rt</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">invokeParentAnnotation</span><span class="params">(c *AnnotationContext)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> rt.parent != <span class="literal">nil</span> &#123;</span><br><span class="line">		rt.parent.invokeParentAnnotation(c)</span><br><span class="line">		<span class="keyword">for</span> _, item := <span class="keyword">range</span> rt.parent.epMiddlewares &#123;</span><br><span class="line">			item(c)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">invokeAnnotation</span><span class="params">(c *AnnotationContext)</span></span> &#123;</span><br><span class="line">	rt.invokeParentAnnotation(c)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 执行全局的ep 过滤器</span></span><br><span class="line">	<span class="keyword">for</span> _, item := <span class="keyword">range</span> rt.epMiddlewares &#123;</span><br><span class="line">		item(c)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>再回到注册http请求的函数methodImp。<strong>留意函数变量f</strong><br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rt *router)</span> <span class="title">methodImp</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	handle <span class="keyword">func</span>(path <span class="keyword">string</span>, handle httprouter.Handle)</span>,</span></span><br><span class="line">	method <span class="keyword">string</span>,</span><br><span class="line">	path <span class="keyword">string</span>,</span><br><span class="line">	handles ...HandlerFunc) Router &#123;</span><br><span class="line"></span><br><span class="line">	f := rt.overiteInvokeAnnotation</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 增加计数</span></span><br><span class="line">	rt.endpoints = <span class="built_in">append</span>(rt.endpoints, &amp;endpoint&#123;</span><br><span class="line">		endPointRegisterCB: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="comment">// 注册到httprouter</span></span><br><span class="line">			handle(rt.absolutePath+path, rt.wrapHandle(handles...))</span><br><span class="line">			<span class="comment">// 调用注解</span></span><br><span class="line">			f(&amp;AnnotationContext&#123;</span><br><span class="line">				r:       rt,</span><br><span class="line">				method:  method,</span><br><span class="line">				path:    path,</span><br><span class="line">				handles: handles,</span><br><span class="line">			&#125;)</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">return</span> rt</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="临时Filter"><a href="#临时Filter" class="headerlink" title="临时Filter"></a>临时Filter</h2><p>使用GlobalAnnotation注册filter会应用到当前router和他的子router，临时filter需要使用kelly.Router.Annotation。这个函数返回的是一个AnnotationRouter对象。</p>
+<p>这个对象有自己的AnnotationHandlerFunc数组，所以不会影响其他的请求</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newAnnotationRouter</span><span class="params">(r *router, handles ...AnnotationHandlerFunc)</span> <span class="title">AnnotationRouter</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;annotationRouter&#123;</span><br><span class="line">		router:      r,</span><br><span class="line">		middlewares: handles,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> annotationRouter <span class="keyword">struct</span> &#123;</span><br><span class="line">	*router</span><br><span class="line">	<span class="comment">// endpoint钩子函数</span></span><br><span class="line">	middlewares []AnnotationHandlerFunc</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时为了在触发filter时，一并触发自己的filter，需要重写<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *annotationRouter)</span> <span class="title">doMethod</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	f <span class="keyword">func</span>(path <span class="keyword">string</span>, handles ...HandlerFunc)</span> <span class="title">Router</span>,</span></span><br><span class="line">	path <span class="keyword">string</span>,</span><br><span class="line">	handles ...HandlerFunc,</span><br><span class="line">) Router &#123;</span><br><span class="line">	old := r.router.overiteInvokeAnnotation</span><br><span class="line">	<span class="comment">// 重写overiteInvokeAnnotation，并且函数退出自动复原</span></span><br><span class="line">	r.router.overiteInvokeAnnotation = r.invokeAnnotation</span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		r.router.overiteInvokeAnnotation = old</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> f(path, handles...)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><strong>由于go并非真正的继承，而只是简单的组合，所以这里的多态实现有些另类</strong></p>
+<h2 id="注解使用"><a href="#注解使用" class="headerlink" title="注解使用"></a>注解使用</h2><p>必须使用链式调用，或者保存返回的临时对象<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">router := r.Group(<span class="string">"/swagger"</span></span><br><span class="line">).GlobalAnnotation(swagger.SetGlobalParam(&amp;swagger.StructParam&#123;</span><br><span class="line">	Tags: []<span class="keyword">string</span>&#123;<span class="string">"API接口"</span>&#125;,</span><br><span class="line">&#125;)).OPTIONS(<span class="string">"/*path"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *kelly.Context)</span></span> &#123;</span><br><span class="line">	c.ResponseStatusOK()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">router.Annotation(swagger.Swagger(&amp;swagger.StructParam&#123;</span><br><span class="line">	ResponseData: &amp;swagger.SuccessResp&#123;&#125;,</span><br><span class="line">	FormData:     &amp;swaggerParam&#123;&#125;,</span><br><span class="line">	Summary:      <span class="string">"api1"</span>,</span><br><span class="line">&#125;)).POST(<span class="string">"/api1"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *kelly.Context)</span></span> &#123;</span><br><span class="line">	c.ResponseStatusOK()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/10/18/kelly-src/" data-id="ckdbgbyws003543po639sv0oc" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/10/18/kelly-src/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/10/17/go-debug/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Golang 调试</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/12/01/nginx-build/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">nginx编译</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/10/18/kelly-src/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

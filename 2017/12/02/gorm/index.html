@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>gorm一些笔记 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="官网 https://github.com/jinzhu/gorm 数据表名gorm默认将golang基于帕斯卡命名法的model的类名转换成下划线命名法格式作为数据表名字 若不一致，可以实现类方法TableName方法func (StoreLite) TableName() string &amp;#123;	return &quot;stores&quot;&amp;#125; 这个转换的方法有放开// ToDBName con">
+<meta name="keywords" content="golang,gorm">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gorm一些笔记">
+<meta property="og:url" content="http://blog.kimq.cn/2017/12/02/gorm/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="官网 https://github.com/jinzhu/gorm 数据表名gorm默认将golang基于帕斯卡命名法的model的类名转换成下划线命名法格式作为数据表名字 若不一致，可以实现类方法TableName方法func (StoreLite) TableName() string &amp;#123;	return &quot;stores&quot;&amp;#125; 这个转换的方法有放开// ToDBName con">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="gorm一些笔记">
+<meta name="twitter:description" content="官网 https://github.com/jinzhu/gorm 数据表名gorm默认将golang基于帕斯卡命名法的model的类名转换成下划线命名法格式作为数据表名字 若不一致，可以实现类方法TableName方法func (StoreLite) TableName() string &amp;#123;	return &quot;stores&quot;&amp;#125; 这个转换的方法有放开// ToDBName con">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-gorm" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      gorm一些笔记
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/12/02/gorm/" class="article-date"><time datetime="2017-12-02T13:09:07.000Z" itemprop="datePublished">2017-12-02</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/学习笔记/">学习笔记</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>官网 <a href="https://github.com/jinzhu/gorm" target="_blank" rel="noopener">https://github.com/jinzhu/gorm</a></p>
+<h2 id="数据表名"><a href="#数据表名" class="headerlink" title="数据表名"></a>数据表名</h2><p>gorm默认将golang基于<code>帕斯卡命名法</code>的model的类名转换成<code>下划线命名法</code>格式作为数据表名字</p>
+<p>若不一致，可以实现类方法<code>TableName</code>方法<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(StoreLite)</span> <span class="title">TableName</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"stores"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个转换的方法有放开<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// ToDBName convert string to db name</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ToDBName</span><span class="params">(name <span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure></p>
+<p>写个工具函数通过一个对象获取它的表名<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"github.com/jinzhu/gorm"</span></span><br><span class="line">	<span class="string">"github.com/jinzhu/inflection"</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DBName</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	t := reflect.TypeOf(obj)</span><br><span class="line">	_, ok := t.MethodByName(<span class="string">"TableName"</span>)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123; <span class="comment">//没找到</span></span><br><span class="line">		<span class="keyword">if</span> t.Kind() == reflect.Ptr &#123;</span><br><span class="line">			t = t.Elem()</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> inflection.Plural(gorm.ToDBName(t.Name()))</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		v := reflect.ValueOf(obj).MethodByName(<span class="string">"TableName"</span>).Call([]reflect.Value&#123;&#125;)</span><br><span class="line">		<span class="keyword">return</span> v[<span class="number">0</span>].Interface().(<span class="keyword">string</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过外键关联查询时，会需要使用类名，参见<a href="http://jinzhu.me/gorm/associations.html#has-one" target="_blank" rel="noopener">http://jinzhu.me/gorm/associations.html#has-one</a><code>Related</code><br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// User has one CreditCard, UserID is the foreign key</span></span><br><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    gorm.Model</span><br><span class="line">    CreditCard   CreditCard</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> CreditCard <span class="keyword">struct</span> &#123;</span><br><span class="line">    gorm.Model</span><br><span class="line">    UserID   <span class="keyword">uint</span></span><br><span class="line">    Number   <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> card CreditCard</span><br><span class="line">db.Model(&amp;user).Related(&amp;card, <span class="string">"CreditCard"</span>)</span><br></pre></td></tr></table></figure></p>
+<p>go默认的反射的类名具有完整的包路径<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DBClassName</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	t := reflect.TypeOf(obj)</span><br><span class="line">	<span class="keyword">if</span> t.Kind() != reflect.Struct &#123;</span><br><span class="line">		t = t.Elem()</span><br><span class="line">	&#125;</span><br><span class="line">	name := filepath.Ext(t.String())</span><br><span class="line">	<span class="keyword">return</span> name[<span class="number">1</span>:]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Select"><a href="#Select" class="headerlink" title="Select"></a>Select</h2><p>gorm默认是<code>select(*)</code>,有些情况可能会导致较多的不必要数据传输和性能损耗。解决方案是<code>Select</code><br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">db.Select(<span class="string">"name, age"</span>).Find(&amp;users)</span><br><span class="line"><span class="comment">//// SELECT name, age FROM users;</span></span><br><span class="line"></span><br><span class="line">db.Select([]<span class="keyword">string</span>&#123;<span class="string">"name"</span>, <span class="string">"age"</span>&#125;).Find(&amp;users)</span><br><span class="line"><span class="comment">//// SELECT name, age FROM users;</span></span><br><span class="line"></span><br><span class="line">db.Table(<span class="string">"users"</span>).Select(<span class="string">"COALESCE(age,?)"</span>, <span class="number">42</span>).Rows()</span><br><span class="line"><span class="comment">//// SELECT COALESCE(age,'42') FROM users;</span></span><br></pre></td></tr></table></figure></p>
+<p>在代码中写死列名不是个好办法<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 过滤出需要查询的字段，若json:"-"，则忽略之</span></span><br><span class="line"><span class="comment">// 背景： 默认情况下grom总是查询所有字段select(*)，而实际情况并不需要那么多</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">FieldsFilter</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">	dbName := DBName(obj)</span><br><span class="line">	value := reflect.TypeOf(obj)</span><br><span class="line">	<span class="keyword">if</span> value.Kind() == reflect.Ptr &#123;</span><br><span class="line">		value = value.Elem()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> value.Kind() != reflect.Struct &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"must be struct object"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> res []<span class="keyword">string</span></span><br><span class="line">	<span class="keyword">return</span> fieldFilterImp(value, res, dbName)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">fieldFilterImp</span><span class="params">(t reflect.Type, res []<span class="keyword">string</span>, dbName <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">	count := t.NumField()</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; count; i++ &#123;</span><br><span class="line">		field := t.Field(i)</span><br><span class="line">		<span class="keyword">if</span> field.Anonymous &#123;</span><br><span class="line">			res = fieldFilterImp(field.Type, res, dbName)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		tag := field.Tag.Get(<span class="string">"json"</span>)</span><br><span class="line">		name := parseTag(tag)</span><br><span class="line">		<span class="keyword">if</span> name == <span class="string">""</span> &#123;</span><br><span class="line">			name = field.Name</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> name == <span class="string">"-"</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		tag = field.Tag.Get(<span class="string">"field"</span>)</span><br><span class="line">		<span class="keyword">if</span> tag == <span class="string">"-"</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> tag != <span class="string">""</span> &#123;</span><br><span class="line">			res = <span class="built_in">append</span>(res, tag)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="comment">// 考虑到join之后可能有列的重名，所以加上db name</span></span><br><span class="line">			res = <span class="built_in">append</span>(res, fmt.Sprintf(<span class="string">"%s.%s"</span>, dbName, name))</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="记录不存在的错误"><a href="#记录不存在的错误" class="headerlink" title="记录不存在的错误"></a>记录不存在的错误</h2><p>当查询不存在时，同样返回错误，通过函数<code>RecordNotFound</code>判断是否属于这种情况</p>
+<h2 id="Count"><a href="#Count" class="headerlink" title="Count"></a>Count</h2><p>gorm默认使用<code>select count(*)</code>，相比select count(‘id’)效率低那么一点，可以优化</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetObjectCount</span><span class="params">(obj <span class="keyword">interface</span>&#123;&#125;, db *gorm.DB)</span> <span class="params">(<span class="keyword">int</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> cnt <span class="keyword">int</span></span><br><span class="line">	temp_db := db.Model(obj).Select(<span class="string">"count(\"id\") as count"</span>).Count(&amp;cnt)</span><br><span class="line">	<span class="keyword">if</span> temp_db.Error != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, temp_db.Error</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> cnt, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="更新部分"><a href="#更新部分" class="headerlink" title="更新部分"></a>更新部分</h2><p>可以使用<code>Select/Omit</code>来选择/排除更新的列</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">db.Model(&amp;user).Select(<span class="string">"name"</span>).Updates(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"hello"</span>, <span class="string">"age"</span>: <span class="number">18</span>, <span class="string">"actived"</span>: <span class="literal">false</span>&#125;)</span><br><span class="line"><span class="comment">//// UPDATE users SET name='hello',</span></span><br><span class="line"><span class="comment">//  updated_at='2013-11-17 21:34:10' WHERE id=111;</span></span><br><span class="line"></span><br><span class="line">db.Model(&amp;user).Omit(<span class="string">"name"</span>).Updates(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;</span><br><span class="line">	<span class="string">"name"</span>: <span class="string">"hello"</span>, <span class="string">"age"</span>: <span class="number">18</span>, <span class="string">"actived"</span>: <span class="literal">false</span>&#125;)</span><br><span class="line"><span class="comment">//// UPDATE users SET age=18, actived=false,</span></span><br><span class="line"><span class="comment">//  updated_at='2013-11-17 21:34:10' WHERE id=111;</span></span><br></pre></td></tr></table></figure>
+<p>同样利用上面的工具函数，可以过滤可更新的列 数据</p>
+<h2 id="批量更新"><a href="#批量更新" class="headerlink" title="批量更新"></a>批量更新</h2><p>当需要一并插入多条数据，sql批量插入的写法比较省<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tbl_name</span><br><span class="line">    (a,b,c)</span><br><span class="line"><span class="keyword">VALUES</span></span><br><span class="line">    (<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>),</span><br><span class="line">    (<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>),</span><br><span class="line">    (<span class="number">7</span>,<span class="number">8</span>,<span class="number">9</span>);</span><br></pre></td></tr></table></figure></p>
+<p>不过gorm目前不支持<a href="https://github.com/jinzhu/gorm/issues/255" target="_blank" rel="noopener">https://github.com/jinzhu/gorm/issues/255</a></p>
+<h2 id="last-insert-id"><a href="#last-insert-id" class="headerlink" title="last_insert_id"></a>last_insert_id</h2><p>gorm自动实现了<code>last_insert_id</code>,即便在事务模式下，后面的sql都可以直接取ID</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">tmpDB := gd.DB.Begin()</span><br><span class="line"><span class="keyword">if</span> err := service.CreateObject(apartment, tmpDB); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	tmpDB.Rollback()</span><br><span class="line">	util.ResponseDbError(http.StatusOK, c, err)</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> k, v := <span class="keyword">range</span> param.ImageUrls &#123;</span><br><span class="line">	img := &amp;model.ApartmentImage&#123;</span><br><span class="line">		ApartmentID: apartment.ID,</span><br><span class="line">		Sequence:    <span class="keyword">uint8</span>(k + <span class="number">1</span>),</span><br><span class="line">		ImageUrl:    v,</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := service.CreateObject(img, tmpDB); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		tmpDB.Rollback()</span><br><span class="line">		util.ResponseDbError(http.StatusOK, c, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tmpDB.Commit()</span><br></pre></td></tr></table></figure>
+<h2 id="软删除"><a href="#软删除" class="headerlink" title="软删除"></a>软删除</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    gorm.Model</span><br><span class="line">    Birthday     time.Time</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// gorm源码</span></span><br><span class="line"><span class="keyword">type</span> Model <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID        <span class="keyword">uint</span> <span class="string">`gorm:"primary_key"`</span></span><br><span class="line">	CreatedAt time.Time</span><br><span class="line">	UpdatedAt time.Time</span><br><span class="line">	DeletedAt *time.Time <span class="string">`sql:"index"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>grom确保自动更新CreatedAt/UpdatedAt，删除只会设置DeletedAt而不删除实际的数据</p>
+<h2 id="打印sql"><a href="#打印sql" class="headerlink" title="打印sql"></a>打印sql</h2><p>打印gorm最终执行的sql对性能优化很有帮助<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// LogMode set log mode, `true` for detailed logs,</span></span><br><span class="line"><span class="comment">//  `false` for no log, default, will only print error logs</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *DB)</span> <span class="title">LogMode</span><span class="params">(enable <span class="keyword">bool</span>)</span> *<span class="title">DB</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> enable &#123;</span><br><span class="line">		s.logMode = <span class="number">2</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		s.logMode = <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="支持自定义对象"><a href="#支持自定义对象" class="headerlink" title="支持自定义对象"></a>支持自定义对象</h2><p>对于自定义类型变量，只需要实现<code>database/sql.Scanner</code>接口，参见<a href="https://github.com/jinzhu/gorm/issues/47" target="_blank" rel="noopener">https://github.com/jinzhu/gorm/issues/47</a></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> FmtDate <span class="keyword">struct</span> &#123;</span><br><span class="line">	Tm *time.Time</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	ctLayout = <span class="string">"2006-01-02 15:04:05"</span></span><br><span class="line">	cdLayout = <span class="string">"2006-01-02"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// sql.Scanner implementation to convert a time.Time column to a LocalDate</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct *FmtDate)</span> <span class="title">Scan</span><span class="params">(value <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> tm, ok := value.(time.Time); ok &#123;</span><br><span class="line">		ct.Tm = &amp;tm</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid time.Time format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// sql/driver.Valuer implementation to go from LocalDate -&gt; time.Time</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct FmtDate)</span> <span class="title">Value</span><span class="params">()</span> <span class="params">(driver.Value, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ct.Tm != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> ct.Tm.Format(cdLayout), <span class="literal">nil</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">""</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 为了支持json(序列化、反序列化)，可以实现</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct *FmtDate)</span> <span class="title">UnmarshalJSON</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">	s := strings.Trim(<span class="keyword">string</span>(b), <span class="string">"\""</span>)</span><br><span class="line">	<span class="keyword">if</span> s == <span class="string">"null"</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid date format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	tm, err := time.Parse(cdLayout, s)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		ct.Tm = &amp;tm</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct FmtDate)</span> <span class="title">MarshalJSON</span><span class="params">()</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ct.Tm != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>(fmt.Sprintf(<span class="string">"\"%s\""</span>, ct.Tm.Format(cdLayout))), <span class="literal">nil</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>(<span class="string">"\"\""</span>), <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="自动解析时间"><a href="#自动解析时间" class="headerlink" title="自动解析时间"></a>自动解析时间</h2><p><a href="https://stackoverflow.com/questions/29341590/go-parse-time-from-database" target="_blank" rel="noopener">https://stackoverflow.com/questions/29341590/go-parse-time-from-database</a></p>
+<p><a href="https://github.com/go-sql-driver/mysql#timetime-support" target="_blank" rel="noopener">https://github.com/go-sql-driver/mysql#timetime-support</a></p>
+<p>The default internal output type of MySQL <code>DATE</code> and <code>DATETIME</code> values is <code>[]byte</code> which allows you to scan the value into a <code>[]byte</code>, <code>string</code> or <code>sql.RawBytes</code> variable in your program.</p>
+<p>However, many want to scan MySQL <code>DATE</code> and <code>DATETIME</code> values into <code>time.Time</code> variables, which is the logical opposite in Go to <code>DATE</code> and <code>DATETIME</code> in MySQL. You can do that by changing the internal output type from <code>[]byte</code> to <code>time.Time</code> with the DSN parameter <code>parseTime=true</code>. You can set the default <a href="https://golang.org/pkg/time/#Location" target="_blank" rel="noopener"><code>time.Time</code> location</a> with the <code>loc</code> DSN parameter.</p>
+<p><strong>Caution:</strong> As of Go 1.1, this makes <code>time.Time</code> the only variable type you can scan <code>DATE</code> and <code>DATETIME</code> values into. This breaks for example <a href="https://github.com/go-sql-driver/mysql/wiki/Examples#rawbytes" target="_blank" rel="noopener"><code>sql.RawBytes</code> support</a>.</p>
+<p>Alternatively you can use the <a href="https://godoc.org/github.com/go-sql-driver/mysql#NullTime" target="_blank" rel="noopener"><code>NullTime</code></a> type as the scan destination, which works with both <code>time.Time</code> and <code>string</code> / <code>[]byte</code>.</p>
+<h2 id="时区"><a href="#时区" class="headerlink" title="时区"></a>时区</h2><p>gorm（应该是go-sql-driver/mysql）会使用utc时间，结果就是明明用9点写入数据库，但数据库里面存的是1点（东八区）</p>
+<p>解决办法有几种</p>
+<p>设置driver的loc为local<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">db, err := gorm.Open(<span class="string">"mysql"</span>, </span><br><span class="line">	<span class="string">"db:dbadmin@tcp(127.0.0.1:3306)/foo?charset=utf8&amp;parseTime=true&amp;loc=Local"</span>)</span><br></pre></td></tr></table></figure></p>
+<p>这样方案的好处是省事，不过在数据库中存当地时间，某些情况下（比如跨国家）会造成疑惑和bug，另一种变通的办法时，使用时间转成本地时间</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> FmtTime <span class="keyword">struct</span> &#123;</span><br><span class="line">	Tm *time.Time</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	ctLayout = <span class="string">"2006-01-02 15:04:05"</span></span><br><span class="line">	cdLayout = <span class="string">"2006-01-02"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct *FmtTime)</span> <span class="title">UnmarshalJSON</span><span class="params">(b []<span class="keyword">byte</span>)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">	s := strings.Trim(<span class="keyword">string</span>(b), <span class="string">"\""</span>)</span><br><span class="line">	<span class="keyword">if</span> s == <span class="string">"null"</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> fmt.Errorf(<span class="string">"invalid date format"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	tm, err := time.Parse(ctLayout, s)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		ct.Tm = &amp;tm</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ct *FmtTime)</span> <span class="title">MarshalJSON</span><span class="params">()</span> <span class="params">([]<span class="keyword">byte</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> ct.Tm != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// 用本地时区输出</span></span><br><span class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>(fmt.Sprintf(<span class="string">"\"%s\""</span>, ct.Tm.In(time.Local).Format(ctLayout))), <span class="literal">nil</span></span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> []<span class="keyword">byte</span>(<span class="string">"\"\""</span>), <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getMysqlUrl</span><span class="params">(c *config.Config)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">"%s:%s@tcp(%s:%d)/%s?charset=utf8&amp;parseTime=true"</span>,</span><br><span class="line">		c.MysqlUser,</span><br><span class="line">		c.MysqlPassword,</span><br><span class="line">		c.MysqlHost,</span><br><span class="line">		c.MysqlPort,</span><br><span class="line">		c.MysqlDb)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OpenDB</span><span class="params">(c *config.Config)</span> <span class="params">(db *sql.DB, driver <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	driver = <span class="string">"mysql"</span></span><br><span class="line">	<span class="keyword">var</span> url <span class="keyword">string</span> = getMysqlUrl(c)</span><br><span class="line">	db, err := sql.Open(driver, url)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> driver == <span class="string">"mysql"</span> &#123;</span><br><span class="line">		<span class="comment">// per issue https://github.com/go-sql-driver/mysql/issues/257</span></span><br><span class="line">		db.SetMaxIdleConns(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := pingDatabase(db); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">		log.Fatalln(<span class="string">"ping 数据库"</span> + driver + <span class="string">"失败"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OpenGorm</span><span class="params">(c *config.Config, driver <span class="keyword">string</span>)</span> <span class="params">(db *gorm.DB)</span></span> &#123;</span><br><span class="line">	url := getMysqlUrl(c)</span><br><span class="line">	db, err := gorm.Open(driver, url)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pingDatabase</span><span class="params">(db *sql.DB)</span> <span class="params">(err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">10</span>; i++ &#123;</span><br><span class="line">		err = db.Ping()</span><br><span class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		log.Print(<span class="string">"ping 数据库失败, 1s后重试"</span>)</span><br><span class="line">		time.Sleep(time.Second)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/12/02/gorm/" data-id="ckdbgbywe002m43po42ayk2kt" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/12/02/gorm/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gorm/">gorm</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/12/01/nginx-build/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">nginx编译</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/12/02/antd/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">antd随笔</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/12/02/gorm/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

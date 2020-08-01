@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>CGI网关服务器漫谈 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="作为一名C/C++转后端的程序员，习惯于socket的裸（在tcp/ip下面操作系统还隐藏了很多细节，这里姑且不论），会纠结一个问题，为什么python还需要wsgi服务器夹在中间呢？ 在一个web请求到达实际的业务逻辑，需要（但不限于）经过  处理tcp连接，读写二进制数据 解析http协议，并判断合法性 检查参数合法性 检查权限/访问控制 安全防护检查 特定语言的参数序列化（绑定）  而业务逻">
+<meta name="keywords" content="wcgi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CGI网关服务器漫谈">
+<meta property="og:url" content="http://blog.kimq.cn/2017/07/22/cgi_web-server/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="作为一名C/C++转后端的程序员，习惯于socket的裸（在tcp/ip下面操作系统还隐藏了很多细节，这里姑且不论），会纠结一个问题，为什么python还需要wsgi服务器夹在中间呢？ 在一个web请求到达实际的业务逻辑，需要（但不限于）经过  处理tcp连接，读写二进制数据 解析http协议，并判断合法性 检查参数合法性 检查权限/访问控制 安全防护检查 特定语言的参数序列化（绑定）  而业务逻">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="CGI网关服务器漫谈">
+<meta name="twitter:description" content="作为一名C/C++转后端的程序员，习惯于socket的裸（在tcp/ip下面操作系统还隐藏了很多细节，这里姑且不论），会纠结一个问题，为什么python还需要wsgi服务器夹在中间呢？ 在一个web请求到达实际的业务逻辑，需要（但不限于）经过  处理tcp连接，读写二进制数据 解析http协议，并判断合法性 检查参数合法性 检查权限/访问控制 安全防护检查 特定语言的参数序列化（绑定）  而业务逻">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-cgi_web-server" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      CGI网关服务器漫谈
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/07/22/cgi_web-server/" class="article-date"><time datetime="2017-07-22T13:50:49.000Z" itemprop="datePublished">2017-07-22</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>作为一名C/C++转后端的程序员，习惯于socket的裸（<em>在tcp/ip下面操作系统还隐藏了很多细节，这里姑且不论</em>），会纠结一个问题，为什么python还需要wsgi服务器夹在中间呢？</p>
+<p>在一个web请求到达实际的业务逻辑，需要（但不限于）经过</p>
+<ol>
+<li>处理tcp连接，读写二进制数据</li>
+<li>解析http协议，并判断合法性</li>
+<li>检查参数合法性</li>
+<li>检查权限/访问控制</li>
+<li>安全防护检查</li>
+<li>特定语言的参数序列化（绑定）</li>
+</ol>
+<p>而业务逻辑处理之后，又需要（但不限于）经过</p>
+<ol>
+<li>反序列化数据（比如对象转json/xml）</li>
+<li>格式化输出（比如html模板引擎）</li>
+</ol>
+<p>除了各种中间服务器，还有各种web框架，例如Python <a href="http://flask.pocoo.org/" target="_blank" rel="noopener">flask</a>等</p>
+<p>对于socket处理，Http(s)协议解析，<a href="https://nginx.org/en/" target="_blank" rel="noopener">nginx</a>/<a href="http://httpd.apache.org/" target="_blank" rel="noopener">apache</a>等成熟服务器是强项，由于是通用的服务器，并不会和特定的语言绑定，所以要和用特定程序语言实现的web业务逻辑配合工作，就需要一定的协议来交互，这就产生了CGI。</p>
+<p>并不是所有的后端语言都需要独立服务器来配合处理网络和http协议，Golang就是一个例外，Golang内置的<a href="https://golang.org/pkg/net/http/" target="_blank" rel="noopener">Http库</a>非常完善（也有很高效的第三方库，比如<a href="https://github.com/valyala/fasthttp" target="_blank" rel="noopener">fasthttp</a>），所以Go web框架大都把这块直接包进去了。</p>
+<blockquote>
+<p>这种做法在部署上有更好的灵活性和便捷性，特别是配合<a href="https://www.docker.com/" target="_blank" rel="noopener">docker</a>，对比<a href="https://projects.spring.io/spring-boot/" target="_blank" rel="noopener">spring boot</a>打包<a href="http://www.eclipse.org/jetty/" target="_blank" rel="noopener">jetty</a>直接运行</p>
+</blockquote>
+<p>对于其他语言，例如python,通常会采用Http <--> WSGI <--> WEB框架 <--> 业务代码 的方式</--></--></--></p>
+<blockquote>
+<p>并非python无法实现类似与Golang的大一统集成方案，理论上什么语言都是可行的，不过基于性能上的考虑，或者避免重复造轮子等。</p>
+</blockquote>
+<p>这种方案利用了各自的优势，协同完成整个事情，但他们并非物理分割的实体，比如<a href="https://uwsgi-docs.readthedocs.io/en/latest/" target="_blank" rel="noopener">uWSGI</a>或者<a href="http://gunicorn.org/" target="_blank" rel="noopener">gunicorn</a>就实现了http服务器和wsgi协议处理，</p>
+<p>在很多文章中，例如【<a href="http://www.jianshu.com/p/84978157c785" target="_blank" rel="noopener">Flask+uwsgi+Nginx</a>】，会再附加一个nginx在最前面，这更多的是为了扩展其他一些功能，比如</p>
+<ol>
+<li>反向代理</li>
+<li>负责均衡</li>
+<li>代理静态资源</li>
+<li>https</li>
+<li>…</li>
+</ol>
+<blockquote>
+<p>nginx负载均衡在应用层处理，在一些高性能场景，可能需要特殊定制的负载均衡服务器，直接在内核的ip层/数据链路层作处理</p>
+</blockquote>
+<p>scgi的一个简单实现如<a href="https://docs.python.org/2/library/wsgiref.html#module-wsgiref.simple_server" target="_blank" rel="noopener">wsgiref.simple_server</a>，基于它很容易写出一个简单的<a href="http://blog.ez2learn.com/2010/01/27/introduction-to-wsgi/" target="_blank" rel="noopener">Python web程序</a>，或者扩展成一个web框架</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> wsgiref.simple_server <span class="keyword">import</span> make_server</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">my_app</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    <span class="string">"""a simple wsgi application"""</span></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    response_headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>)]</span><br><span class="line">    start_response(status, response_headers)</span><br><span class="line">    <span class="keyword">return</span> [<span class="string">u"你好! 歡迎來到Victor的第一個WSGI程式"</span>.encode(<span class="string">'utf8'</span>)]</span><br><span class="line"></span><br><span class="line">httpd = make_server(<span class="string">''</span>, <span class="number">8000</span>, my_app)</span><br><span class="line">print(<span class="string">"Serving on port 8000..."</span>)</span><br><span class="line">httpd.serve_forever()</span><br></pre></td></tr></table></figure>
+<p>借助<a href="https://uwsgi-docs.readthedocs.io/en/latest/" target="_blank" rel="noopener">uWSGI</a>也很<a href="http://www.bjhee.com/nginx-uwsgi.html" target="_blank" rel="noopener">容易实现</a><br><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">application</span><span class="params">(environ, start_response)</span>:</span></span><br><span class="line">    status = <span class="string">'200 OK'</span></span><br><span class="line">    output = <span class="string">'Hello World!'</span></span><br><span class="line"></span><br><span class="line">    response_headers = [(<span class="string">'Content-type'</span>, <span class="string">'text/plain'</span>),</span><br><span class="line">                        (<span class="string">'Content-Length'</span>, str(len(output)))]</span><br><span class="line">    start_response(status, response_headers)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> [output]</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install uwsgi</span><br><span class="line">king@king:~/code/bug$ uwsgi --version</span><br><span class="line">2.0.15</span><br><span class="line">king@king:~/code/bug$ uwsgi --http :9090 --wsgi-file server.py</span><br></pre></td></tr></table></figure>
+<p>wcgi利用了语言的特性，直接通过调用和回调的方式实现高效请求转发和回传，wcgi和业务代码就在同个进程中，而最早的cgi并非这样</p>
+<p>最早的<a href="https://shenwang.blog.ustc.edu.cn/nginx%E5%92%8Cuwsgi%E9%80%9A%E4%BF%A1%E6%9C%BA%E5%88%B6/" target="_blank" rel="noopener">CGI</a>是很灵活的，收到请求后CGI网关会启动子进程，并通过IPC（通常的做法是将stdin/stdout对接到输入输出）发送请求和接收结果，处理完成，子进程退出。</p>
+<p>nging配置cgi比较繁琐，可以通过nc来<a href="http://qjw.qiujinwu.com/blog/2013/12/22/nc_server" target="_blank" rel="noopener">模拟一些这个流程</a><br><figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buf_[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">do</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(gets(buf_))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"recv : %s\n"</span>,buf_);</span><br><span class="line">            fflush(<span class="built_in">stdout</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">while</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>server<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp$ gcc a.c</span><br><span class="line">king@king:/tmp$ rm -f /tmp/f; mkfifo /tmp/f</span><br><span class="line">king@king:/tmp$ cat /tmp/f | ./a.out | nc -l -p 12345 127.0.0.1 &gt; /tmp/f</span><br></pre></td></tr></table></figure></p>
+<p>client<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp$ nc 127.0.0.1 12345</span><br><span class="line">1</span><br><span class="line">recv : 1</span><br><span class="line">2</span><br><span class="line">recv : 2</span><br><span class="line">3</span><br><span class="line">recv : 3</span><br><span class="line">4</span><br><span class="line">recv : 4</span><br><span class="line">5</span><br><span class="line">recv : 5</span><br><span class="line">6</span><br><span class="line">recv : 6</span><br></pre></td></tr></table></figure></p>
+<p>CGI的设计可以支持各种不同语言的程序，问题是性能太差，所以又搞出了什么fastcgi。</p>
+<p>FastCGI，顾名思义为更快的 CGI，它允许在一个进程内处理多个请求，而不是一个请求处理完毕就直接结束进程，性能上有了很大的提高。这其中又以Php的<a href="https://php-fpm.org/" target="_blank" rel="noopener">PHP-FPM</a>比较典型，和Python的网关服务器将Http协议处理部分自行处理不同，Php网关服务器通常配合第三方Http服务器使用，例如<a href="https://nginx.org/en/" target="_blank" rel="noopener">nginx</a>或者<a href="https://www.lighttpd.net/" target="_blank" rel="noopener">lighttpd</a>。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/20694204" target="_blank" rel="noopener">PHP-FPM</a>作为一个独立的网关服务器存在，和nginx类似，会有一个master进程接收请求（nginx的master进程做的事情少得多）和若干worker进程，每个worker进程会跑一个PHP解释器，是 PHP 代码真正执行的地方。master进程则监听端口，并接收来自Http服务器的请求，通常情况下使用unixsocket。</p>
+<p>nginx作为一个通用的服务器，为了配合<a href="https://php-fpm.org/" target="_blank" rel="noopener">PHP-FPM</a>，需要使用插件<a href="https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/" target="_blank" rel="noopener">fastcgi_param</a>，根据配置该插件会作一些转换并请求代理到FPM的地址。</p>
+<p>处理好了Http请求分析，调度传递之后，还有很多事情需要处理，如前面提到的【检查参数合法性】、【检查权限/访问控制】等，这就是web框架的事情了，web框架是为了提高开发效率，让开发者更聚焦于业务逻辑，直接裸写也是OK的。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/07/22/cgi_web-server/" data-id="ckdbgbyv9000943po7cr7k452" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/07/22/cgi_web-server/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wcgi/">wcgi</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/07/14/ssl/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">证书与Nginx部署</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/07/23/sqlalchemy/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Flask sqlalchemy调优总结</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/07/22/cgi_web-server/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

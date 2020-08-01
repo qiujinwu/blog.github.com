@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>nginx编译 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="编译从http://nginx.org/download/下载nginx,最简单的用法 wget http://nginx.org/download/nginx-1.9.9.tar.gztar zvfx nginx-1.9.9.tar.gzcd nginx-1.9.9.tar.gz./configuremake./obj/nginx 考虑到nginx有各种配置和各种可选的模块，通常需要定制conf">
+<meta name="keywords" content="nginx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="nginx编译">
+<meta property="og:url" content="http://blog.kimq.cn/2017/12/01/nginx-build/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="编译从http://nginx.org/download/下载nginx,最简单的用法 wget http://nginx.org/download/nginx-1.9.9.tar.gztar zvfx nginx-1.9.9.tar.gzcd nginx-1.9.9.tar.gz./configuremake./obj/nginx 考虑到nginx有各种配置和各种可选的模块，通常需要定制conf">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="nginx编译">
+<meta name="twitter:description" content="编译从http://nginx.org/download/下载nginx,最简单的用法 wget http://nginx.org/download/nginx-1.9.9.tar.gztar zvfx nginx-1.9.9.tar.gzcd nginx-1.9.9.tar.gz./configuremake./obj/nginx 考虑到nginx有各种配置和各种可选的模块，通常需要定制conf">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-nginx-build" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      nginx编译
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/12/01/nginx-build/" class="article-date"><time datetime="2017-12-01T11:31:39.000Z" itemprop="datePublished">2017-12-01</time></a>
+</div>
+
+    
+    
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><p>从<a href="http://nginx.org/download/" target="_blank" rel="noopener">http://nginx.org/download/</a>下载nginx,最简单的用法</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget http://nginx.org/download/nginx-1.9.9.tar.gz</span><br><span class="line">tar zvfx nginx-1.9.9.tar.gz</span><br><span class="line"><span class="built_in">cd</span> nginx-1.9.9.tar.gz</span><br><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">./obj/nginx</span><br></pre></td></tr></table></figure>
+<p>考虑到nginx有各种配置和各种可选的模块，通常需要定制configure的参数，configure –help查看所有的选项</p>
+<p>可以【<strong>nginx -V</strong>】查看现有nginx的编译参数，若configure过程中缺少某些库，自行安装(ubuntu apt-get即可)</p>
+<p>例如<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure  --with-cc-opt=<span class="string">'-g -O2 -fPIE -fstack-protector-strong \</span></span><br><span class="line"><span class="string">    -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2'</span> \</span><br><span class="line">    --with-ld-opt=<span class="string">'-Wl,-Bsymbolic-functions -fPIE -pie -Wl,-z,relro \</span></span><br><span class="line"><span class="string">    -Wl,-z,now'</span> --prefix=/usr/share/nginx --conf-path=/etc/nginx/nginx.conf \</span><br><span class="line">    --http-log-path=/var/<span class="built_in">log</span>/nginx/access.log \</span><br><span class="line">    --error-log-path=/var/<span class="built_in">log</span>/nginx/error.log \</span><br><span class="line">    --lock-path=/var/lock/nginx.lock \</span><br><span class="line">    --pid-path=/run/nginx.pid \</span><br><span class="line">    --http-client-body-temp-path=/var/lib/nginx/body \</span><br><span class="line">    --http-fastcgi-temp-path=/var/lib/nginx/fastcgi \</span><br><span class="line">    --http-proxy-temp-path=/var/lib/nginx/proxy \</span><br><span class="line">    --http-scgi-temp-path=/var/lib/nginx/scgi \</span><br><span class="line">    --http-uwsgi-temp-path=/var/lib/nginx/uwsgi \</span><br><span class="line">    --with-debug --with-pcre-jit --with-ipv6 --with-http_ssl_module \</span><br><span class="line">    --with-http_stub_status_module --with-http_realip_module \</span><br><span class="line">    --with-http_auth_request_module --with-http_addition_module \</span><br><span class="line">    --with-http_gunzip_module --with-http_gzip_static_module \</span><br><span class="line">    --with-http_v2_module --with-http_sub_module --with-stream \</span><br><span class="line">    --with-stream_ssl_module --with-threads</span><br></pre></td></tr></table></figure></p>
+<p>make之后，sudo ./objs/nginx 即可运行（background）模式</p>
+<p>关闭nginx</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#从容停止Nginx </span></span><br><span class="line">sudo <span class="built_in">kill</span> -QUIT `pidof nginx | sed <span class="string">"s/ /\n/g"</span> | sort |  head -n 1`</span><br><span class="line"><span class="comment">#快速停止Nginx  </span></span><br><span class="line">sudo <span class="built_in">kill</span> -TERM `pidof nginx | sed <span class="string">"s/ /\n/g"</span> | sort |  head -n 1`</span><br><span class="line"><span class="comment">#强制停止Nginx</span></span><br><span class="line">sudo <span class="built_in">kill</span> -9 `pidof nginx | sed <span class="string">"s/ /\n/g"</span> | sort |  head -n 1`</span><br></pre></td></tr></table></figure>
+<p>前台运行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nginx -g <span class="string">'daemon off;'</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="编译第三方插件"><a href="#编译第三方插件" class="headerlink" title="编译第三方插件"></a>编译第三方插件</h1><p>随便挑一个<a href="https://www.nginx.com/resources/wiki/modules/fancy_index/" target="_blank" rel="noopener">https://www.nginx.com/resources/wiki/modules/fancy_index/</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 添加--add-module参数</span></span><br><span class="line">./configure ** --add-module=/tmp/ngx-fancyindex</span><br><span class="line">git <span class="built_in">clone</span> https://github.com/aperezdc/ngx-fancyindex.git ngx-fancyindex</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;                                                                        </span><br><span class="line">	<span class="attribute">listen</span> <span class="number">8800</span>;</span><br><span class="line">	<span class="attribute">root</span>  /home/king/;</span><br><span class="line">	<span class="attribute">fancyindex</span> <span class="literal">on</span>;</span><br><span class="line">	<span class="attribute">fancyindex_exact_size</span> <span class="literal">off</span>;</span><br><span class="line">	<span class="attribute">fancyindex_localtime</span> <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="OpenResty"><a href="#OpenResty" class="headerlink" title="OpenResty"></a>OpenResty</h1><p>安装 <a href="https://openresty.org/cn/installation.html" target="_blank" rel="noopener">https://openresty.org/cn/installation.html</a></p>
+<p>可以安装预编译的二进制或者直接从源码编译</p>
+<blockquote>
+<p>OpenResty以nginx的方式发布，只不过和官方的使用不同的模块。由于两者的配置等各种依赖隔离，只要确保OpenResty和Nginx不端口冲突，就可和谐共生</p>
+</blockquote>
+<p>查看sudo make install 可以看到默认的安装路径<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/mime.types'</span> \</span><br><span class="line">	|| cp conf/mime.types <span class="string">'/usr/local/openresty/nginx/conf'</span></span><br><span class="line">cp conf/mime.types <span class="string">'/usr/local/openresty/nginx/conf/mime.types.default'</span></span><br><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/fastcgi_params'</span> \</span><br><span class="line">	|| cp conf/fastcgi_params <span class="string">'/usr/local/openresty/nginx/conf'</span></span><br><span class="line">cp conf/fastcgi_params \</span><br><span class="line">	<span class="string">'/usr/local/openresty/nginx/conf/fastcgi_params.default'</span></span><br><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/fastcgi.conf'</span> \</span><br><span class="line">	|| cp conf/fastcgi.conf <span class="string">'/usr/local/openresty/nginx/conf'</span></span><br><span class="line">cp conf/fastcgi.conf <span class="string">'/usr/local/openresty/nginx/conf/fastcgi.conf.default'</span></span><br><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/uwsgi_params'</span> \</span><br><span class="line">	|| cp conf/uwsgi_params <span class="string">'/usr/local/openresty/nginx/conf'</span></span><br><span class="line">cp conf/uwsgi_params \</span><br><span class="line">	<span class="string">'/usr/local/openresty/nginx/conf/uwsgi_params.default'</span></span><br><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/scgi_params'</span> \</span><br><span class="line">	|| cp conf/scgi_params <span class="string">'/usr/local/openresty/nginx/conf'</span></span><br><span class="line">cp conf/scgi_params \</span><br><span class="line">	<span class="string">'/usr/local/openresty/nginx/conf/scgi_params.default'</span></span><br><span class="line"><span class="comment"># 主配置</span></span><br><span class="line"><span class="built_in">test</span> -f <span class="string">'/usr/local/openresty/nginx/conf/nginx.conf'</span> \</span><br><span class="line">	|| cp conf/nginx.conf <span class="string">'/usr/local/openresty/nginx/conf/nginx.conf'</span></span><br><span class="line">cp conf/nginx.conf <span class="string">'/usr/local/openresty/nginx/conf/nginx.conf.default'</span></span><br><span class="line"><span class="built_in">test</span> -d <span class="string">'/usr/local/openresty/nginx/logs'</span> \</span><br><span class="line">	|| mkdir -p <span class="string">'/usr/local/openresty/nginx/logs'</span></span><br><span class="line"><span class="built_in">test</span> -d <span class="string">'/usr/local/openresty/nginx/logs'</span> \</span><br><span class="line">	|| mkdir -p <span class="string">'/usr/local/openresty/nginx/logs'</span></span><br><span class="line"><span class="built_in">test</span> -d <span class="string">'/usr/local/openresty/nginx/html'</span> \</span><br><span class="line">	|| cp -R docs/html <span class="string">'/usr/local/openresty/nginx'</span></span><br><span class="line"><span class="built_in">test</span> -d <span class="string">'/usr/local/openresty/nginx/logs'</span> \</span><br><span class="line"><span class="comment"># 日志</span></span><br><span class="line">	|| mkdir -p <span class="string">'/usr/local/openresty/nginx/logs'</span></span><br><span class="line">make[2]: Leaving directory <span class="string">'/tmp/openresty-1.13.6.1/build/nginx-1.13.6'</span></span><br><span class="line">make[1]: Leaving directory <span class="string">'/tmp/openresty-1.13.6.1/build/nginx-1.13.6'</span></span><br><span class="line"><span class="comment"># 二进制</span></span><br><span class="line">ln -sf /usr/<span class="built_in">local</span>/openresty/nginx/sbin/nginx /usr/<span class="built_in">local</span>/openresty/bin/openresty</span><br></pre></td></tr></table></figure></p>
+<h2 id="网站统计中的数据收集原理及实现"><a href="#网站统计中的数据收集原理及实现" class="headerlink" title="网站统计中的数据收集原理及实现"></a><a href="http://blog.codinglabs.org/articles/how-web-analytics-data-collection-system-work.html" target="_blank" rel="noopener">网站统计中的数据收集原理及实现</a></h2><p>配置</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">http</span> &#123;</span><br><span class="line">	<span class="comment"># 创建名称为tick的日志格式（后面会引用）</span></span><br><span class="line">	<span class="attribute">log_format</span> tick <span class="string">"<span class="variable">$msec</span>^A<span class="variable">$remote_addr</span>^A<span class="variable">$u_domain</span>^A<span class="variable">$u_url</span>^A<span class="variable">$u_title</span>^A<span class="variable">$u_referrer</span>^A<span class="variable">$u_sh</span>^A<span class="variable">$u_sw</span>^A<span class="variable">$u_cd</span>^A<span class="variable">$u_lang</span>^A<span class="variable">$http_user_agent</span>^A<span class="variable">$u_utrace</span>^A<span class="variable">$u_account</span>"</span>;</span><br><span class="line"></span><br><span class="line">	<span class="section">server</span> &#123;</span><br><span class="line">		<span class="attribute">listen</span> <span class="number">9088</span>;</span><br><span class="line">		<span class="attribute">index</span> index.html;</span><br><span class="line"></span><br><span class="line">        <span class="attribute">location</span> / &#123;</span><br><span class="line">            <span class="attribute">root</span>   html;</span><br><span class="line">            <span class="attribute">index</span>  index.html index.htm;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">		<span class="attribute">location</span> /<span class="number">1</span>.gif &#123;</span><br><span class="line">			<span class="comment">#伪装成gif文件</span></span><br><span class="line">			<span class="attribute">default_type</span> image/gif;    </span><br><span class="line">			<span class="comment">#本身关闭access_log，通过subrequest记录log</span></span><br><span class="line">			<span class="attribute">access_log</span> <span class="literal">off</span>;</span><br><span class="line"></span><br><span class="line">			<span class="attribute">access_by_lua</span> <span class="string">"</span></span><br><span class="line"><span class="string">				-- 用户跟踪cookie名为__utrace</span></span><br><span class="line"><span class="string">				local uid = ngx.var.cookie___utrace        </span></span><br><span class="line"><span class="string">				if not uid then</span></span><br><span class="line"><span class="string">					-- 如果没有则生成一个跟踪cookie，算法为md5(时间戳+IP+客户端信息)</span></span><br><span class="line"><span class="string">					uid = ngx.md5(ngx.now() .. ngx.var.remote_addr .. ngx.var.http_user_agent)</span></span><br><span class="line"><span class="string">				end </span></span><br><span class="line"><span class="string">				ngx.header['Set-Cookie'] = &#123;'__utrace=' .. uid .. '; path=/'&#125;</span></span><br><span class="line"><span class="string">				if ngx.var.arg_domain then</span></span><br><span class="line"><span class="string">					-- 通过subrequest到/i-log记录日志，将参数和用户跟踪cookie带过去</span></span><br><span class="line"><span class="string">					ngx.location.capture('/i-log?' .. ngx.var.args .. '&amp;utrace=' .. uid)</span></span><br><span class="line"><span class="string">				end </span></span><br><span class="line"><span class="string">			"</span>;  </span><br><span class="line"></span><br><span class="line">			<span class="comment">#此请求不缓存</span></span><br><span class="line">			<span class="attribute">add_header</span> Expires <span class="string">"Fri, 01 Jan 1980 00:00:00 GMT"</span>;</span><br><span class="line">			<span class="attribute">add_header</span> Pragma <span class="string">"no-cache"</span>;</span><br><span class="line">			<span class="attribute">add_header</span> Cache-Control <span class="string">"no-cache, max-age=0, must-revalidate"</span>;</span><br><span class="line">			<span class="comment">#返回一个1×1的空gif图片</span></span><br><span class="line">			empty_gif;</span><br><span class="line">		&#125;   </span><br><span class="line"></span><br><span class="line">		<span class="attribute">location</span> /i-log &#123;</span><br><span class="line">			internal;</span><br><span class="line"></span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_domain</span> <span class="variable">$arg_domain</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_url</span> <span class="variable">$arg_url</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_title</span> <span class="variable">$arg_title</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_referrer</span> <span class="variable">$arg_referrer</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_sh</span> <span class="variable">$arg_sh</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_sw</span> <span class="variable">$arg_sw</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_cd</span> <span class="variable">$arg_cd</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_lang</span> <span class="variable">$arg_lang</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_utrace</span> <span class="variable">$arg_utrace</span>;</span><br><span class="line">			<span class="attribute">set_unescape_uri</span> <span class="variable">$u_account</span> <span class="variable">$arg_account</span>;</span><br><span class="line"></span><br><span class="line">			<span class="attribute">log_subrequest</span> <span class="literal">on</span>;</span><br><span class="line">			<span class="comment">#记录日志到ma.log，实际应用中最好加buffer，格式为tick</span></span><br><span class="line">			<span class="attribute">access_log</span> /tmp/ma.log tick;</span><br><span class="line"></span><br><span class="line">			<span class="attribute">echo</span> <span class="string">''</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>前端代码<br>cat /usr/local/openresty/nginx/html/ma.js<br><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> params = &#123;&#125;;</span><br><span class="line">    <span class="comment">//Document对象数据</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">document</span>) &#123;</span><br><span class="line">        params.domain = <span class="built_in">document</span>.domain || <span class="string">''</span>; </span><br><span class="line">        params.url = <span class="built_in">document</span>.URL || <span class="string">''</span>; </span><br><span class="line">        params.title = <span class="built_in">document</span>.title || <span class="string">''</span>; </span><br><span class="line">        params.referrer = <span class="built_in">document</span>.referrer || <span class="string">''</span>; </span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="comment">//Window对象数据</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">window</span> &amp;&amp; <span class="built_in">window</span>.screen) &#123;</span><br><span class="line">        params.sh = <span class="built_in">window</span>.screen.height || <span class="number">0</span>;</span><br><span class="line">        params.sw = <span class="built_in">window</span>.screen.width || <span class="number">0</span>;</span><br><span class="line">        params.cd = <span class="built_in">window</span>.screen.colorDepth || <span class="number">0</span>;</span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="comment">//navigator对象数据</span></span><br><span class="line">    <span class="keyword">if</span>(navigator) &#123;</span><br><span class="line">        params.lang = navigator.language || <span class="string">''</span>; </span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="comment">//解析_maq配置</span></span><br><span class="line">    <span class="keyword">if</span>(_maq) &#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> _maq) &#123;</span><br><span class="line">            <span class="keyword">switch</span>(_maq[i][<span class="number">0</span>]) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'_setAccount'</span>:</span><br><span class="line">                    params.account = _maq[i][<span class="number">1</span>];</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            &#125;   </span><br><span class="line">        &#125;   </span><br><span class="line">    &#125;   </span><br><span class="line">    <span class="comment">//拼接参数串</span></span><br><span class="line">    <span class="keyword">var</span> args = <span class="string">''</span>; </span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> params) &#123;</span><br><span class="line">        <span class="keyword">if</span>(args != <span class="string">''</span>) &#123;</span><br><span class="line">            args += <span class="string">'&amp;'</span>;</span><br><span class="line">        &#125;   </span><br><span class="line">        args += i + <span class="string">'='</span> + <span class="built_in">encodeURIComponent</span>(params[i]);</span><br><span class="line">    &#125;   </span><br><span class="line"> </span><br><span class="line">    <span class="comment">//通过Image对象请求后端脚本</span></span><br><span class="line">    <span class="keyword">var</span> img = <span class="keyword">new</span> Image(<span class="number">1</span>, <span class="number">1</span>); </span><br><span class="line">    img.src = <span class="string">'/1.gif?'</span> + args;</span><br><span class="line">&#125;)();</span><br></pre></td></tr></table></figure></p>
+<p>cat /usr/local/openresty/nginx/html/index.html<br><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Welcome to OpenResty!<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">    body &#123;</span><br><span class="line">        width: 35em;</span><br><span class="line">        margin: 0 auto;</span><br><span class="line">        font-family: Tahoma, Verdana, Arial, sans-serif;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="javascript"><span class="keyword">var</span> _maq = _maq || [];</span></span><br><span class="line"><span class="javascript">_maq.push([<span class="string">'_setAccount'</span>, <span class="string">'网站标识'</span>]);</span></span><br><span class="line"> </span><br><span class="line"><span class="javascript">(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> ma = <span class="built_in">document</span>.createElement(<span class="string">'script'</span>); ma.type = <span class="string">'text/javascript'</span>; ma.async = <span class="literal">true</span>;</span></span><br><span class="line"><span class="javascript">    ma.src = <span class="string">'/ma.js'</span>;</span></span><br><span class="line"><span class="javascript">    <span class="keyword">var</span> s = <span class="built_in">document</span>.getElementsByTagName(<span class="string">'script'</span>)[<span class="number">0</span>]; s.parentNode.insertBefore(ma, s);</span></span><br><span class="line">&#125;)();</span><br><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">h1</span>&gt;</span>Welcome to OpenResty!<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>If you see this page, the OpenResty web platform is successfully installed and</span><br><span class="line">working. Further configuration is required.<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span>For online documentation and support please refer to</span><br><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"https://openresty.org/"</span>&gt;</span>openresty.org<span class="tag">&lt;/<span class="name">a</span>&gt;</span>.<span class="tag">&lt;<span class="name">br</span>/&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">em</span>&gt;</span>Thank you for flying OpenResty.<span class="tag">&lt;/<span class="name">em</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="http://blog.codinglabs.org/articles/how-web-analytics-data-collection-system-work.html" target="_blank" rel="noopener">http://blog.codinglabs.org/articles/how-web-analytics-data-collection-system-work.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/12/01/nginx-build/" data-id="ckdbgbyx2003r43poj2ewl0ot" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/12/01/nginx-build/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/10/18/kelly-src/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Kelly源码剖析</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/12/02/gorm/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">gorm一些笔记</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/12/01/nginx-build/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

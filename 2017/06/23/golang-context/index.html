@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Golang Context | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="从go1.7开始，golang.org/x/net/context包正式作为context包进入了标准库。官方的说明如下  Package context defines the Context type, which carries deadlines, cancelation signals, and other request-scoped values across API boundar">
+<meta name="keywords" content="golang">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Golang Context">
+<meta property="og:url" content="http://blog.kimq.cn/2017/06/23/golang-context/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="从go1.7开始，golang.org/x/net/context包正式作为context包进入了标准库。官方的说明如下  Package context defines the Context type, which carries deadlines, cancelation signals, and other request-scoped values across API boundar">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Golang Context">
+<meta name="twitter:description" content="从go1.7开始，golang.org/x/net/context包正式作为context包进入了标准库。官方的说明如下  Package context defines the Context type, which carries deadlines, cancelation signals, and other request-scoped values across API boundar">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-golang-context" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Golang Context
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/06/23/golang-context/" class="article-date"><time datetime="2017-06-23T14:23:11.000Z" itemprop="datePublished">2017-06-23</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>从go1.7开始，golang.org/x/net/context包正式作为context包进入了标准库。官方的说明如下</p>
+<blockquote>
+<p>Package context defines the Context type, which carries deadlines, cancelation signals, and other request-scoped values across API boundaries and between processes.</p>
+</blockquote>
+<p>参考</p>
+<ol>
+<li><a href="https://blog.golang.org/context" target="_blank" rel="noopener">https://blog.golang.org/context</a></li>
+<li><a href="https://godoc.org/golang.org/x/net/context" target="_blank" rel="noopener">https://godoc.org/golang.org/x/net/context</a></li>
+</ol>
+<p>Context接口非常简单<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// A Context carries a deadline, a cancelation signal, and other values across</span></span><br><span class="line"><span class="comment">// API boundaries.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Context's methods may be called by multiple goroutines simultaneously.</span></span><br><span class="line"><span class="keyword">type</span> Context <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 是否有超时，超时context才有</span></span><br><span class="line">	Deadline() (deadline time.Time, ok <span class="keyword">bool</span>)</span><br><span class="line">    <span class="comment">// 是否已经结束，通过从channel中读取数据判断，用于被监听的routine</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">    <span class="comment">// 当Done返回的ch读取数据（或者被close），可以获取到错误（取消，超时等）</span></span><br><span class="line">	Err() error</span><br><span class="line">    <span class="comment">// value Context的值，通过key获取</span></span><br><span class="line">	Value(key <span class="keyword">interface</span>&#123;&#125;) <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Context的核心通过channel来作同步，为了理解，最好了解go的同步机制</p>
+<h1 id="Go语言并发模型"><a href="#Go语言并发模型" class="headerlink" title="Go语言并发模型"></a><a href="Go语言并发模型：像Unix Pipe那样使用channel">Go语言并发模型</a></h1><p>参考<a href="https://blog.golang.org/pipelines" target="_blank" rel="noopener">Go Concurrency Patterns: Pipelines and cancellation</a></p>
+<p>和其他语言相比，go对并发的控制源于非常简单，但功能并不弱，常用的包括（但不限于）</p>
+<ol>
+<li>sync.Mutex 互斥</li>
+<li>sync.WaitGroup</li>
+<li>channel</li>
+</ol>
+<p>官方推荐channel，并且对此有很好的优化</p>
+<h2 id="pipeline"><a href="#pipeline" class="headerlink" title="pipeline"></a>pipeline</h2><p>连续单个的管道<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">gen</span><span class="params">(nums ...<span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> _, n := <span class="keyword">range</span> nums &#123;</span><br><span class="line">			out &lt;- n</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(out)</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> out</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sq</span><span class="params">(in &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> n := <span class="keyword">range</span> in &#123;</span><br><span class="line">			out &lt;- n * n</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(out)</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> out</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 设置流水线</span></span><br><span class="line">	c := gen(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line">	out := sq(c)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 消费输出结果</span></span><br><span class="line">	fmt.Println(&lt;-out) <span class="comment">// 4</span></span><br><span class="line">	fmt.Println(&lt;-out) <span class="comment">// 9</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>多个并行的pipe并行处理，并汇聚到下一个pipe，核心是sync.WaitGroup作屏障<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"sync"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">gen</span><span class="params">(nums ...<span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> _, n := <span class="keyword">range</span> nums &#123;</span><br><span class="line">			out &lt;- n</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(out)</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> out</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sq</span><span class="params">(in &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> n := <span class="keyword">range</span> in &#123;</span><br><span class="line">			out &lt;- n * n</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">close</span>(out)</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> out</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge</span><span class="params">(cs ...&lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">	out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 为每一个输入channel cs 创建一个 goroutine output</span></span><br><span class="line">	<span class="comment">// output 将数据从 c 拷贝到 out，直到 c 关闭，然后 调用 wg.Done</span></span><br><span class="line">	output := <span class="function"><span class="keyword">func</span><span class="params">(c &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> n := <span class="keyword">range</span> c &#123;</span><br><span class="line">			out &lt;- n</span><br><span class="line">		&#125;</span><br><span class="line">		wg.Done()</span><br><span class="line">	&#125;</span><br><span class="line">	wg.Add(<span class="built_in">len</span>(cs))</span><br><span class="line">	<span class="keyword">for</span> _, c := <span class="keyword">range</span> cs &#123;</span><br><span class="line">		<span class="keyword">go</span> output(c)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 启动一个 goroutine，用于所有 output goroutine结束时，关闭 out </span></span><br><span class="line">	<span class="comment">// 该goroutine 必须在 wg.Add 之后启动</span></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		wg.Wait()</span><br><span class="line">		<span class="built_in">close</span>(out)</span><br><span class="line">	&#125;()</span><br><span class="line">	<span class="keyword">return</span> out</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	in := gen(<span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 启动两个 sq 实例，即两个goroutines处理 channel "in" 的数据</span></span><br><span class="line">	c1 := sq(in)</span><br><span class="line">	c2 := sq(in)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// merge 函数将 channel c1 和 c2 合并到一起，这段代码会消费 merge 的结果</span></span><br><span class="line">	<span class="keyword">for</span> n := <span class="keyword">range</span> merge(c1, c2) &#123;</span><br><span class="line">		fmt.Println(n) <span class="comment">// 打印 4 9, 或 9 4</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="处理中断"><a href="#处理中断" class="headerlink" title="处理中断"></a>处理中断</h2><p>通过传递一个用于控制是否退出的channel来实现和谐的中断，这也是Context的核心所在，为了控制多个channel，只需要<strong>close channel写端</strong>即可唤醒所有的channel读端<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">merge</span><span class="params">(done &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, cs ...&lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span> &lt;-<span class="title">chan</span> <span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> wg sync.WaitGroup</span><br><span class="line">    out := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 为 cs 的每一个 channel 创建一个 goroutine</span></span><br><span class="line">    <span class="comment">// 这个 goroutine 运行 output，它将数据从 c</span></span><br><span class="line">    <span class="comment">// 拷贝到 out，直到 c 关闭，或者 接收到 done</span></span><br><span class="line">    <span class="comment">// 的关闭信号。人啊后调用 wg.Done()</span></span><br><span class="line">    output := <span class="function"><span class="keyword">func</span><span class="params">(c &lt;-<span class="keyword">chan</span> <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">defer</span> wg.Done()</span><br><span class="line">        <span class="keyword">for</span> n := <span class="keyword">range</span> c &#123;</span><br><span class="line">            <span class="keyword">select</span> &#123;</span><br><span class="line">            <span class="keyword">case</span> out &lt;- n:</span><br><span class="line">            <span class="keyword">case</span> &lt;-done:</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>关于中断多个channel，参考<a href="https://chilts.org/2017/06/12/cancelling-multiple-goroutines" target="_blank" rel="noopener">https://chilts.org/2017/06/12/cancelling-multiple-goroutines</a></p>
+<p>channel作为一种同步机制，有必要了解go的内存模型和（非）缓存的同步差异</p>
+<h1 id="go内存模型"><a href="#go内存模型" class="headerlink" title="go内存模型"></a><a href="http://blog.csdn.net/ywh147/article/details/10942603" target="_blank" rel="noopener">go内存模型</a></h1><p>参考<a href="https://golang.org/ref/mem" target="_blank" rel="noopener">https://golang.org/ref/mem</a></p>
+<h2 id="Happens-Before-After"><a href="#Happens-Before-After" class="headerlink" title="Happens Before/After"></a>Happens Before/After</h2><p>Happens-before用来指明Go程序里的内存操作的局部顺序。如果一个内存操作事件e1 happens-before e2，则e2 happens-after e1也成立；如果e1不是happens-before e2,也不是happens-after e2，则e1和e2是并发的。</p>
+<p>下面这段是核心，也很费解</p>
+<blockquote>
+<p>在这个定义之下，如果以下情况满足，则对变量（v）的内存写操作（w）对一个内存读操作（r）来说允许可见的：</p>
+<ol>
+<li>r不在w开始之前发生（可以是之后或并发）；</li>
+<li>w和r之间没有另一个写操作(w’)发生；</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>为了保证对变量（v）的一个特定写操作（w）对一个读操作（r）可见，就需要确保w是r唯一允许的写操作，于是如果以下情况满足，则对变量（v）的内存写操作（w）对一个内存读操作（r）来说保证可见的：</p>
+<ol>
+<li>w在r开始之前发生；</li>
+<li>所有其它对v的写操作只在w之前或r之后发生；</li>
+</ol>
+</blockquote>
+<p>简单地说，对于【<strong>允许可见</strong>】表示有可能读到正确的写数据，但是由于存在读脏数据的可能，（假定读操作是有意义的）所以极端情况，编译器甚至优化掉写代码逻辑</p>
+<p>而【<strong>保证可见</strong>】就确保一定能读到正确的写数据，所以编译器会确保写操作在读操作前执行</p>
+<h2 id="Channel-同步"><a href="#Channel-同步" class="headerlink" title="Channel 同步"></a>Channel 同步</h2><ol>
+<li>对一个Channel的发送操作(send) happens-before 相应Channel的接收操作完成</li>
+<li>关闭一个Channel happens-before 从该Channel接收到最后的返回值0</li>
+<li>不带缓冲的Channel的接收操作（receive） happens-before 相应Channel的发送操作完成</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a = <span class="string">"hello, world"</span></span><br><span class="line">	c &lt;- <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> f()</span><br><span class="line">	&lt;-c</span><br><span class="line">	<span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述代码可以确保输出hello, world，因为【a = “hello, world”】 <strong>happens-before</strong> 【c &lt;- 0】，【print(a)】 <strong>happens-after</strong> 【&lt;-c】， 根据上面的规则1）以及happens-before的可传递性，a = “hello, world” happens-beforeprint(a)。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>, <span class="number">10</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a = <span class="string">"hello, world"</span></span><br><span class="line">	<span class="built_in">close</span>(c) <span class="comment">///////</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> f()</span><br><span class="line">	&lt;-c</span><br><span class="line">	<span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>根据规则2）把c&lt;-0替换成close(c)也能保证输出hello,world，因为关闭操作在&lt;-c接收到0之前发送。<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> c = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">int</span>)</span><br><span class="line"><span class="keyword">var</span> a <span class="keyword">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a = <span class="string">"hello, world"</span></span><br><span class="line">	&lt;-c</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">go</span> f()</span><br><span class="line">	c &lt;- <span class="number">0</span></span><br><span class="line">	<span class="built_in">print</span>(a)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>根据规则3），因为c是不带缓冲的【Channel，a = “hello, world”】 <strong>happens-before</strong> 【&lt;-c】 <strong>happens-before</strong> 【&lt;- 0】 <strong>happens-before</strong> 【print(a)】， </p>
+<p><strong>但如果c是缓冲队列，如定义c = make(chan int, 1), 那结果就不确定了。</strong></p>
+<h1 id="Context-解决的问题"><a href="#Context-解决的问题" class="headerlink" title="Context 解决的问题"></a>Context 解决的问题</h1><p>在并发模型中，经常会开启几个go routine来并发处理任务，这就提出了能够中断（取消）的需求，虽然前面提到的方案都是可行的（实际上Context也就是对上述方案的封装），但抽象得并不好，</p>
+<p>还有一个很大的问题是，如果调用的go routine内部又开启了多个go routine，如何和谐的递归触发中断呢？</p>
+<p>除了中断，另外一个常见的需求是超时，以及传递参数</p>
+<blockquote>
+<p>go routine可以直接传参数，Context valueCtx的优势在于，父routine的value可以继承到子routine（若key不冲突），只需要（以Context作为参数的函数方法，应该把Context作为第一个参数，放在第一位。）</p>
+</blockquote>
+<p>为此，Context提供了几个工具函数<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCancel</span><span class="params">(parent Context)</span> <span class="params">(ctx Context, cancel CancelFunc)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithDeadline</span><span class="params">(parent Context, deadline time.Time)</span> <span class="params">(Context, CancelFunc)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithTimeout</span><span class="params">(parent Context, timeout time.Duration)</span> <span class="params">(Context, CancelFunc)</span></span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithValue</span><span class="params">(parent Context, key, val <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">Context</span></span></span><br></pre></td></tr></table></figure></p>
+<ol>
+<li>WithTimeout对WithDeadline的一个简单转换封装，就是相对时间/绝对实际的差别，它继承自CancelCtx</li>
+<li>CancelCtx是可以取消Context，另一个参数是一个函数，调用函数实际上就是关闭（close）Done的channel。</li>
+<li>Context提供了空Context（emptyCtx），无实际意义，除了做了根Context</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// An emptyCtx is never canceled, has no values, and has no deadline. It is not</span></span><br><span class="line"><span class="comment">// struct&#123;&#125;, since vars of this type must have distinct addresses.</span></span><br><span class="line"><span class="keyword">type</span> emptyCtx <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Deadline</span><span class="params">()</span> <span class="params">(deadline time.Time, ok <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Done</span><span class="params">()</span> &lt;-<span class="title">chan</span> <span class="title">struct</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Err</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*emptyCtx)</span> <span class="title">Value</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *emptyCtx)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> e &#123;</span><br><span class="line">	<span class="keyword">case</span> background:</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"context.Background"</span></span><br><span class="line">	<span class="keyword">case</span> todo:</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"context.TODO"</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"unknown empty Context"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	background = <span class="built_in">new</span>(emptyCtx)</span><br><span class="line">	todo       = <span class="built_in">new</span>(emptyCtx)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>参考<a href="http://www.flysnow.org/2017/05/12/go-in-action-go-context.html" target="_blank" rel="noopener">http://www.flysnow.org/2017/05/12/go-in-action-go-context.html</a></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">				fmt.Println(<span class="string">"监控退出，停止了..."</span>)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				fmt.Println(<span class="string">"goroutine监控中..."</span>)</span><br><span class="line">				time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;(ctx)</span><br><span class="line">	time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line">	fmt.Println(<span class="string">"可以了，通知监控停止"</span>)</span><br><span class="line">	cancel()</span><br><span class="line">	<span class="comment">//为了检测监控过是否停止，如果没有监控输出，就表示停止了</span></span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Context控制多个goroutine<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line">	<span class="string">"context"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">watch</span><span class="params">(ctx context.Context, name <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">			fmt.Println(name,<span class="string">"监控退出，停止了..."</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			fmt.Println(name,<span class="string">"goroutine监控中..."</span>)</span><br><span class="line">			time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line">	<span class="keyword">go</span> watch(ctx,<span class="string">"【监控1】"</span>)</span><br><span class="line">	<span class="keyword">go</span> watch(ctx,<span class="string">"【监控2】"</span>)</span><br><span class="line">	<span class="keyword">go</span> watch(ctx,<span class="string">"【监控3】"</span>)</span><br><span class="line">	time.Sleep(<span class="number">10</span> * time.Second)</span><br><span class="line">	fmt.Println(<span class="string">"可以了，通知监控停止"</span>)</span><br><span class="line">	cancel()</span><br><span class="line">	<span class="comment">//为了检测监控过是否停止，如果没有监控输出，就表示停止了</span></span><br><span class="line">	time.Sleep(<span class="number">5</span> * time.Second)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="CancelCtx"><a href="#CancelCtx" class="headerlink" title="CancelCtx"></a>CancelCtx</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// A cancelCtx can be canceled. When canceled, it also cancels any children</span></span><br><span class="line"><span class="comment">// that implement canceler.</span></span><br><span class="line"><span class="keyword">type</span> cancelCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">	Context</span><br><span class="line"></span><br><span class="line">	done <span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125; <span class="comment">// closed by the first cancel call.</span></span><br><span class="line"></span><br><span class="line">	mu       sync.Mutex</span><br><span class="line">    <span class="comment">// 管理routine树状结构（bool无意义，只因无类似stl set的数据结构）</span></span><br><span class="line">	children <span class="keyword">map</span>[canceler]<span class="keyword">bool</span> <span class="comment">// set to nil by the first cancel call</span></span><br><span class="line">    <span class="comment">// 退出后，标记原因的err</span></span><br><span class="line">	err      error             <span class="comment">// set to non-nil by the first cancel call</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cancelCtx)</span> <span class="title">Done</span><span class="params">()</span> &lt;-<span class="title">chan</span> <span class="title">struct</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="comment">// 用于子Routine监听退出的channel</span></span><br><span class="line">	<span class="keyword">return</span> c.done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cancelCtx)</span> <span class="title">Err</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> c.err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>chilren存的是一个canceler接口<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// A canceler is a context type that can be canceled directly. The</span></span><br><span class="line"><span class="comment">// implementations are *cancelCtx and *timerCtx.</span></span><br><span class="line"><span class="keyword">type</span> canceler <span class="keyword">interface</span> &#123;</span><br><span class="line">    <span class="comment">// cancel确保可以递归的cancel子routine</span></span><br><span class="line">	cancel(removeFromParent <span class="keyword">bool</span>, err error)</span><br><span class="line">    <span class="comment">// 参见propagateCancel</span></span><br><span class="line">	Done() &lt;-<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="关闭接口"><a href="#关闭接口" class="headerlink" title="关闭接口"></a>关闭接口</h3><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithCancel</span><span class="params">(parent Context)</span> <span class="params">(ctx Context, cancel CancelFunc)</span></span> &#123;</span><br><span class="line">	c := newCancelCtx(parent)</span><br><span class="line">	propagateCancel(parent, &amp;c)</span><br><span class="line">    <span class="comment">// 返回的第二个参数是调用了cancel函数的函数</span></span><br><span class="line">	<span class="keyword">return</span> &amp;c, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.cancel(<span class="literal">true</span>, Canceled) &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// cancel closes c.done, cancels each of c's children, and, if</span></span><br><span class="line"><span class="comment">// removeFromParent is true, removes c from its parent's children.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *cancelCtx)</span> <span class="title">cancel</span><span class="params">(removeFromParent <span class="keyword">bool</span>, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"context: internal error: missing cancel error"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">    <span class="comment">// 设置了err就表示已经cancel过，不能重复cancel</span></span><br><span class="line">	<span class="keyword">if</span> c.err != <span class="literal">nil</span> &#123;</span><br><span class="line">		c.mu.Unlock()</span><br><span class="line">		<span class="keyword">return</span> <span class="comment">// already canceled</span></span><br><span class="line">	&#125;</span><br><span class="line">	c.err = err</span><br><span class="line">    <span class="comment">// 关闭channel，唤醒所有监听的子routine</span></span><br><span class="line">	<span class="built_in">close</span>(c.done)</span><br><span class="line">    <span class="comment">// 递归cancel子 routine</span></span><br><span class="line">	<span class="keyword">for</span> child := <span class="keyword">range</span> c.children &#123;</span><br><span class="line">		<span class="comment">// <span class="doctag">NOTE:</span> acquiring the child's lock while holding parent's lock.</span></span><br><span class="line">		child.cancel(<span class="literal">false</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	c.children = <span class="literal">nil</span></span><br><span class="line">	c.mu.Unlock()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 这里作为一个bool参数，是因为并非每种ctx都需要removeChild。比如valueCtx就不需要，它只能寄居在另外两种里面</span></span><br><span class="line">	<span class="keyword">if</span> removeFromParent &#123;</span><br><span class="line">		removeChild(c.Context, c)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正因为如此，所以提供了工具函数，不停地网上遍历，找到最近的一个具有chilren的context<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parentCancelCtx</span><span class="params">(parent Context)</span> <span class="params">(*cancelCtx, <span class="keyword">bool</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">switch</span> c := parent.(<span class="keyword">type</span>) &#123;</span><br><span class="line">		<span class="keyword">case</span> *cancelCtx:</span><br><span class="line">			<span class="keyword">return</span> c, <span class="literal">true</span></span><br><span class="line">		<span class="keyword">case</span> *timerCtx:  <span class="comment">// 人家继承自cancelCtx</span></span><br><span class="line">			<span class="keyword">return</span> &amp;c.cancelCtx, <span class="literal">true</span></span><br><span class="line">		<span class="keyword">case</span> *valueCtx:</span><br><span class="line">			parent = c.Context</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, <span class="literal">false</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>从父context中删除就使用了这个工具函数，也就是说他并不是他parent的child<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// removeChild removes a context from its parent.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">removeChild</span><span class="params">(parent Context, child canceler)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 这里的p并不一定是他的直接parent</span></span><br><span class="line">	p, ok := parentCancelCtx(parent)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> p.children != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">delete</span>(p.children, child)</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="构建树"><a href="#构建树" class="headerlink" title="构建树"></a>构建树</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">// propagateCancel arranges <span class="keyword">for</span> child to be canceled when parent is.</span><br><span class="line">func propagateCancel(parent Context, child canceler) &#123;</span><br><span class="line">    // parent无可退出，那自认也就不能包含什么chilren</span><br><span class="line">	<span class="keyword">if</span> parent.Done() == nil &#123;</span><br><span class="line">		<span class="built_in">return</span> // parent is never canceled</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> p, ok := parentCancelCtx(parent); ok &#123;</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		<span class="keyword">if</span> p.err != nil &#123;</span><br><span class="line">            // parent已经cancel，立即cancel child</span><br><span class="line">			// parent has already been canceled</span><br><span class="line">			child.cancel(<span class="literal">false</span>, p.err)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        	//  构建context树</span><br><span class="line">			<span class="keyword">if</span> p.children == nil &#123;</span><br><span class="line">				p.children = make(map[canceler]bool)</span><br><span class="line">			&#125;</span><br><span class="line">			p.children[child] = <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    	// 按理不会走到这里来，既然parent.Done()不为空，那么肯定实现了cancel/timerCtx</span><br><span class="line">        // 然后到为了确保自行扩展导致的异常情况？？？？？</span><br><span class="line">		go <span class="function"><span class="title">func</span></span>() &#123;</span><br><span class="line">			select &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-parent.Done():</span><br><span class="line">				child.cancel(<span class="literal">false</span>, parent.Err())</span><br><span class="line">			<span class="keyword">case</span> &lt;-child.Done():</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="timerCtx"><a href="#timerCtx" class="headerlink" title="timerCtx"></a>timerCtx</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithDeadline</span><span class="params">(parent Context, deadline time.Time)</span> <span class="params">(Context, CancelFunc)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 如果当前的过期时间比parent还后，那么就不需要过期了，简单地做个cancelCtx就行了</span></span><br><span class="line">	<span class="keyword">if</span> cur, ok := parent.Deadline(); ok &amp;&amp; cur.Before(deadline) &#123;</span><br><span class="line">		<span class="comment">// The current deadline is already sooner than the new one.</span></span><br><span class="line">		<span class="keyword">return</span> WithCancel(parent)</span><br><span class="line">	&#125;</span><br><span class="line">	c := &amp;timerCtx&#123;</span><br><span class="line">		cancelCtx: newCancelCtx(parent),</span><br><span class="line">		deadline:  deadline,</span><br><span class="line">	&#125;</span><br><span class="line">	propagateCancel(parent, c)</span><br><span class="line">	d := deadline.Sub(time.Now())</span><br><span class="line">	<span class="keyword">if</span> d &lt;= <span class="number">0</span> &#123;</span><br><span class="line">        <span class="comment">// 立即执行</span></span><br><span class="line">		c.cancel(<span class="literal">true</span>, DeadlineExceeded) <span class="comment">// deadline has already passed</span></span><br><span class="line">		<span class="keyword">return</span> c, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.cancel(<span class="literal">true</span>, Canceled) &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	c.mu.Lock()</span><br><span class="line">	<span class="keyword">defer</span> c.mu.Unlock()</span><br><span class="line">	<span class="keyword">if</span> c.err == <span class="literal">nil</span> &#123;</span><br><span class="line">         <span class="comment">// 回调执行</span></span><br><span class="line">		c.timer = time.AfterFunc(d, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			c.cancel(<span class="literal">true</span>, DeadlineExceeded)</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> c, <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; c.cancel(<span class="literal">true</span>, Canceled) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="valueCtx"><a href="#valueCtx" class="headerlink" title="valueCtx"></a>valueCtx</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// A valueCtx carries a key-value pair. It implements Value for that key and</span></span><br><span class="line"><span class="comment">// delegates all other calls to the embedded Context.</span></span><br><span class="line"><span class="keyword">type</span> valueCtx <span class="keyword">struct</span> &#123;</span><br><span class="line">	Context</span><br><span class="line">	key, val <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *valueCtx)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Sprintf(<span class="string">"%v.WithValue(%#v, %#v)"</span>, c.Context, c.key, c.val)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *valueCtx)</span> <span class="title">Value</span><span class="params">(key <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">interface</span></span>&#123;&#125; &#123;</span><br><span class="line">	<span class="keyword">if</span> c.key == key &#123;</span><br><span class="line">		<span class="keyword">return</span> c.val</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 往上递归，实现累加传递参数</span></span><br><span class="line">	<span class="keyword">return</span> c.Context.Value(key)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/06/23/golang-context/" data-id="ckdbgbyw9002943potdbr5m3j" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/06/23/golang-context/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/06/22/godoc/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Golang文档</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/06/28/golang-httptest/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Golang Http调试</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/06/23/golang-context/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

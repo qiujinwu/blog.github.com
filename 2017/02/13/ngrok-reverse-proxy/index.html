@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>ngrok反向代理局域网开发机 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="主机和域名首先需要准备有固定外网IP的主机和域名，假设使用域名test.qiujinwu.com作为提供服务的域名，那么先到dns解析方添加【A记录】，注意包含【test】和【*.test】下面是dnspod的记录 对于主机，需要放开一个对内和对外的端口，对内默认是【TCP/4443】，对外根据需要配置，例如微信就必须是http80或者https443。 编译Ngrok下载代码 git clone">
+<meta name="keywords" content="proxy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ngrok反向代理局域网开发机">
+<meta property="og:url" content="http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="主机和域名首先需要准备有固定外网IP的主机和域名，假设使用域名test.qiujinwu.com作为提供服务的域名，那么先到dns解析方添加【A记录】，注意包含【test】和【*.test】下面是dnspod的记录 对于主机，需要放开一个对内和对外的端口，对内默认是【TCP/4443】，对外根据需要配置，例如微信就必须是http80或者https443。 编译Ngrok下载代码 git clone">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ngrok反向代理局域网开发机">
+<meta name="twitter:description" content="主机和域名首先需要准备有固定外网IP的主机和域名，假设使用域名test.qiujinwu.com作为提供服务的域名，那么先到dns解析方添加【A记录】，注意包含【test】和【*.test】下面是dnspod的记录 对于主机，需要放开一个对内和对外的端口，对内默认是【TCP/4443】，对外根据需要配置，例如微信就必须是http80或者https443。 编译Ngrok下载代码 git clone">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-ngrok-reverse-proxy" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      ngrok反向代理局域网开发机
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/ngrok-reverse-proxy/" class="article-date"><time datetime="2017-02-13T10:19:19.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a> / <a class="article-category-link" href="/categories/运营运维/代理/">代理</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="主机和域名"><a href="#主机和域名" class="headerlink" title="主机和域名"></a>主机和域名</h1><p>首先需要准备有固定外网IP的主机和域名，假设使用域名<strong>test.qiujinwu.com</strong>作为提供服务的域名，那么先到dns解析方添加<strong>【A记录】</strong>，注意包含<strong>【test】</strong>和<strong>【*.test】</strong>下面是dnspod的记录</p>
+<p>对于主机，需要放开一个对内和对外的端口，对内默认是【TCP/4443】，对外根据需要配置，例如微信就必须是http80或者https443。</p>
+<h1 id="编译Ngrok"><a href="#编译Ngrok" class="headerlink" title="编译Ngrok"></a>编译Ngrok</h1><p>下载代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/inconshreveable/ngrok.git</span><br></pre></td></tr></table></figure>
+<p>其他一些地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/tutumcloud/ngrok.git</span><br></pre></td></tr></table></figure>
+<h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential golang mercurial git</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，ubuntu14.4默认的golang版本是1.2.1，这会导致下面的错误</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ubuntu@VM-61-124-ubuntu:~$ go version</span><br><span class="line">go version go1.2.1 linux/amd64</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">src/github.com/gorilla/websocket/client.go:361: unknown tls.Config field &apos;GetCertificate&apos; in struct literal</span><br><span class="line">src/github.com/gorilla/websocket/client.go:370: unknown tls.Config field &apos;ClientSessionCache&apos; in struct literal</span><br><span class="line">src/github.com/gorilla/websocket/client.go:373: unknown tls.Config field &apos;CurvePreferences&apos; in struct literal</span><br><span class="line">make: *** [client] Error 2</span><br></pre></td></tr></table></figure>
+<p>所以需要将golang升级到1.7。我个人是直接下载【<a href="https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz" target="_blank" rel="noopener">https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz</a>】，然后<br>【tar zxvf go1.7.linux-amd64.tar.gz -C /usr/local】，并且【find /usr -name “go*”】找到匹配的路径，全部都覆盖了一遍。，我在ubuntu 16.04 go版本比较新，没有这些鬼问题。</p>
+<p>最终的版本如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@kingqiu:~/proxy/ngrok.bak$ go version</span><br><span class="line">go version go1.7 linux/amd64</span><br></pre></td></tr></table></figure>
+<h1 id="编译代码"><a href="#编译代码" class="headerlink" title="编译代码"></a>编译代码</h1><p>运行以下命令，注意把域名改掉</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl genrsa -out rootCA.key 2048</span><br><span class="line">openssl req -x509 -new -nodes -key rootCA.key -subj <span class="string">"/CN=test.qiujinwu.com"</span> -days 5000 -out rootCA.pem</span><br><span class="line">openssl genrsa -out device.key 2048</span><br><span class="line">openssl req -new -key device.key -subj <span class="string">"/CN=test.qiujinwu.com"</span> -out device.csr</span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> device.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out device.crt -days 5000</span><br><span class="line">cp rootCA.pem assets/client/tls/ngrokroot.crt</span><br><span class="line">cp device.crt assets/server/tls/snakeoil.crt</span><br><span class="line">cp device.key assets/server/tls/snakeoil.key</span><br></pre></td></tr></table></figure>
+<p>然后（这里必须要sudo，不然某个地方提示没权限）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo make release-server release-client</span><br></pre></td></tr></table></figure>
+<p>若成功，则会在bin目录下生成客户端和服务端</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@kingqiu:~/proxy/ngrok$ ls bin/</span><br><span class="line">go-bindata  ngrok  ngrokd</span><br></pre></td></tr></table></figure>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>将ngrokd拷贝到外网的服务器，运行以下命令</p>
+<p>注意domian必须和证书保持完全一致，后面两个端口分别是http、https的端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ./bin/ngrokd -domain=<span class="string">"test.qiujinwu.com"</span> -httpAddr=<span class="string">":80"</span> -httpsAddr=<span class="string">":9082"</span> -tunnelAddr=<span class="string">":4443"</span></span><br></pre></td></tr></table></figure>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>新建ngrok.cfg作为客户端的配置，用来定义服务器信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server_addr: test.qiujinwu.com:4443</span><br><span class="line">trust_host_root_certs: <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>运行命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok -subdomain 【子域名qjw】-proto=http -config=./ngrok.cfg 【端口5000】</span><br></pre></td></tr></table></figure>
+<p>这条命令就是把本地的5000端口代理到qjw.test.qiujinwu.com上去了。</p>
+<h1 id="特殊场景"><a href="#特殊场景" class="headerlink" title="特殊场景"></a>特殊场景</h1><p>考虑一些特殊的需求，例如微信必须要求是80端口，但是服务器已经有其他程序占用了该端口，或者同时运行两个ngrok程序，但又必须分享80端口。这时就需要依赖nginx反向代理来支持</p>
+<p>首先，反向代理有一个问题，如下，客户端代理链接包含了ngrok服务器绑定的本地端口（也就是nginx代理到的端口），这时直接访问80端口，ngrok服务器会提示找不到隧道，需要对nginx代理出来的http做一些处理，见下面的分析。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ngrok (Ctrl+C to quit)</span><br><span class="line"></span><br><span class="line">Tunnel Status online </span><br><span class="line">Version 1.7/1.7 </span><br><span class="line">Forwarding http://qjw.test.qiujinwu.com:8001 -&gt; 127.0.0.1:8188 </span><br><span class="line">Web Interface 127.0.0.1:4040 </span><br><span class="line"><span class="comment"># Conn 0</span></span><br><span class="line">Avg Conn Time 0.00ms</span><br></pre></td></tr></table></figure>
+<p>这种情况下需要在nginx转发配置做一些小改动</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">upstream</span> ngrok1 &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> <span class="regexp">*.test.qiujinwu.com</span>;</span><br><span class="line">	<span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Host  <span class="variable">$http_host</span>:<span class="number">8001</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Connection <span class="string">""</span>;</span><br><span class="line">		<span class="attribute">proxy_pass</span>      http://ngrok1 ;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="attribute">upstream</span> ngrok &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8002</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> <span class="regexp">*.test</span>2.qiujinwu.com;</span><br><span class="line">	<span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Host  <span class="variable">$http_host</span>:<span class="number">8002</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Connection <span class="string">""</span>;</span><br><span class="line">		<span class="attribute">proxy_pass</span>      http://ngrok ;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ngrokd运行，分别通过nginx代理到8001和8002端口，内网机器则通过4443和4444来连接</p>
+<h2 id="去除端口"><a href="#去除端口" class="headerlink" title="去除端口"></a>去除端口</h2><p>代理到本地之后，http的请求就变成了<a href="http://www.domain.com:8002/path#path，为了保持一致，在本地最好用nginx将这个8002去掉" target="_blank" rel="noopener">http://www.domain.com:8002/path#path，为了保持一致，在本地最好用nginx将这个8002去掉</a><br><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8088</span>;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="comment">#include proxy_params;</span></span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host  <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://127.0.0.1:5000;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">&#123;</span><br><span class="line">./ngrokd -domain=<span class="string">"test.qiujinwu.com"</span> -httpAddr=<span class="string">":8001"</span> -tunnelAddr=<span class="string">":4443"</span> -httpsAddr=<span class="string">":9082"</span></span><br><span class="line">&#125;&amp;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">./ngrokd_qiye -domain=<span class="string">"test2.qiujinwu.com"</span> -httpAddr=<span class="string">":8002"</span> -tunnelAddr=<span class="string">":4444"</span> -httpsAddr=<span class="string">":9083"</span></span><br><span class="line">&#125;&amp;</span><br></pre></td></tr></table></figure>
+<h2 id="其他做法"><a href="#其他做法" class="headerlink" title="其他做法"></a>其他做法</h2><ol>
+<li>用docker欺骗ngrok服务器</li>
+<li>若需要代理连个服务，并不需要架设连个ngrok服务，跑两个客户端，配置两个不同的<strong>subdomain</strong>即可。</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://hocg.in/2016/08/31/Ngrok%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_blank" rel="noopener">https://hocg.in/2016/08/31/Ngrok%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</a></li>
+<li><a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="noopener">https://imququ.com/post/self-hosted-ngrokd.html</a></li>
+<li><a href="https://aotu.io/notes/2016/02/19/ngrok/" target="_blank" rel="noopener">https://aotu.io/notes/2016/02/19/ngrok/</a></li>
+<li><a href="https://fengqi.me/unix/409.html" target="_blank" rel="noopener">https://fengqi.me/unix/409.html</a></li>
+<li><a href="http://blog.csdn.net/xs910115/article/details/50096757" target="_blank" rel="noopener">http://blog.csdn.net/xs910115/article/details/50096757</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/" data-id="ckdbgbyx5003y43po0k4cvx1n" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/proxy/">proxy</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/02/13/great-wall-proxy/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">翻墙的一些工具</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/02/13/jsonschema-validate/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">使用jsonschema作参数校验</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

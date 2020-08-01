@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Sentry | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="安装Sentry推荐用docker来安装，参考https://hub.docker.com/_/sentry/docker pull sentrydocker pull redisdocker pull postgres 运行redisdocker run -d --name sentry-redis redis 运行progressdocker run -d --name sentry-post">
+<meta name="keywords" content="sentry">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sentry">
+<meta property="og:url" content="http://blog.kimq.cn/2017/03/10/sentry/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="安装Sentry推荐用docker来安装，参考https://hub.docker.com/_/sentry/docker pull sentrydocker pull redisdocker pull postgres 运行redisdocker run -d --name sentry-redis redis 运行progressdocker run -d --name sentry-post">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Sentry">
+<meta name="twitter:description" content="安装Sentry推荐用docker来安装，参考https://hub.docker.com/_/sentry/docker pull sentrydocker pull redisdocker pull postgres 运行redisdocker run -d --name sentry-redis redis 运行progressdocker run -d --name sentry-post">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-sentry" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Sentry
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/10/sentry/" class="article-date"><time datetime="2017-03-10T01:43:34.000Z" itemprop="datePublished">2017-03-10</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="安装Sentry"><a href="#安装Sentry" class="headerlink" title="安装Sentry"></a>安装Sentry</h1><p>推荐用docker来安装，参考<strong><a href="https://hub.docker.com/_/sentry/" target="_blank" rel="noopener">https://hub.docker.com/_/sentry/</a></strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker pull sentry</span><br><span class="line">docker pull redis</span><br><span class="line">docker pull postgres</span><br></pre></td></tr></table></figure></p>
+<p>运行redis<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --name sentry-redis redis</span><br></pre></td></tr></table></figure></p>
+<p>运行progress<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">docker run -d --name sentry-postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_USER=sentry postgres</span><br></pre></td></tr></table></figure></p>
+<p>使用sentry命令行生成一个密钥，用于在sentry容器之间授权<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~$ docker run --rm sentry config generate-secret-key</span><br><span class="line"><span class="built_in">fc</span>=k^xur0()hb7cqi81z@&amp;b!d9cy6l_-j<span class="comment">#&amp;36)kk28u^%ldx*l</span></span><br></pre></td></tr></table></figure></p>
+<p>如果数据库是第一次使用（新的），用下面的命令创建表结构（初始化）<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --rm -e SENTRY_SECRET_KEY=<span class="string">'&lt;secret-key&gt;'</span> \</span><br><span class="line">	--link sentry-postgres:postgres --link sentry-redis:redis sentry upgrade</span><br></pre></td></tr></table></figure></p>
+<p>在这个过程中会提示创建用户<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Would you like to create a user account now? [Y/n]: Y</span><br><span class="line">Email: email@gmail.com</span><br><span class="line">Password:</span><br><span class="line">Repeat <span class="keyword">for</span> confirmation: </span><br><span class="line">Should this user be a superuser? [y/N]: Y</span><br><span class="line">User created: email@gmail.com</span><br></pre></td></tr></table></figure></p>
+<p>运行服务器（Web）</p>
+<p>注意<strong>-p 8080:9000</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --name my-sentry -e SENTRY_SECRET_KEY=<span class="string">'&lt;secret-key&gt;'</span> \</span><br><span class="line">	-p 8080:9000 \</span><br><span class="line">	--link sentry-redis:redis --link sentry-postgres:postgres sentry</span><br></pre></td></tr></table></figure></p>
+<p>sentry还需要 celery beat 和 celery workers干活，所以再启动两个容器<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d --name sentry-cron -e SENTRY_SECRET_KEY=<span class="string">'&lt;secret-key&gt;'</span> \</span><br><span class="line">	--link sentry-postgres:postgres --link sentry-redis:redis sentry run cron</span><br><span class="line">docker run -d --name sentry-worker-1 -e SENTRY_SECRET_KEY=<span class="string">'&lt;secret-key&gt;'</span>  \</span><br><span class="line">	--link sentry-postgres:postgres --link sentry-redis:redis sentry run worker</span><br></pre></td></tr></table></figure></p>
+<h1 id="Go-Client"><a href="#Go-Client" class="headerlink" title="Go Client"></a>Go Client</h1><p>sentry client for go <strong><a href="https://docs.sentry.io/clients/go/" target="_blank" rel="noopener">https://docs.sentry.io/clients/go/</a></strong>，只需要简单的封裝就可以适配gin<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"github.com/getsentry/raven-go"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"github.com/gin-gonic/gin"</span></span><br><span class="line">	<span class="string">"runtime/debug"</span></span><br><span class="line">	<span class="string">"errors"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Middleware</span><span class="params">(dsn <span class="keyword">string</span>)</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> dsn == <span class="string">""</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"Error: No DSN detected!\n"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	raven.SetDSN(dsn)</span><br><span class="line">	<span class="keyword">var</span> client = raven.DefaultClient</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">				flags := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;</span><br><span class="line">					<span class="string">"endpoint"</span>: c.Request.RequestURI,</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				debug.PrintStack()</span><br><span class="line">				rvalStr := fmt.Sprint(err)</span><br><span class="line">				packet := raven.NewPacket(rvalStr, raven.NewException(</span><br><span class="line">					errors.New(rvalStr),</span><br><span class="line">					raven.NewStacktrace(<span class="number">2</span>, <span class="number">3</span>, <span class="literal">nil</span>)),</span><br><span class="line">				)</span><br><span class="line">				client.Capture(packet, flags)</span><br><span class="line">				c.Writer.WriteHeader(http.StatusInternalServerError)</span><br><span class="line"></span><br><span class="line">				<span class="comment">//const size = 1 &lt;&lt; 12</span></span><br><span class="line">				<span class="comment">//buf := make([]byte, size)</span></span><br><span class="line">				<span class="comment">//n := runtime.Stack(buf, false)</span></span><br><span class="line">				<span class="comment">//client.CaptureMessage(fmt.Sprintf("%v\nStacktrace:\n%s", err, buf[:n]),nil)</span></span><br><span class="line">				<span class="comment">//c.Writer.WriteHeader(http.StatusInternalServerError)</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>参考</p>
+<ol>
+<li><a href="https://github.com/dz0ny/martini-sentry" target="_blank" rel="noopener">https://github.com/dz0ny/martini-sentry</a></li>
+<li><a href="https://github.com/gin-gonic/gin-sentry" target="_blank" rel="noopener">https://github.com/gin-gonic/gin-sentry</a></li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"github.com/gin-gonic/gin"</span></span><br><span class="line">	<span class="string">"github.com/getsentry/raven-go"</span></span><br><span class="line">	<span class="string">"errors"</span></span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line"></span><br><span class="line">	r.Use(Middleware(<span class="string">"http://5138362834d22ecbd@localhost:8080/2"</span>))</span><br><span class="line">	<span class="comment">// r.Use(gin.Recovery())</span></span><br><span class="line"></span><br><span class="line">	r.GET(<span class="string">"/ping"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		raven.CaptureErrorAndWait(errors.New(<span class="string">"this is a string error"</span>), <span class="literal">nil</span>)</span><br><span class="line">		<span class="built_in">panic</span>(fmt.Sprintf(<span class="string">"this is a panic"</span>))</span><br><span class="line">		c.JSON(<span class="number">200</span>, gin.H&#123;</span><br><span class="line">			<span class="string">"message"</span>: <span class="string">"pong"</span>,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">	r.Run(<span class="string">":12345"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Python-client"><a href="#Python-client" class="headerlink" title="Python client"></a>Python client</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> raven.contrib.flask <span class="keyword">import</span> Sentry</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, session, redirect, url_for, escape, request</span><br><span class="line"><span class="keyword">from</span> flask_script <span class="keyword">import</span> Manager</span><br><span class="line"></span><br><span class="line">sentry = Sentry()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">create_app</span><span class="params">()</span>:</span></span><br><span class="line">    app = Flask(__name__)</span><br><span class="line">    sentry.init_app(app, dsn=<span class="string">'http://5138362834d22ecbd@localhost:8080/2'</span>)</span><br><span class="line">    <span class="keyword">return</span> app</span><br><span class="line"></span><br><span class="line">app = create_app()</span><br><span class="line">sentry.captureMessage(<span class="string">'hello, world!.shit'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="Pip修改默认源"><a href="#Pip修改默认源" class="headerlink" title="Pip修改默认源"></a>Pip修改默认源</h2><p>Pip默认的源速度很慢，而且时而访问不了，可以修改到国内的源<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install -i http://pypi.douban.com/simple/ \</span><br><span class="line">    --trusted-host pypi.douban.com itsdangerous</span><br></pre></td></tr></table></figure></p>
+<p>其他比如<a href="http://mirrors.aliyun.com/pypi/simple/" target="_blank" rel="noopener">http://mirrors.aliyun.com/pypi/simple/</a></p>
+<h3 id="设置全局默认"><a href="#设置全局默认" class="headerlink" title="设置全局默认"></a>设置全局默认</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@KingUbuntu64:~$ mkdir -p ~/.config/pip/</span><br><span class="line">king@KingUbuntu64:~$ vi ~/.config/pip/pip.conf</span><br></pre></td></tr></table></figure>
+<p>如果是Windows，路径是【%APPDATA%\pip\pip.ini】<br><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[global]</span></span><br><span class="line"><span class="attr">timeout</span> = <span class="number">60</span></span><br><span class="line"><span class="attr">index-url</span> = http://pypi.douban.com/simple</span><br><span class="line"><span class="section">[install]</span></span><br><span class="line"><span class="attr">trusted-host</span>=pypi.douban.com</span><br></pre></td></tr></table></figure></p>
+<h1 id="不用docker"><a href="#不用docker" class="headerlink" title="不用docker"></a>不用docker</h1><p>先准备redis，mysql或者postgres</p>
+<h2 id="安装sentry"><a href="#安装sentry" class="headerlink" title="安装sentry"></a>安装sentry</h2><p>apt-get 安装的依赖可能有所差异</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt-get install libpq-dev libffi-dev python-mysqldb libmysqlclient-dev \</span><br><span class="line">	libssl-dev libjpeg9 libjpeg9-dev libpng16-16 libpng3 libpng16-dev</span><br><span class="line">pip install sentry pymysql MySQL-python</span><br></pre></td></tr></table></figure>
+<h2 id="生成初始化配置"><a href="#生成初始化配置" class="headerlink" title="生成初始化配置"></a>生成初始化配置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@kingqiu:~/proj$ sentry init .</span><br><span class="line">(venv) king@kingqiu:~/proj$ ls</span><br><span class="line">config.yml  sentry.conf.py</span><br></pre></td></tr></table></figure>
+<h2 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h2><h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>默认是postgres<br><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'sentry.db.postgres'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: <span class="string">'sentry'</span>,</span><br><span class="line">        <span class="string">'USER'</span>: <span class="string">'postgres'</span>,</span><br><span class="line">        <span class="string">'PASSWORD'</span>: <span class="string">''</span>,</span><br><span class="line">        <span class="string">'HOST'</span>: <span class="string">''</span>,</span><br><span class="line">        <span class="string">'PORT'</span>: <span class="string">''</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>改成mysql，其中的【NAME】表示数据库名，需要事先新建该数据库<br><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">DATABASES = &#123;</span><br><span class="line">    <span class="string">'default'</span>: &#123;</span><br><span class="line">        # You can swap out the engine for MySQL easily by changing this value</span><br><span class="line">        # to ``django.db.backends.mysql`` or to PostgreSQL with</span><br><span class="line">        # ``django.db.backends.postgresql_psycopg2``</span><br><span class="line">        <span class="string">'ENGINE'</span>: <span class="string">'django.db.backends.mysql'</span>,</span><br><span class="line">        <span class="string">'NAME'</span>: <span class="string">'sentry'</span>,</span><br><span class="line">        <span class="string">'USER'</span>: <span class="string">'username'</span>,</span><br><span class="line">        <span class="string">'PASSWORD'</span>: <span class="string">'password'</span>,</span><br><span class="line">        <span class="string">'PORT'</span>: <span class="string">'3306'</span>,</span><br><span class="line">        <span class="string">'HOST'</span>: <span class="string">'localhost'</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="comment"># See https://docs.sentry.io/on-premise/server/queue/ for more</span></span><br><span class="line"><span class="comment"># information on configuring your queue broker and workers. Sentry relies</span></span><br><span class="line"><span class="comment"># on a Python framework called Celery to manage queues.</span></span><br><span class="line"></span><br><span class="line"><span class="attr">BROKER_URL</span> = <span class="string">'redis://localhost:6379'</span></span><br></pre></td></tr></table></figure>
+<h3 id="IP-端口"><a href="#IP-端口" class="headerlink" title="IP/端口"></a>IP/端口</h3><figure class="highlight"><table><tr><td class="code"><pre><span class="line"><span class="attr">SENTRY_WEB_HOST</span> = <span class="string">'0.0.0.0'</span></span><br><span class="line"><span class="attr">SENTRY_WEB_PORT</span> = <span class="number">9000</span></span><br><span class="line"><span class="attr">SENTRY_WEB_OPTIONS</span> = &#123;</span><br><span class="line">    <span class="comment"># 'workers': 3,  # the number of web workers</span></span><br><span class="line">    <span class="comment"># 'protocol': 'uwsgi',  # Enable uwsgi protocol instead of http</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h3><p>创建表神马的，config后面的.表示路径，自行修改。</p>
+<p>在这个过程中，可以一次性创建超级用户<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sentry --config=. upgrade</span><br></pre></td></tr></table></figure></p>
+<h3 id="创建新用户"><a href="#创建新用户" class="headerlink" title="创建新用户"></a>创建新用户</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sentry --config=. createsuperuser</span><br><span class="line">sentry --config=. createuser</span><br></pre></td></tr></table></figure>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><h4 id="启动Web服务"><a href="#启动Web服务" class="headerlink" title="启动Web服务"></a>启动Web服务</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sentry --config=. start</span><br></pre></td></tr></table></figure>
+<h4 id="启动Wokers"><a href="#启动Wokers" class="headerlink" title="启动Wokers"></a>启动Wokers</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sentry --config=. celery worker -B</span><br></pre></td></tr></table></figure>
+<h1 id="使用OpenID登陆"><a href="#使用OpenID登陆" class="headerlink" title="使用OpenID登陆"></a>使用OpenID登陆</h1><p>在upgrade时，注册一个owner权限的用户，并且用此账户登陆</p>
+<p>首次登陆会弹出<code>Welcome to Sentry</code>，其中<code>Root URL</code>会用作oauth回调路径，所以慎重填写</p>
+<p>使用通用的OpenID登陆依赖一个<a href="https://github.com/TableflippersAnonymous/sentry-auth-openid" target="_blank" rel="noopener">sentry-auth-openid</a>插件。</p>
+<p>直接安装的sentry，按照指引即可，若使用docker，可以先调试确认</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo docker run --rm -it --name my-sentry -e SENTRY_SECRET_KEY=<span class="string">'$KEY'</span> \</span><br><span class="line">	-p 9000:9000 \</span><br><span class="line">	--link sentry-redis:redis --link sentry-postgres:postgres sentry /bin/bash</span><br><span class="line"><span class="comment"># 安装插件</span></span><br><span class="line">pip install https://github.com/TableflippersAnonymous/sentry-auth-openid/archive/master.zip</span><br><span class="line"><span class="comment"># 安装vi以便编辑配置</span></span><br><span class="line">apt update &amp;&amp; apt install vim -y</span><br></pre></td></tr></table></figure>
+<p>vi /etc/sentry/sentry.conf.py 添加以下内容<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">OPENID_AUTHORIZE_URL = <span class="string">"http://server:5556/dex/auth"</span></span><br><span class="line">OPENID_TOKEN_URL = <span class="string">"http://server:5556/dex/token"</span></span><br><span class="line">OPENID_CLIENT_ID = <span class="string">"example-app"</span></span><br><span class="line">OPENID_CLIENT_SECRET = <span class="string">"ZXhhbXBsZS1hcHAtc2VjcmV0"</span></span><br></pre></td></tr></table></figure></p>
+<p>openid服务器，可以用<a href="https://github.com/coreos/dex" target="_blank" rel="noopener">https://github.com/coreos/dex</a> 测试用着</p>
+<h2 id="启用"><a href="#启用" class="headerlink" title="启用"></a>启用</h2><p>登陆之后，左边菜单<code>MANAGE -&gt; Auth</code>，完整的URL <a href="http://localhost:9000/organizations/sentry/auth/" target="_blank" rel="noopener">http://localhost:9000/organizations/sentry/auth/</a></p>
+<p>然后点击<code>OPENID</code> 按钮会跳转到oidc服务器进行验证，验证OK保存，下次就自动开启了openid登陆</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/10/sentry/" data-id="ckdbgbyxp005243po649wb6e2" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/10/sentry/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sentry/">sentry</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/03/09/noexport-json-xml-gob/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Struct未导出变量序列化时的坑</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/03/16/python-ws/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Flask 处理websocket</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/03/10/sentry/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

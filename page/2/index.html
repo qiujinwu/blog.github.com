@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="随笔">
+<meta property="og:type" content="website">
+<meta property="og:title" content="个人笔记">
+<meta property="og:url" content="http://blog.kimq.cn/page/2/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="随笔">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="个人笔记">
+<meta name="twitter:description" content="随笔">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          
+  
+    <article id="post-goerror" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/12/goerror/">errors库</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/12/goerror/" class="article-date"><time datetime="2020-01-12T16:00:00.000Z" itemprop="datePublished">2020-01-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Pkg-errors"><a href="#Pkg-errors" class="headerlink" title="Pkg/errors"></a>Pkg/errors</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/pkg/errors"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Errorf(<span class="string">"oring error"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func1</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := Func(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.WithMessage(err, <span class="string">"Func1"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func2</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	err := Func1()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.Wrap(err, <span class="string">"Func2"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := Func2(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Print(err)</span><br><span class="line">		fmt.Println(<span class="string">"\n------\n"</span>)</span><br><span class="line">		fmt.Printf(<span class="string">"%+v"</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>New(message string)</code> 生成的错误，自带调用堆栈信息 // <code>errors.New</code>/<code>fmt.Errorf</code></li>
+<li><code>WithMessage(err error, message string)</code>  只附加新的信息</li>
+<li><code>func WithStack(err error) error</code> //只附加调用堆栈信息</li>
+<li><code>func Wrap(err error, message string) error</code> //同时附加堆栈和信息</li>
+</ul>
+<p><code>func Cause(err error) error</code> 获取原始错误</p>
+<h2 id="Print"><a href="#Print" class="headerlink" title="Print"></a>Print</h2><blockquote>
+<p>fmt.Printf</p>
+</blockquote>
+<ul>
+<li><code>%s,%v</code> 功能一样，输出错误信息，不包含堆栈</li>
+<li><code>%q</code> 输出的错误信息带引号，不包含堆栈</li>
+<li><code>%+v</code> 输出错误信息和堆栈</li>
+</ul>
+<h1 id="juju-errors"><a href="#juju-errors" class="headerlink" title="juju/errors"></a>juju/errors</h1><figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/juju/errors"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> fmt.Errorf(<span class="string">"oring error"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func1</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := Func(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.Annotate(err, <span class="string">"Func1"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Func2</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	err := Func1()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.Trace(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := Func2(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Print(err)</span><br><span class="line">		fmt.Println(<span class="string">"\n------\n"</span>)</span><br><span class="line">		fmt.Printf(<span class="string">"%+v"</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="GOPROXY"><a href="#GOPROXY" class="headerlink" title="GOPROXY"></a>GOPROXY</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$go</span> env -w GOPROXY=https://goproxy.cn,direct</span><br><span class="line"><span class="variable">$export</span> GOPROXY=https://goproxy.cn</span><br></pre></td></tr></table></figure>
+<h1 id="mod-replace"><a href="#mod-replace" class="headerlink" title="mod replace"></a><a href="https://studygolang.com/articles/20271" target="_blank" rel="noopener">mod replace</a></h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">replace (</span><br><span class="line">    golang.org/x/build =&gt; github.com/golang/build v0.0.0-20190416225751-b5f252a0a7dd</span><br><span class="line">    golang.org/x/crypto =&gt; github.com/golang/crypto v0.0.0-20190411191339-88737f569e3a</span><br><span class="line">    golang.org/x/exp =&gt; github.com/golang/exp v0.0.0-20190413192849-7f338f571082</span><br><span class="line">    golang.org/x/image =&gt; github.com/golang/image v0.0.0-20190417020941-4e30a6eb7d9a</span><br><span class="line">    golang.org/x/lint =&gt; github.com/golang/lint v0.0.0-20190409202823-959b441ac422</span><br><span class="line">    golang.org/x/mobile =&gt; github.com/golang/mobile v0.0.0-20190415191353-3e0bab5405d6</span><br><span class="line">    golang.org/x/net =&gt; github.com/golang/net v0.0.0-20190415214537-1da14a5a36f2</span><br><span class="line">    golang.org/x/oauth2 =&gt; github.com/golang/oauth2 v0.0.0-20190402181905-9f3314589c9a</span><br><span class="line">    golang.org/x/perf =&gt; github.com/golang/perf v0.0.0-20190312170614-0655857e383f</span><br><span class="line">    golang.org/x/sync =&gt; github.com/golang/sync v0.0.0-20190412183630-56d357773e84</span><br><span class="line">    golang.org/x/sys =&gt; github.com/golang/sys v0.0.0-20190416152802-12500544f89f</span><br><span class="line">    golang.org/x/text =&gt; github.com/golang/text v0.3.0</span><br><span class="line">    golang.org/x/time =&gt; github.com/golang/time v0.0.0-20190308202827-9d24e82272b4</span><br><span class="line">    golang.org/x/tools =&gt; github.com/golang/tools v0.0.0-20190417005754-4ca4b55e2050</span><br><span class="line">    golang.org/x/xerrors =&gt; github.com/golang/xerrors v0.0.0-20190410155217-1f06c39b4373</span><br><span class="line">    google.golang.org/api =&gt; github.com/googleapis/google-api-go-client v0.3.2</span><br><span class="line">    google.golang.org/appengine =&gt; github.com/golang/appengine v1.5.0</span><br><span class="line">    google.golang.org/genproto =&gt; github.com/google/go-genproto v0.0.0-20190415143225-d1146b9035b9</span><br><span class="line">    google.golang.org/grpc =&gt; github.com/grpc/grpc-go v1.20.0</span><br><span class="line">    gopkg.in/asn1-ber.v1 =&gt; github.com/go-asn1-ber/asn1-ber v0.0.0-20181015200546-f715ec2f112d</span><br><span class="line">    gopkg.in/fsnotify.v1 =&gt; github.com/Jwsonic/recinotify v0.0.0-20151201212458-7389700f1b43</span><br><span class="line">    gopkg.in/gorethink/gorethink.v4 =&gt; github.com/rethinkdb/rethinkdb-go v4.0.0+incompatible</span><br><span class="line">    gopkg.in/ini.v1 =&gt; github.com/go-ini/ini v1.42.0</span><br><span class="line">    gopkg.in/src-d/go-billy.v4 =&gt; github.com/src-d/go-billy v4.2.0+incompatible</span><br><span class="line">    gopkg.in/src-d/go-git-fixtures.v3 =&gt; github.com/src-d/go-git-fixtures v3.4.0+incompatible</span><br><span class="line">    gopkg.in/yaml.v2 =&gt; github.com/go-yaml/yaml v2.1.0+incompatible</span><br><span class="line">    k8s.io/api =&gt; github.com/kubernetes/api v0.0.0-20190416052506-9eb4726e83e4</span><br><span class="line">    k8s.io/apimachinery =&gt; github.com/kubernetes/apimachinery v0.0.0-20190416092415-3370b4aef5d6</span><br><span class="line">    k8s.io/client-go =&gt; github.com/kubernetes/client-go v11.0.0+incompatible</span><br><span class="line">    k8s.io/klog =&gt; github.com/simonpasquier/klog-gokit v0.1.0</span><br><span class="line">    k8s.io/kube-openapi =&gt; github.com/kubernetes/kube-openapi v0.0.0-20190401085232-94e1e7b7574c</span><br><span class="line">    k8s.io/utils =&gt; github.com/kubernetes/utils v0.0.0-20190308190857-21c4ce38f2a7</span><br><span class="line">    sigs.k8s.io/yaml =&gt; github.com/kubernetes-sigs/yaml v1.1.0</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>粘贴到项目对应的go.mod文件中，执行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go mod tidy</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://github.com/juju/errors" target="_blank" rel="noopener">https://github.com/juju/errors</a></li>
+<li><a href="https://github.com/pkg/errors" target="_blank" rel="noopener">https://github.com/pkg/errors</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/12/goerror/" data-id="ckdbgbyw4001v43po4xaeavvv" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/12/goerror/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-goversion" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/12/goversion/">Go编译时变量</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/12/goversion/" class="article-date"><time datetime="2020-01-12T16:00:00.000Z" itemprop="datePublished">2020-01-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>支持每次打包都动态更新版本号,编译时间之类的变量</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-X importpath.name=value </span><br><span class="line">Set the value of the string variable in importpath named name to value. </span><br><span class="line">Note that before Go 1.5 this option took two separate arguments. </span><br><span class="line">Now it takes one argument split on the first = sign.</span><br></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> buildstamp = <span class="string">""</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"Build Time : %s\n"</span>, buildstamp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$export</span> flags=<span class="string">"-X main.buildstamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'`"</span></span><br><span class="line"><span class="variable">$go</span> build -ldflags <span class="string">"<span class="variable">$flags</span>"</span> -o m m.go </span><br><span class="line">$./m</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://golang.org/cmd/link/" target="_blank" rel="noopener">https://golang.org/cmd/link/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/12/goversion/" data-id="ckdbgbywg002q43po2w773fc9" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/12/goversion/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-vagrant" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/11/vagrant/">Vagrant踩坑</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/11/vagrant/" class="article-date"><time datetime="2020-01-11T16:00:00.000Z" itemprop="datePublished">2020-01-12</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Vagrant是用来管理虚拟机的，如VirtualBox、VMware、AWS等，主要好处是可以提供一个可配置、可移植和复用的软件环境，可以使用shell、chef、puppet等工具部署。</p>
+<h2 id="安装vagrant-virtualbox"><a href="#安装vagrant-virtualbox" class="headerlink" title="安装vagrant/virtualbox"></a>安装vagrant/virtualbox</h2><blockquote>
+<p>由于<code>apt install</code>安装的版本太老, 所以从官网下载<code>vagrant_2.2.5_x86_64.deb</code></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/data/vagrantbox$ vagrant up --provider=virtualbox</span><br><span class="line">The provider <span class="string">'virtualbox'</span> that was requested to back the machine</span><br><span class="line"><span class="string">'default'</span> is reporting that it isn<span class="string">'t usable on this system. The</span></span><br><span class="line"><span class="string">reason is shown below:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">Vagrant has detected that you have a version of VirtualBox installed</span></span><br><span class="line"><span class="string">that is not supported by this version of Vagrant. Please install one of</span></span><br><span class="line"><span class="string">the supported versions listed below to use Vagrant:</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">4.0, 4.1, 4.2, 4.3, 5.0, 5.1</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">A Vagrant update may also be available that adds support for the version</span></span><br><span class="line"><span class="string">you specified. Please check www.vagrantup.com/downloads.html to download</span></span><br><span class="line"><span class="string">the latest version.</span></span><br></pre></td></tr></table></figure>
+<h2 id="添加box"><a href="#添加box" class="headerlink" title="添加box"></a>添加box</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant box add ubuntu/bionic https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images/bionic/current/bionic-server-cloudimg-amd64-vagrant.box</span><br><span class="line">==&gt; box: Box file was not detected as metadata. Adding it directly...</span><br><span class="line">==&gt; box: Adding box <span class="string">'ubuntu/bionic'</span> (v0) <span class="keyword">for</span> provider: </span><br><span class="line">    box: Downloading: https://mirrors.tuna.tsinghua.edu.cn/ubuntu-cloud-images/bionic/current/bionic-server-cloudimg-amd64-vagrant.box</span><br><span class="line">==&gt; box: Successfully added box <span class="string">'ubuntu/bionic'</span> (v0) <span class="keyword">for</span> <span class="string">'virtualbox'</span>!</span><br></pre></td></tr></table></figure>
+<h2 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant box update</span><br></pre></td></tr></table></figure>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ mkdir vagrantbox</span><br><span class="line">$ <span class="built_in">cd</span> vagrantbox/</span><br><span class="line">$ vagrant init ubuntu/bionic</span><br><span class="line">A `Vagrantfile` has been placed <span class="keyword">in</span> this directory. You are now</span><br><span class="line">ready to `vagrant up` your first virtual environment! Please <span class="built_in">read</span></span><br><span class="line">the comments <span class="keyword">in</span> the Vagrantfile as well as documentation on</span><br><span class="line">`vagrantup.com` <span class="keyword">for</span> more information on using Vagrant.</span><br><span class="line">$ ls</span><br><span class="line">Vagrantfile</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant up --provider=virtualbox</span><br><span class="line">Bringing machine <span class="string">'default'</span> up with <span class="string">'virtualbox'</span> provider...</span><br><span class="line">==&gt; default: Importing base box <span class="string">'ubuntu/bionic'</span>...</span><br><span class="line">==&gt; default: Matching MAC address <span class="keyword">for</span> NAT networking...</span><br><span class="line">==&gt; default: Checking <span class="keyword">if</span> box <span class="string">'ubuntu/bionic'</span> version <span class="string">'20190729'</span> is up to date...</span><br><span class="line">==&gt; default: Setting the name of the VM: vagrantbox_default_1564392888222_56525</span><br><span class="line">==&gt; default: Clearing any previously <span class="built_in">set</span> network interfaces...</span><br><span class="line">==&gt; default: Preparing network interfaces based on configuration...</span><br><span class="line">    default: Adapter 1: nat</span><br><span class="line">==&gt; default: Forwarding ports...</span><br><span class="line">    default: 22 (guest) =&gt; 2222 (host) (adapter 1)</span><br><span class="line">==&gt; default: Booting VM...</span><br><span class="line">==&gt; default: Waiting <span class="keyword">for</span> machine to boot. This may take a few minutes...</span><br><span class="line">    default: SSH address: 127.0.0.1:2222</span><br><span class="line">    default: SSH username: vagrant</span><br><span class="line">    default: SSH auth method: private key</span><br><span class="line">    default: </span><br><span class="line">    default: Vagrant insecure key detected. Vagrant will automatically replace</span><br><span class="line">    default: this with a newly generated keypair <span class="keyword">for</span> better security.</span><br><span class="line">    default: </span><br><span class="line">    default: Inserting generated public key within guest...</span><br><span class="line">    default: Removing insecure key from the guest <span class="keyword">if</span> it<span class="string">'s present...</span></span><br><span class="line"><span class="string">    default: Key inserted! Disconnecting and reconnecting using new SSH key...</span></span><br><span class="line"><span class="string">==&gt; default: Machine booted and ready!</span></span><br><span class="line"><span class="string">==&gt; default: Checking for guest additions in VM...</span></span><br><span class="line"><span class="string">    default: The guest additions on this VM do not match the installed version of</span></span><br><span class="line"><span class="string">    default: VirtualBox! In most cases this is fine, but in rare cases it can</span></span><br><span class="line"><span class="string">    default: prevent things such as shared folders from working properly. If you see</span></span><br><span class="line"><span class="string">    default: shared folder errors, please make sure the guest additions within the</span></span><br><span class="line"><span class="string">    default: virtual machine match the version of VirtualBox you have installed on</span></span><br><span class="line"><span class="string">    default: your host and reload your VM.</span></span><br><span class="line"><span class="string">    default: </span></span><br><span class="line"><span class="string">    default: Guest Additions Version: 5.2.22</span></span><br><span class="line"><span class="string">    default: VirtualBox Version: 6.0</span></span><br><span class="line"><span class="string">==&gt; default: Mounting shared folders...</span></span><br><span class="line"><span class="string">    default: /vagrant =&gt; /home/king/data/vagrantbox</span></span><br></pre></td></tr></table></figure>
+<h2 id="查看进程"><a href="#查看进程" class="headerlink" title="查看进程"></a>查看进程</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ps aufx | grep virtualbox</span><br><span class="line">king \_ grep --color=auto virtualbox</span><br><span class="line">king  \_ /usr/lib/virtualbox/VBoxXPCOMIPCD</span><br><span class="line">king    \_ /usr/lib/virtualbox/VBoxSVC --auto-shutdown</span><br><span class="line">king     \_ /usr/lib/virtualbox/VBoxHeadless --comment vagrantbox_default_1564392888222_56525 --startvm 315ba5d9-fb4c-40ca-acf4-97dc75db70c7 --vrde config</span><br></pre></td></tr></table></figure>
+<h2 id="进入shell"><a href="#进入shell" class="headerlink" title="进入shell"></a>进入shell</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant ssh</span><br><span class="line">Welcome to Ubuntu 18.04.2 LTS (GNU/Linux 4.15.0-56-generic x86_64)</span><br><span class="line"></span><br><span class="line"> * Documentation:  https://help.ubuntu.com</span><br><span class="line"> * Management:     https://landscape.canonical.com</span><br><span class="line"> * Support:        https://ubuntu.com/advantage</span><br><span class="line"></span><br><span class="line">vagrant@ubuntu:~$ <span class="built_in">pwd</span></span><br><span class="line">/home/vagrant</span><br><span class="line">vagrant@ubuntu:~$ <span class="built_in">logout</span></span><br><span class="line">Connection to 127.0.0.1 closed.</span><br></pre></td></tr></table></figure>
+<h2 id="关机-amp-销毁"><a href="#关机-amp-销毁" class="headerlink" title="关机&amp;销毁"></a>关机&amp;销毁</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ vagrant halt</span><br><span class="line">==&gt; default: Attempting graceful shutdown of VM...</span><br><span class="line">$ vagrant destroy</span><br><span class="line">    default: Are you sure you want to destroy the <span class="string">'default'</span> VM? [y/N] y</span><br><span class="line">==&gt; default: Destroying VM and associated drives...</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a href="https://www.vagrantup.com/" target="_blank" rel="noopener">https://www.vagrantup.com/</a></li>
+<li><a href="https://www.cnblogs.com/hafiz/p/9175484.html" target="_blank" rel="noopener">https://www.cnblogs.com/hafiz/p/9175484.html</a></li>
+<li><a href="https://segmentfault.com/a/1190000000264347" target="_blank" rel="noopener">https://segmentfault.com/a/1190000000264347</a></li>
+<li><a href="https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md" target="_blank" rel="noopener">https://github.com/astaxie/go-best-practice/blob/master/ebook/zh/01.3.md</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/11/vagrant/" data-id="ckdbgbyya005z43pow88swjmi" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/11/vagrant/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-landslide" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/01/10/landslide/">使用landslide生成幻灯片</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/01/10/landslide/" class="article-date"><time datetime="2020-01-10T16:00:00.000Z" itemprop="datePublished">2020-01-11</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>官网 <a href="https://github.com/adamzap/landslide" target="_blank" rel="noopener">https://github.com/adamzap/landslide</a></p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pip install landslide</span><br></pre></td></tr></table></figure>
+<h2 id="从源码安装"><a href="#从源码安装" class="headerlink" title="从源码安装"></a>从源码安装</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/adamzap/landslide.git</span><br><span class="line">$ <span class="built_in">cd</span> landslide</span><br><span class="line">$ python setup.py build</span><br><span class="line">$ sudo python setup.py install</span><br></pre></td></tr></table></figure>
+<h1 id="快捷键"><a href="#快捷键" class="headerlink" title="快捷键"></a>快捷键</h1><ul>
+<li>Press h to toggle display of help</li>
+<li>Press left arrow and right arrow to navigate</li>
+<li>Press t to toggle a table of contents for your presentation. Slide titles are links</li>
+<li>Press ESC to display the presentation overview (Exposé)</li>
+<li>Press n to toggle slide number visibility</li>
+<li>Press b to toggle screen blanking</li>
+<li>Press c to toggle current slide context (previous and next slides)</li>
+<li>Press e to make slides filling the whole available space within the document body</li>
+<li>Press S to toggle display of link to the source file for each slide</li>
+<li>Press ‘2’ to toggle notes in your slides (specify with the .notes macro)</li>
+<li>Press ‘3’ to toggle pseudo-3D display (experimental)</li>
+<li>Browser zooming is supported</li>
+</ul>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">landslide a.md -i -o &gt; name_you_like.html</span><br></pre></td></tr></table></figure>
+<h1 id="sample"><a href="#sample" class="headerlink" title="sample"></a>sample</h1><figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line"><span class="section"># Landslide</span></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="section"># Overview</span></span><br><span class="line"></span><br><span class="line">Generate HTML5 slideshows from markdown, ReST, or textile.</span><br><span class="line"></span><br><span class="line">![<span class="string">python</span>](<span class="link">http://i.imgur.com/bc2xk.png</span>)</span><br><span class="line"></span><br><span class="line">Landslide is primarily written in Python, but it's themes use:</span><br><span class="line"></span><br><span class="line"><span class="bullet">- </span>HTML5</span><br><span class="line"><span class="bullet">- </span>Javascript</span><br><span class="line"><span class="bullet">- </span>CSS</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line"><span class="section"># Code Sample</span></span><br><span class="line"></span><br><span class="line">Landslide supports code snippets</span><br><span class="line"></span><br><span class="line"><span class="code">    !python</span></span><br><span class="line"><span class="code">    def log(self, message, level='notice'):</span></span><br><span class="line"><span class="code">        if self.logger and not callable(self.logger):</span></span><br><span class="line"><span class="code">            raise ValueError(u"Invalid logger set, must be a callable")</span></span><br><span class="line"></span><br><span class="line"><span class="code">        if self.verbose and self.logger:</span></span><br><span class="line"><span class="code">            self.logger(message, level)</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/01/10/landslide/" data-id="ckdbgbywv003c43po7e42hv4l" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/01/10/landslide/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-python-pip-from-git" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/16/python-pip-from-git/">Python安装Git库</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/07/16/python-pip-from-git/" class="article-date"><time datetime="2018-07-16T09:33:35.000Z" itemprop="datePublished">2018-07-16</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>依赖特定的版本</p>
+<p>例如requirements.txt中<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># ssh方式</span></span><br><span class="line">git+ssh://git@github.com/qjw/flask-swagger.git@v1.0.1</span><br><span class="line"><span class="comment"># https方式</span></span><br><span class="line">git+https://github.com/qjw/flask-swagger.git@@v1.0.1</span><br><span class="line"><span class="comment"># 本地文件系统</span></span><br><span class="line">git+file:///home/king/code/flask-swagger/</span><br></pre></td></tr></table></figure></p>
+<p>或者<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pip install git+https://github.com/qjw/flask-swagger.git@v1.0.1</span><br></pre></td></tr></table></figure></p>
+<p>安装之后,源码在目录<code>venv/lib/python3.5/site-packages/flask_swagger</code></p>
+<p>@后面可以是<code>tag</code>/<code>branch</code>甚至<code>commit</code>.</p>
+<p>这种方案的不足是: 每次提交修改都得<code>打tag</code>,若是提交频繁会相当麻烦且容易出错,</p>
+<p>如果改动之后,不重新打tag,会受到cache的影响而不能即使更新</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p pip-cache</span><br><span class="line">pip install --cache-dir pip-cache -r requirements.txt</span><br></pre></td></tr></table></figure>
+<h2 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h2><p>在开发期间,可以使用<code>文件系统的方式</code>不经过外网安装</p>
+<h2 id="频繁的改动"><a href="#频繁的改动" class="headerlink" title="频繁的改动"></a>频繁的改动</h2><p>前面打tag的方式,适合那些不经常变化的基础库,对于频繁有更新的项目,可以考虑使用<a href="https://pip.readthedocs.io/en/1.1/requirements.html" target="_blank" rel="noopener"><code>editable</code> packages</a>方式安装</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 指定版本(tag)</span></span><br><span class="line">-e git+ssh://git@github.com/qjw/flask-swagger.git@v1.0.1<span class="comment">#flask-swagger</span></span><br><span class="line"><span class="comment"># 直接从master</span></span><br><span class="line">-e git+ssh://git@github.com/qjw/flask-swagger.git<span class="comment">#egg=flask-swagger</span></span><br><span class="line"><span class="comment"># 从本地目录引用(调试)</span></span><br><span class="line">-e git+file:///home/king/code/flask-swagger<span class="comment">#egg=flask-swagger</span></span><br></pre></td></tr></table></figure>
+<p>和前面的方式相比,多了参数<code>-e</code>,以及后面额<code>egg</code> hash,后者指定了源码存放的目录,具体的路径在<code>venv/src/flask-swagger</code>.</p>
+<h3 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h3><p>若直接使用master或其他分支,会产生历史版本不一致的问题</p>
+<blockquote>
+<p>比如我重新编译一个历史版本,会因为依赖变化导致不一致的行为</p>
+</blockquote>
+<p>每一次产生一个branche是不现实的,用tag相对较好.代码管理是一个受权限控制的行为,那么这个tag由谁来打就是个问题</p>
+<ol>
+<li>如果开发者自行打tag,那git tags会各种乱和冲突</li>
+<li>如果管理员来做,那么开发效率有严重影响(在联调过程中,tag必须准备好,可是改个bug又必须重新tag)</li>
+</ol>
+<p>直接使用commit id也是一种可行的办法,不过这种方式非常的不优雅</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/07/16/python-pip-from-git/" data-id="ckdbgbyxh004n43po7nreezr6" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/07/16/python-pip-from-git/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/pip/">pip</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-go-defer-param-order" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/07/16/go-defer-param-order/">Golang defer的坑,以及函数执行顺序差异</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/07/16/go-defer-param-order/" class="article-date"><time datetime="2018-07-16T08:14:19.000Z" itemprop="datePublished">2018-07-16</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Golang/">Golang</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>C/C++函数结果作为参数,会从右到左</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cstdio&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span>&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function"><span class="keyword">int</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"B %d\n"</span>,i);</span><br><span class="line">            <span class="keyword">return</span> i;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span>&#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="function">B <span class="title">f</span><span class="params">(<span class="keyword">int</span> i)</span></span>&#123;</span><br><span class="line">            <span class="built_in">printf</span>(<span class="string">"A %d\n"</span>,i);</span><br><span class="line">            B b;</span><br><span class="line">            <span class="keyword">return</span> b;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">f</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"C %d %d\n"</span>,a,b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    B b;</span><br><span class="line">    A a;</span><br><span class="line">    <span class="comment">// 从右到左执行</span></span><br><span class="line">    f(a.f(<span class="number">1</span>).f(<span class="number">2</span>),b.f(<span class="number">3</span>));</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">B 3</span><br><span class="line">A 1</span><br><span class="line">B 2</span><br><span class="line">C 2 3</span><br></pre></td></tr></table></figure>
+<p>golang变成了从左到右</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> B <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*B)</span> <span class="title">f</span><span class="params">(p <span class="keyword">int</span>)</span> <span class="title">int</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"B %d\n"</span>, p)</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> A <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(*A)</span> <span class="title">f</span><span class="params">(p <span class="keyword">int</span>)</span> *<span class="title">B</span></span> &#123;</span><br><span class="line">	fmt.Printf(<span class="string">"A %d\n"</span>, p)</span><br><span class="line">	<span class="keyword">return</span> &amp;B&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">dd</span><span class="params">(*B, <span class="keyword">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">"C"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	a := &amp;A&#123;&#125;</span><br><span class="line">	b := &amp;B&#123;&#125;</span><br><span class="line">    <span class="comment">// 在defer之前,会计算到保留最后一个函数,也就是a.f(1)会先执行</span></span><br><span class="line">	<span class="keyword">defer</span> a.f(<span class="number">1</span>).f(<span class="number">2</span>)</span><br><span class="line">    <span class="comment">// 从左到右执行</span></span><br><span class="line">	<span class="keyword">defer</span> dd(a.f(<span class="number">3</span>), b.f(<span class="number">4</span>))</span><br><span class="line">    <span class="comment">// 匿名函数,defer统一执行</span></span><br><span class="line">	<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		a.f(<span class="number">5</span>).f(<span class="number">6</span>)</span><br><span class="line">	&#125;()</span><br><span class="line">	fmt.Println(<span class="string">"main"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">A 1</span><br><span class="line">A 3</span><br><span class="line">B 4</span><br><span class="line">main</span><br><span class="line">A 5</span><br><span class="line">B 6</span><br><span class="line">C</span><br><span class="line">B 2</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/07/16/go-defer-param-order/" data-id="ckdbgbyw2001p43podzg2s94h" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/07/16/go-defer-param-order/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-tars" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/06/26/tars/">腾讯Tars初探</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/06/26/tars/" class="article-date"><time datetime="2018-06-26T12:25:07.000Z" itemprop="datePublished">2018-06-26</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>官网</p>
+<ol>
+<li><a href="https://github.com/Tencent/Tars" target="_blank" rel="noopener">https://github.com/Tencent/Tars</a></li>
+<li><a href="https://github.com/tars-node" target="_blank" rel="noopener">https://github.com/tars-node</a></li>
+</ol>
+<p>本文重点参考</p>
+<ol>
+<li><a href="https://github.com/Tencent/Tars/blob/master/Install.md" target="_blank" rel="noopener">https://github.com/Tencent/Tars/blob/master/Install.md</a></li>
+<li><a href="https://github.com/Tencent/Tars/blob/master/docs/tars_cpp_quickstart.md" target="_blank" rel="noopener">https://github.com/Tencent/Tars/blob/master/docs/tars_cpp_quickstart.md</a></li>
+</ol>
+<h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h1><p>下载代码、apt-get安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@github.com:Tencent/Tars.git</span><br><span class="line">apt-get install flex bison libmysqlclient-dev</span><br></pre></td></tr></table></figure>
+<p>安装第三方库<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/thirdparty/thirdparty.sh</span><br></pre></td></tr></table></figure></p>
+<p>实际就下载一个<code>rapidjson</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/Tars/cpp/thirdparty$ tree -L 2</span><br><span class="line">.</span><br><span class="line">├── rapidjson</span><br><span class="line">│   ├── appveyor.yml</span><br><span class="line">│   ├── bin</span><br><span class="line">│   ├── CHANGELOG.md</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── CMakeModules</span><br><span class="line">│   ├── contrib</span><br><span class="line">│   ├── doc</span><br><span class="line">│   ├── docker</span><br><span class="line">│   ├── example</span><br><span class="line">│   ├── include</span><br><span class="line">│   ├── include_dirs.js</span><br><span class="line">│   ├── library.json</span><br><span class="line">│   ├── license.txt</span><br><span class="line">│   ├── package.json</span><br><span class="line">│   ├── rapidjson.autopkg</span><br><span class="line">│   ├── RapidJSONConfig.cmake.in</span><br><span class="line">│   ├── RapidJSONConfigVersion.cmake.in</span><br><span class="line">│   ├── RapidJSON.pc.in</span><br><span class="line">│   ├── readme.md</span><br><span class="line">│   ├── readme.zh-cn.md</span><br><span class="line">│   ├── <span class="built_in">test</span></span><br><span class="line">│   ├── thirdparty</span><br><span class="line">│   └── travis-doxygen.sh</span><br><span class="line">└── thirdparty.sh</span><br></pre></td></tr></table></figure></p>
+<h1 id="编译核心组件-开发库"><a href="#编译核心组件-开发库" class="headerlink" title="编译核心组件/开发库"></a>编译核心组件/开发库</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/build</span><br><span class="line">chmod u+x build.sh</span><br><span class="line">./build.sh all</span><br></pre></td></tr></table></figure>
+<p>需要重来，则<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./build.sh cleanall</span><br></pre></td></tr></table></figure></p>
+<p>由于ubuntu的mysql库路径和tars默认配置不一致，所以需要在编译前修改CMAKE配置,<code>${TARS_ROOT}/Tars/cpp/build/CmakeLists.txt</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">set</span>(MYSQL_DIR_INC <span class="string">"/usr/include/mysql"</span>)</span><br><span class="line"><span class="built_in">set</span>(MYSQL_DIR_LIB <span class="string">"/usr/lib/x86_64-linux-gnu/"</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="安装开发库"><a href="#安装开发库" class="headerlink" title="安装开发库"></a>安装开发库</h2><p>编译成功之后<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span></span><br><span class="line">sudo mkdir tars</span><br><span class="line">sudo chown king:king ./tars/  <span class="comment"># king酌情修改</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/build</span><br><span class="line">./build.sh install</span><br></pre></td></tr></table></figure>
+<p>文件内容如下，主要用于Cpp开发（头文件/库）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/usr/<span class="built_in">local</span>/tars$ tree -L 3</span><br><span class="line">.</span><br><span class="line">└── cpp</span><br><span class="line">    ├── include</span><br><span class="line">    │   ├── jmem</span><br><span class="line">    │   ├── promise</span><br><span class="line">    │   ├── servant</span><br><span class="line">    │   ├── tup</span><br><span class="line">    │   └── util</span><br><span class="line">    ├── lib</span><br><span class="line">    │   ├── libtarsparse.a</span><br><span class="line">    │   ├── libtarsservant.a</span><br><span class="line">    │   └── libtarsutil.a</span><br><span class="line">    ├── makefile</span><br><span class="line">    │   └── makefile.tars</span><br><span class="line">    ├── script</span><br><span class="line">    │   ├── create_http_server.sh</span><br><span class="line">    │   ├── create_tars_server.sh</span><br><span class="line">    │   ├── demo</span><br><span class="line">    │   └── http_demo</span><br><span class="line">    └── tools</span><br><span class="line">        ├── tars2android</span><br><span class="line">        ├── tars2c</span><br><span class="line">        ├── tars2cpp</span><br><span class="line">        ├── tars2cs</span><br><span class="line">        ├── tars2node</span><br><span class="line">        ├── tars2oc</span><br><span class="line">        ├── tars2php</span><br><span class="line">        └── tars2python</span><br></pre></td></tr></table></figure>
+<h2 id="安装基础服务"><a href="#安装基础服务" class="headerlink" title="安装基础服务"></a>安装基础服务</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/build</span><br><span class="line">make framework-tar</span><br></pre></td></tr></table></figure>
+<p>会生成一个<code>framework.tgz</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/app</span><br><span class="line">sudo mkdir tars</span><br><span class="line">sudo chown king:king ./tars/  <span class="comment"># king酌情修改</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/build</span><br><span class="line">cp ./framework.tgz /usr/<span class="built_in">local</span>/app/tars/</span><br><span class="line"><span class="built_in">cd</span> /usr/<span class="built_in">local</span>/app/tars</span><br><span class="line">tar xzfv framework.tgz</span><br></pre></td></tr></table></figure>
+<p>内容如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/usr/<span class="built_in">local</span>/app/tars$ tree -L 2</span><br><span class="line">.</span><br><span class="line">├── framework.tgz</span><br><span class="line">├── tarsAdminRegistry</span><br><span class="line">│   ├── bin</span><br><span class="line">│   ├── conf</span><br><span class="line">│   └── util</span><br><span class="line">├── tarsconfig</span><br><span class="line">│   ├── bin</span><br><span class="line">│   ├── conf</span><br><span class="line">│   ├── data</span><br><span class="line">│   └── util</span><br><span class="line">├── tars_install.sh</span><br><span class="line">├── tarsnode</span><br><span class="line">│   ├── bin</span><br><span class="line">│   ├── conf</span><br><span class="line">│   ├── data</span><br><span class="line">│   ├── tmp</span><br><span class="line">│   └── util</span><br><span class="line">├── tarsnode_install.sh</span><br><span class="line">├── tarspatch</span><br><span class="line">│   ├── bin</span><br><span class="line">│   ├── conf</span><br><span class="line">│   ├── data</span><br><span class="line">│   └── util</span><br><span class="line">└── tarsregistry</span><br><span class="line">    ├── bin</span><br><span class="line">    ├── conf</span><br><span class="line">    ├── data</span><br><span class="line">    └── util</span><br></pre></td></tr></table></figure>
+<h1 id="运行核心基础服务"><a href="#运行核心基础服务" class="headerlink" title="运行核心基础服务"></a>运行核心基础服务</h1><h2 id="准备Mysql"><a href="#准备Mysql" class="headerlink" title="准备Mysql"></a>准备Mysql</h2><p>安装之后<br><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> db_tars <span class="keyword">default</span> <span class="keyword">charset</span> utf8 <span class="keyword">COLLATE</span> utf8_general_ci;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> tars_stat <span class="keyword">default</span> <span class="keyword">charset</span> utf8 <span class="keyword">COLLATE</span> utf8_general_ci;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> tars_property <span class="keyword">default</span> <span class="keyword">charset</span> utf8 <span class="keyword">COLLATE</span> utf8_general_ci;</span><br></pre></td></tr></table></figure></p>
+<p>修改IP。<code>这里的IP可用域名</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/cpp/framework/sql</span><br><span class="line">sed -i <span class="string">"s/192.168.2.131/192.168.10.6/g"</span> `grep 192.168.2.131 -rl ./*`</span><br><span class="line">sed -i <span class="string">"s/db.tars.com/server/g"</span> `grep db.tars.com -rl ./*`</span><br><span class="line">sed -i <span class="string">"s/tars2015/password/g"</span> `grep tars2015 -rl ./*`</span><br><span class="line">sed -i <span class="string">"s/dbuser=tars/dbuser=user/g"</span> `grep dbuser=tars -rl ./*`</span><br></pre></td></tr></table></figure>
+<p>创建表<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/usr/<span class="built_in">local</span>/app/tars$ mysql -uu -pp -hserver db_tars <span class="comment"># user/password酌情修改</span></span><br><span class="line">mysql&gt; <span class="built_in">source</span> ./cpp/framework/sql/db_tars.sql</span><br></pre></td></tr></table></figure></p>
+<p>若想使用默认的帐号密码<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CREATE USER <span class="string">'tars'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'tars2015'</span>;</span><br><span class="line">GRANT ALL ON db_tars.* TO <span class="string">'tars'</span>@<span class="string">'%'</span>;</span><br><span class="line">GRANT ALL ON tars_stat.* TO <span class="string">'tars'</span>@<span class="string">'%'</span>;</span><br><span class="line">GRANT ALL ON tars_property.* TO <span class="string">'tars'</span>@<span class="string">'%'</span>;</span><br></pre></td></tr></table></figure></p>
+<h2 id="修改服务配置"><a href="#修改服务配置" class="headerlink" title="修改服务配置"></a>修改服务配置</h2><h3 id="修改IP地址"><a href="#修改IP地址" class="headerlink" title="修改IP地址"></a>修改IP地址</h3><p>因为个人的Mysql没有在本机，所以单独处理</p>
+<blockquote>
+<p><code>注意原来为IP的地方，不能用域名，否则会bind失败</code>（其实可以改进一下）</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> your_machine_ip=192.168.10.6</span><br><span class="line">sed -i <span class="string">"s/192.168.2.131/<span class="variable">$&#123;your_machine_ip&#125;</span>/g"</span> `grep 192.168.2.131 -rl ./*`</span><br><span class="line">sed -i <span class="string">"s/registry.tars.com/<span class="variable">$&#123;your_machine_ip&#125;</span>/g"</span> `grep registry.tars.com -rl ./*`</span><br><span class="line">sed -i <span class="string">"s/web.tars.com/<span class="variable">$&#123;your_machine_ip&#125;</span>/g"</span> `grep web.tars.com -rl ./*`</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> your_machine_ip=server</span><br><span class="line">sed -i <span class="string">"s/db.tars.com/<span class="variable">$&#123;your_machine_ip&#125;</span>/g"</span> `grep db.tars.com -rl ./*`</span><br></pre></td></tr></table></figure>
+<h3 id="修改Mysql帐号密码"><a href="#修改Mysql帐号密码" class="headerlink" title="修改Mysql帐号密码"></a>修改Mysql帐号密码</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/usr/<span class="built_in">local</span>/app/tars$ grep dbuser -rl ./* | grep <span class="string">".conf"</span></span><br><span class="line">./tarsAdminRegistry/conf/adminregistry.conf</span><br><span class="line">./tarsconfig/conf/tarsconfig.conf</span><br><span class="line">./tarsconfig/bin/tarsconfig</span><br><span class="line">./tarsregistry/conf/tarsregistry.conf</span><br></pre></td></tr></table></figure>
+<p>Mysql帐号密码通过下列的配置指定</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">db</span>&gt;</span></span><br><span class="line">    charset=utf8</span><br><span class="line">    dbhost=server</span><br><span class="line">    dbname=db_tars</span><br><span class="line">    dbpass=p</span><br><span class="line">    dbport=3306</span><br><span class="line">    dbuser=u</span><br><span class="line"><span class="tag">&lt;/<span class="name">db</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Cd /usr/<span class="built_in">local</span>/app/tars</span><br><span class="line">chmod u+x tars_install.sh</span><br><span class="line"><span class="comment"># 运行基础组件（共五个进程）</span></span><br><span class="line">./tars_install.sh</span><br><span class="line"><span class="comment"># 运行rsync</span></span><br><span class="line">sudo ./tarspatch/util/init.sh</span><br></pre></td></tr></table></figure>
+<p>进程如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/app/tars/tarsregistry/bin/tarsregistry --config=/usr/<span class="built_in">local</span>/app/tars/tarsregistry/conf/tarsregistry.conf</span><br><span class="line">/usr/<span class="built_in">local</span>/app/tars/tarsAdminRegistry/bin/tarsAdminRegistry --config=/usr/<span class="built_in">local</span>/app/tars/tarsAdminRegistry/conf/adminregistry.conf</span><br><span class="line">/usr/<span class="built_in">local</span>/app/tars/tarsnode/bin/tarsnode --locator=tars.tarsregistry.QueryObj@tcp -h 192.168.10.6 -p 17890 --config=/usr/<span class="built_in">local</span>/app/tars/tarsnode/conf/tarsnode.conf</span><br><span class="line">/usr/<span class="built_in">local</span>/app/tars/tarsconfig/bin/tarsconfig --config=/usr/<span class="built_in">local</span>/app/tars/tarsconfig/conf/tarsconfig.conf</span><br><span class="line">/usr/<span class="built_in">local</span>/app/tars/tarspatch/bin/tarspatch --config=/usr/<span class="built_in">local</span>/app/tars/tarspatch/conf/tarspatch.conf</span><br></pre></td></tr></table></figure>
+<h1 id="运行前端"><a href="#运行前端" class="headerlink" title="运行前端"></a>运行前端</h1><h2 id="准备Java-client"><a href="#准备Java-client" class="headerlink" title="准备Java client"></a>准备Java client</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/java</span><br><span class="line">mvn clean install </span><br><span class="line">mvn clean install -f core/client.pom.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 这一步不需要，应该是用于Java开发的，类似于C++的include/lib</span></span><br><span class="line">mvn clean install -f core/server.pom.xml</span><br></pre></td></tr></table></figure>
+<p>编译之后</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/Tars/java$ ls ~/.m2/repository/com/tencent/tars/tars-client/</span><br><span class="line">1.4.0  maven-metadata-local.xml</span><br></pre></td></tr></table></figure>
+<h2 id="编译前端"><a href="#编译前端" class="headerlink" title="编译前端"></a>编译前端</h2><p>切换到目录<code>${TARS_ROOT}/Tars/web/src/main/resources</code></p>
+<p>修改 <code>app.config.properties</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># server为mysql地址</span></span><br><span class="line">tarsweb.datasource.tars.addr=server:3306</span><br><span class="line">tarsweb.datasource.tars.user=u</span><br><span class="line">tarsweb.datasource.tars.pswd=p</span><br></pre></td></tr></table></figure></p>
+<p>maven打包<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mvn clean package</span><br></pre></td></tr></table></figure></p>
+<p>增加<code>/etc/hosts</code> （注意不是127.0.0.1）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">192.168.10.6 registry1.tars.com                                                    </span><br><span class="line">192.168.10.6 registry2.tars.com</span><br></pre></td></tr></table></figure>
+<p>若找不到依赖 qq-cloud-central</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/Tars/web$ diff pom.xml pom.xml.bak </span><br><span class="line">diff pom.xml.bak pom.xml</span><br><span class="line">82c82</span><br><span class="line">&lt; 			&lt;groupId&gt;qq-cloud-central&lt;/groupId&gt;</span><br><span class="line">---</span><br><span class="line">&gt; 			&lt;groupId&gt;com.tencent.tars&lt;/groupId&gt;</span><br><span class="line">84c84</span><br><span class="line">&lt; 			&lt;version&gt;1.0.3&lt;/version&gt;</span><br><span class="line">---</span><br><span class="line">&gt; 			&lt;version&gt;1.4.0&lt;/version&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="resin运行"><a href="#resin运行" class="headerlink" title="resin运行"></a>resin运行</h2><p>下载<a href="http://caucho.com/download/resin-4.0.56.tar.gz" target="_blank" rel="noopener">http://caucho.com/download/resin-4.0.56.tar.gz</a> 解压到<code>/usr/local/app/resin</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> <span class="variable">$&#123;TARS_ROOT&#125;</span>/Tars/web/</span><br><span class="line">cp ./target/tars.war /usr/<span class="built_in">local</span>/app/resin/webapps/</span><br></pre></td></tr></table></figure>
+<p>修改conf/resin.xml</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">host</span> <span class="attr">id</span>=<span class="string">""</span> <span class="attr">root-directory</span>=<span class="string">"."</span>&gt;</span></span><br><span class="line">    &lt;--  &lt;web-app id="/" root-directory="webapps/ROOT"/&gt; --&gt;</span><br><span class="line">    <span class="tag">&lt;<span class="name">web-app</span> <span class="attr">id</span>=<span class="string">"/"</span> <span class="attr">document-directory</span>=<span class="string">"webapps/tars"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">host</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mkdir -p /data/<span class="built_in">log</span>/tars</span><br><span class="line">/usr/<span class="built_in">local</span>/app/resin/bin/resin.sh start</span><br></pre></td></tr></table></figure>
+<p>进程如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/lib/jvm/jdk1.8.0_111/bin/java -Dresin.watchdog=app-0 -Djava.util.logging.manager=com.caucho.log.LogManagerIm</span><br><span class="line">     usr/lib/jvm/jdk1.8.0_111/bin/java -Dresin.server=app-0 -Djava.util.logging.manager=com.caucho.log.LogManager</span><br></pre></td></tr></table></figure>
+<h2 id="发布可选组件"><a href="#发布可选组件" class="headerlink" title="发布可选组件"></a>发布可选组件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 其他服务</span></span><br><span class="line">make tarsstat-tar</span><br><span class="line">make tarsnotify-tar</span><br><span class="line">make tarsproperty-tar</span><br><span class="line">make tarslog-tar</span><br><span class="line">make tarsquerystat-tar</span><br><span class="line">make tarsqueryproperty-tar</span><br></pre></td></tr></table></figure>
+<p>安装framework之后，tarsnotify会跑步起来，需要将上面步骤发布的tarsnotify-tar发布上去</p>
+<p>接下来可以将剩余的5个也发布上去</p>
+<h1 id="Cpp-Hello-world"><a href="#Cpp-Hello-world" class="headerlink" title="Cpp Hello world"></a>Cpp Hello world</h1><p>生成server</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">/usr/local/tars/cpp/script/create_tars_server.sh TestApp HelloServer Hello</span><br></pre></td></tr></table></figure>
+<p>在Ubuntu有报错，rename不了，参见文末[问题]集锦</p>
+<p>生成接口头文件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/<span class="built_in">local</span>/tars/cpp/tools/tars2cpp Hello.tars</span><br><span class="line">make</span><br><span class="line">make tar</span><br></pre></td></tr></table></figure>
+<p>make tar 会生成.tgz包，用于上传发布到tars平台</p>
+<p>可以按照<a href="https://github.com/Tencent/Tars/blob/master/docs/tars_cpp_quickstart.md" target="_blank" rel="noopener">tars_cpp_quickstart</a> 增加一个带参数的接口</p>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>创建目录[/home/tarsproto/],<em>必须这个，有点恶心</em>，在后回到刚刚服务器源码的目录，例如[/usr/local/tars/TestApp/HelloServer]<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make release</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/home/tarsproto/TestApp/HelloServer$ tree -L 2</span><br><span class="line">.</span><br><span class="line">├── Hello.h</span><br><span class="line">├── HelloServer.mk</span><br><span class="line">├── Hello.tars</span><br><span class="line">└── makefile</span><br><span class="line"></span><br><span class="line">0 directories, 4 files</span><br></pre></td></tr></table></figure>
+<p>这些内容用于客户端引用</p>
+<p>按照步骤继续添加可执行程序源码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/home/tarsproto/TestApp/TestHelloClient$ tree</span><br><span class="line">.</span><br><span class="line">├── main.cpp</span><br><span class="line">├── makefile</span><br><span class="line"></span><br><span class="line">0 directories, 2 files</span><br></pre></td></tr></table></figure>
+<p>注意修改IP地址</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> ** argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Communicator comm;</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">        HelloPrx prx;</span><br><span class="line">        comm.stringToProxy(<span class="string">"TestApp.HelloServer.HelloObj@tcp -h 192.168.10.6 -p 20001"</span> , prx);</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>运行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/home/tarsproto/TestApp/TestHelloClient$ ./TestHelloClient </span><br><span class="line">2018-06-26 15:22:52|CommunicatorEpoll::run id:12838</span><br><span class="line">iRet:0 sReq:hello world sRsp:hello world</span><br></pre></td></tr></table></figure></p>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><h2 id="访问http-127-0-0-1-8080报错"><a href="#访问http-127-0-0-1-8080报错" class="headerlink" title="访问http://127.0.0.1:8080报错"></a>访问<a href="http://127.0.0.1:8080报错" target="_blank" rel="noopener">http://127.0.0.1:8080报错</a></h2><p>NoClassDefFoundError: org/apache/log4j/spi/ThrowableInformation</p>
+<p>修改${TARS_ROOT}/Tars/java/core/client.pom.xml，增加下列依赖<br><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!-- https://mvnrepository.com/artifact/log4j/log4j --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="mysql时间搓错误"><a href="#mysql时间搓错误" class="headerlink" title="mysql时间搓错误"></a>mysql时间搓错误</h2><p>Error updating database.  Cause: com.mysql.jdbc.MysqlDataTruncation: Data truncation: Incorrect datetime value: ‘0000:00:00 00:00:00’ for column ‘patch_time’ at row 1↵### The error may involve defaultParameterMap</p>
+<p><code>/etc/mysql/mysql.conf.d/mysqld.cnf</code>  去掉<code>NO_ZERO_DATE</code>选项<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sql_mode = <span class="string">"ONLY_FULL_GROUP_BY"</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="文件发布上传文件失败"><a href="#文件发布上传文件失败" class="headerlink" title="文件发布上传文件失败"></a>文件发布上传文件失败</h2><p>检查文件/目录权限</p>
+<h2 id="tarsnotify-inactive"><a href="#tarsnotify-inactive" class="headerlink" title="tarsnotify inactive"></a>tarsnotify inactive</h2><p>需要手动发布 <code>tarsnotify-tar</code>（另外还有五个可选组件）</p>
+<h2 id="生成hello-world失败"><a href="#生成hello-world失败" class="headerlink" title="生成hello world失败"></a>生成hello world失败</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Bareword <span class="string">"DemoServer"</span> not allowed <span class="keyword">while</span> <span class="string">"strict subs"</span> <span class="keyword">in</span> use at</span><br></pre></td></tr></table></figure>
+<p>参考 <a href="http://haoningabc.iteye.com/blog/1688936" target="_blank" rel="noopener">http://haoningabc.iteye.com/blog/1688936</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#rename "DemoServer" "$SERVER" $SRC_FILE  </span></span><br><span class="line">rename <span class="string">"s/DemoServer/<span class="variable">$SERVER</span>/"</span> <span class="variable">$SRC_FILE</span>  </span><br><span class="line"><span class="comment">#rename "DemoServant" "$SERVANT" $SRC_FILE  </span></span><br><span class="line">rename <span class="string">"s/DemoServant/<span class="variable">$SERVANT</span>/"</span> <span class="variable">$SRC_FILE</span></span><br></pre></td></tr></table></figure>
+<h2 id="编译Hello-world报错"><a href="#编译Hello-world报错" class="headerlink" title="编译Hello world报错"></a>编译Hello world报错</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">/usr/include/c++/5/bits/c++0x_warning.h:32:2: error: <span class="comment">#error This file requires compiler</span></span><br></pre></td></tr></table></figure>
+<p>修改当前目录makeifle，<code>TARS2CPP_FLAG</code>增加<code>c11</code>支持<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">TARS2CPP_FLAG:= -std=c++11</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/06/26/tars/" data-id="ckdbgbyy5005r43pojbdbs7mf" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/06/26/tars/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tars/">tars</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-oauth" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/28/oauth/">GO Oauth2/OIDC客户端/服务器</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/05/28/oauth/" class="article-date"><time datetime="2018-05-28T01:12:53.000Z" itemprop="datePublished">2018-05-28</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/学习笔记/">学习笔记</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <ol>
+<li>服务器参考<a href="https://github.com/RangelReale/osin" target="_blank" rel="noopener">https://github.com/RangelReale/osin</a></li>
+<li>客户端参考<a href="https://github.com/golang/oauth2" target="_blank" rel="noopener">https://github.com/golang/oauth2</a></li>
+<li>OIDC服务器参考<a href="https://github.com/coreos/dex" target="_blank" rel="noopener">https://github.com/coreos/dex</a></li>
+<li>OIDC客户端参考<a href="https://github.com/coreos/go-oidc" target="_blank" rel="noopener">https://github.com/coreos/go-oidc</a></li>
+</ol>
+<h1 id="OAuth2服务器"><a href="#OAuth2服务器" class="headerlink" title="OAuth2服务器"></a>OAuth2服务器</h1><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/RangelReale/osin"</span></span><br><span class="line">	<span class="string">"github.com/RangelReale/osin/example"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleLoginPage</span><span class="params">(ar *osin.AuthorizeRequest, w http.ResponseWriter, r *http.Request)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	r.ParseForm()</span><br><span class="line">	<span class="keyword">if</span> r.Method == <span class="string">"POST"</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	html := <span class="string">`&lt;html&gt;&lt;body&gt;</span></span><br><span class="line"><span class="string">LOGIN %s&lt;br/&gt;</span></span><br><span class="line"><span class="string">&lt;form action="/authorize?%s" method="POST"&gt;</span></span><br><span class="line"><span class="string">&lt;input type="submit"/&gt;</span></span><br><span class="line"><span class="string">&lt;/form&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;&lt;/html&gt;`</span></span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(fmt.Sprintf(html, ar.Client.GetId(), r.URL.RawQuery)))</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newTestStorage</span><span class="params">()</span> *<span class="title">example</span>.<span class="title">TestStorage</span></span> &#123;</span><br><span class="line">	ts := example.NewTestStorage()</span><br><span class="line">	c, _ := ts.GetClient(<span class="string">"1234"</span>)</span><br><span class="line">	tc := c.(*osin.DefaultClient)</span><br><span class="line">	tc.RedirectUri = <span class="string">"http://qjw.p.kimq.cn/callback"</span></span><br><span class="line">	<span class="keyword">return</span> ts</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cfg := osin.NewServerConfig()</span><br><span class="line">	cfg.AllowGetAccessRequest = <span class="literal">true</span></span><br><span class="line">	cfg.AllowClientSecretInParams = <span class="literal">true</span></span><br><span class="line"></span><br><span class="line">	server := osin.NewServer(cfg, newTestStorage())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Authorization code endpoint</span></span><br><span class="line">	http.HandleFunc(<span class="string">"/authorize"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		resp := server.NewResponse()</span><br><span class="line">		<span class="keyword">defer</span> resp.Close()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ar := server.HandleAuthorizeRequest(resp, r); ar != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> !handleLoginPage(ar, w, r) &#123;</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">			ar.Authorized = <span class="literal">true</span></span><br><span class="line">			server.FinishAuthorizeRequest(resp, r, ar)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> resp.IsError &amp;&amp; resp.InternalError != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">"ERROR: %s\n"</span>, resp.InternalError)</span><br><span class="line">		&#125;</span><br><span class="line">		osin.OutputJSON(resp, w, r)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Access token endpoint</span></span><br><span class="line">	http.HandleFunc(<span class="string">"/token"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		resp := server.NewResponse()</span><br><span class="line">		<span class="keyword">defer</span> resp.Close()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ar := server.HandleAccessRequest(resp, r); ar != <span class="literal">nil</span> &#123;</span><br><span class="line">			ar.Authorized = <span class="literal">true</span></span><br><span class="line">			server.FinishAccessRequest(resp, r, ar)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> resp.IsError &amp;&amp; resp.InternalError != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">"ERROR: %s\n"</span>, resp.InternalError)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		osin.OutputJSON(resp, w, r)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Information endpoint</span></span><br><span class="line">	http.HandleFunc(<span class="string">"/info"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		resp := server.NewResponse()</span><br><span class="line">		<span class="keyword">defer</span> resp.Close()</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> ir := server.HandleInfoRequest(resp, r); ir != <span class="literal">nil</span> &#123;</span><br><span class="line">			server.FinishInfoRequest(resp, r, ir)</span><br><span class="line">		&#125;</span><br><span class="line">		osin.OutputJSON(resp, w, r)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	http.ListenAndServe(<span class="string">":14000"</span>, <span class="literal">nil</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="OAuth2客户端"><a href="#OAuth2客户端" class="headerlink" title="OAuth2客户端"></a>OAuth2客户端</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"golang.org/x/oauth2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> htmlIndex = <span class="string">`&lt;html&gt;&lt;body&gt;</span></span><br><span class="line"><span class="string">&lt;a href="/login"&gt;Log in with oauth2&lt;/a&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;&lt;/html&gt;</span></span><br><span class="line"><span class="string">`</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> infoUrl = <span class="string">"http://localhost:14000/info"</span></span><br><span class="line"><span class="keyword">var</span> endpotin = oauth2.Endpoint&#123;</span><br><span class="line">	AuthURL:  <span class="string">"http://localhost:14000/authorize"</span>,</span><br><span class="line">	TokenURL: <span class="string">"http://localhost:14000/token"</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> oauthConfig = &amp;oauth2.Config&#123;</span><br><span class="line">	ClientID:     <span class="string">"1234"</span>,</span><br><span class="line">	ClientSecret: <span class="string">"aabbccdd"</span>,</span><br><span class="line">	RedirectURL:  <span class="string">"http://qjw.p.kimq.cn/callback"</span>,</span><br><span class="line">	Scopes:       []<span class="keyword">string</span>&#123;<span class="string">"api"</span>&#125;,</span><br><span class="line">	Endpoint:     endpotin,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> oauthStateString = <span class="string">"random"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">"/"</span>, handleMain)</span><br><span class="line">	http.HandleFunc(<span class="string">"/login"</span>, handleLogin)</span><br><span class="line">	http.HandleFunc(<span class="string">"/callback"</span>, handleCallback)</span><br><span class="line">	fmt.Println(http.ListenAndServe(<span class="string">":8000"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleMain</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	fmt.Fprintf(w, htmlIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleLogin</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	url := oauthConfig.AuthCodeURL(oauthStateString)</span><br><span class="line">	fmt.Println(url)</span><br><span class="line">	http.Redirect(w, r, url, http.StatusTemporaryRedirect)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleCallback</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	state := r.FormValue(<span class="string">"state"</span>)</span><br><span class="line">	<span class="keyword">if</span> state != oauthStateString &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"invalid oauth state, expected '%s', got '%s'\n"</span>, oauthStateString, state)</span><br><span class="line">		http.Redirect(w, r, <span class="string">"/"</span>, http.StatusTemporaryRedirect)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(state)</span><br><span class="line"></span><br><span class="line">	code := r.FormValue(<span class="string">"code"</span>)</span><br><span class="line">	fmt.Println(code)</span><br><span class="line">	token, err := oauthConfig.Exchange(oauth2.NoContext, code)</span><br><span class="line">	fmt.Println(token)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"Code exchange failed with '%s'\n"</span>, err)</span><br><span class="line">		http.Redirect(w, r, <span class="string">"/"</span>, http.StatusTemporaryRedirect)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">	req, _ := http.NewRequest(<span class="string">"GET"</span>, infoUrl, <span class="literal">nil</span>)</span><br><span class="line">	req.Header.Set(<span class="string">"Authorization"</span>, <span class="string">"bearer "</span>+token.AccessToken)</span><br><span class="line">	response, err := client.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> response.Body.Close()</span><br><span class="line">		contents, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">		fmt.Fprintf(w, <span class="string">"Content: %s\n"</span>, contents)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Fprintf(w, <span class="string">"Content: %s\n"</span>, err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Gitlab-OAuth客户端"><a href="#Gitlab-OAuth客户端" class="headerlink" title="Gitlab OAuth客户端"></a>Gitlab OAuth客户端</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"io/ioutil"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"golang.org/x/oauth2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> htmlIndex = <span class="string">`&lt;html&gt;&lt;body&gt;</span></span><br><span class="line"><span class="string">&lt;a href="/login"&gt;Log in with oauth2&lt;/a&gt;</span></span><br><span class="line"><span class="string">&lt;/body&gt;&lt;/html&gt;</span></span><br><span class="line"><span class="string">`</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//var infoUrl = "http://localhost:14000/info"</span></span><br><span class="line"><span class="comment">//var endpotin = oauth2.Endpoint&#123;</span></span><br><span class="line"><span class="comment">//	AuthURL:  "http://localhost:14000/authorize",</span></span><br><span class="line"><span class="comment">//	TokenURL: "http://localhost:14000/token",</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="comment">//var oauthConfig = &amp;oauth2.Config&#123;</span></span><br><span class="line"><span class="comment">//	ClientID:     "1234",</span></span><br><span class="line"><span class="comment">//	ClientSecret: "aabbccdd",</span></span><br><span class="line"><span class="comment">//	RedirectURL:  "http://qjw.p.kimq.cn/callback",</span></span><br><span class="line"><span class="comment">//	Scopes:       []string&#123;"api"&#125;,</span></span><br><span class="line"><span class="comment">//	Endpoint:     endpotin,</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> domain = <span class="string">"https://gitlab.example.com"</span></span><br><span class="line"><span class="keyword">var</span> infoUrl = domain + <span class="string">"/api/v4/users"</span></span><br><span class="line"><span class="keyword">var</span> endpotin = oauth2.Endpoint&#123;</span><br><span class="line">	AuthURL:  domain + <span class="string">"/oauth/authorize"</span>,</span><br><span class="line">	TokenURL: domain + <span class="string">"/oauth/token"</span>,</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> oauthConfig = &amp;oauth2.Config&#123;</span><br><span class="line">	ClientID:     <span class="string">"4f56sad4f56sa4df65safd"</span>,</span><br><span class="line">	ClientSecret: <span class="string">"7f8dasf46sa54f56s4df65"</span>,</span><br><span class="line">	RedirectURL:  <span class="string">"http://qjw.p.kimq.cn/callback"</span>,</span><br><span class="line">	Scopes:       []<span class="keyword">string</span>&#123;<span class="string">"api"</span>&#125;,</span><br><span class="line">	Endpoint:     endpotin,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> oauthStateString = <span class="string">"random"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	http.HandleFunc(<span class="string">"/"</span>, handleMain)</span><br><span class="line">	http.HandleFunc(<span class="string">"/login"</span>, handleLogin)</span><br><span class="line">	http.HandleFunc(<span class="string">"/callback"</span>, handleCallback)</span><br><span class="line">	fmt.Println(http.ListenAndServe(<span class="string">":8000"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleMain</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	fmt.Fprintf(w, htmlIndex)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleLogin</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	url := oauthConfig.AuthCodeURL(oauthStateString)</span><br><span class="line">	fmt.Println(url)</span><br><span class="line">	http.Redirect(w, r, url, http.StatusTemporaryRedirect)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleCallback</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	state := r.FormValue(<span class="string">"state"</span>)</span><br><span class="line">	<span class="keyword">if</span> state != oauthStateString &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"invalid oauth state, expected '%s', got '%s'\n"</span>, oauthStateString, state)</span><br><span class="line">		http.Redirect(w, r, <span class="string">"/"</span>, http.StatusTemporaryRedirect)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	fmt.Println(state)</span><br><span class="line"></span><br><span class="line">	code := r.FormValue(<span class="string">"code"</span>)</span><br><span class="line">	fmt.Println(code)</span><br><span class="line">	token, err := oauthConfig.Exchange(oauth2.NoContext, code)</span><br><span class="line">	fmt.Println(token)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"Code exchange failed with '%s'\n"</span>, err)</span><br><span class="line">		http.Redirect(w, r, <span class="string">"/"</span>, http.StatusTemporaryRedirect)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	client := &amp;http.Client&#123;&#125;</span><br><span class="line">	req, _ := http.NewRequest(<span class="string">"GET"</span>, infoUrl, <span class="literal">nil</span>)</span><br><span class="line">	req.Header.Set(<span class="string">"Authorization"</span>, <span class="string">"bearer "</span>+token.AccessToken)</span><br><span class="line">	response, err := client.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> response.Body.Close()</span><br><span class="line">		contents, _ := ioutil.ReadAll(response.Body)</span><br><span class="line">		fmt.Fprintf(w, <span class="string">"Content: %s\n"</span>, contents)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Fprintf(w, <span class="string">"Content: %s\n"</span>, err.Error())</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="OIDC服务器"><a href="#OIDC服务器" class="headerlink" title="OIDC服务器"></a>OIDC服务器</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ go get github.com/coreos/dex</span><br><span class="line">$ <span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/coreos/dex</span><br><span class="line">$ make</span><br></pre></td></tr></table></figure>
+<p>修改examples/config-dev.yml<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">staticClients:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">example-app</span></span><br><span class="line">  <span class="attr">redirectURIs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'http://qjw.p.kimq.cn/callback'</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">'Example App'</span></span><br><span class="line">  <span class="attr">secret:</span> <span class="string">ZXhhbXBsZS1hcHAtc2VjcmV0</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./bin/dex serve examples/config-dev.yaml</span><br></pre></td></tr></table></figure>
+<h2 id="OIDC客户端"><a href="#OIDC客户端" class="headerlink" title="OIDC客户端"></a>OIDC客户端</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"encoding/json"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	oidc <span class="string">"github.com/coreos/go-oidc"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"golang.org/x/net/context"</span></span><br><span class="line">	<span class="string">"golang.org/x/oauth2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> domain = <span class="string">"http://127.0.0.1:5556/dex"</span></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	clientID     = <span class="string">"example-app"</span></span><br><span class="line">	clientSecret = <span class="string">"ZXhhbXBsZS1hcHAtc2VjcmV0"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx := context.Background()</span><br><span class="line"></span><br><span class="line">	provider, err := oidc.NewProvider(ctx, domain)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	oidcConfig := &amp;oidc.Config&#123;</span><br><span class="line">		ClientID: clientID,</span><br><span class="line">	&#125;</span><br><span class="line">	verifier := provider.Verifier(oidcConfig)</span><br><span class="line"></span><br><span class="line">	config := oauth2.Config&#123;</span><br><span class="line">		ClientID:     clientID,</span><br><span class="line">		ClientSecret: clientSecret,</span><br><span class="line">		Endpoint:     provider.Endpoint(),</span><br><span class="line">		RedirectURL:  <span class="string">"http://qjw.p.kimq.cn/callback"</span>,</span><br><span class="line">		Scopes:       []<span class="keyword">string</span>&#123;oidc.ScopeOpenID&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	state := <span class="string">"foobar"</span> <span class="comment">// Don't do this in production.</span></span><br><span class="line"></span><br><span class="line">	http.HandleFunc(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		http.Redirect(w, r, config.AuthCodeURL(state), http.StatusFound)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	http.HandleFunc(<span class="string">"/callback"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.URL.Query().Get(<span class="string">"state"</span>) != state &#123;</span><br><span class="line">			http.Error(w, <span class="string">"state did not match"</span>, http.StatusBadRequest)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		oauth2Token, err := config.Exchange(ctx, r.URL.Query().Get(<span class="string">"code"</span>))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, <span class="string">"Failed to exchange token: "</span>+err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		rawIDToken, ok := oauth2Token.Extra(<span class="string">"id_token"</span>).(<span class="keyword">string</span>)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			http.Error(w, <span class="string">"No id_token field in oauth2 token."</span>, http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		idToken, err := verifier.Verify(ctx, rawIDToken)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, <span class="string">"Failed to verify ID Token: "</span>+err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		oauth2Token.AccessToken = <span class="string">"*REDACTED*"</span></span><br><span class="line"></span><br><span class="line">		resp := <span class="keyword">struct</span> &#123;</span><br><span class="line">			OAuth2Token   *oauth2.Token</span><br><span class="line">			IDTokenClaims *json.RawMessage <span class="comment">// ID Token payload is just JSON.</span></span><br><span class="line">		&#125;&#123;oauth2Token, <span class="built_in">new</span>(json.RawMessage)&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err := idToken.Claims(&amp;resp.IDTokenClaims); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		data, err := json.MarshalIndent(resp, <span class="string">""</span>, <span class="string">"    "</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		w.Write(data)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">"127.0.0.1:8000"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Dex使用Gitlab"><a href="#Dex使用Gitlab" class="headerlink" title="Dex使用Gitlab"></a>Dex使用Gitlab</h1><p>Dex默认提供了几种不需要额外配置的认证方式，参见配置 <code>config-dev.yaml</code>。代码实现参见<code>github.com/coreos/dex/storage/static.go</code><br><figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">staticClients:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">id:</span> <span class="string">example-app</span></span><br><span class="line">  <span class="attr">redirectURIs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">'http://qjw.p.kimq.cn/callback'</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">'Example App'</span></span><br><span class="line">  <span class="attr">secret:</span> <span class="string">ZXhhbXBsZS1hcHAtc2VjcmV0</span></span><br><span class="line">  </span><br><span class="line"><span class="attr">connectors:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">type:</span> <span class="string">mockCallback</span></span><br><span class="line">  <span class="attr">id:</span> <span class="string">mock</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">Example</span></span><br><span class="line">  </span><br><span class="line"><span class="comment"># Let dex keep a list of passwords which can be used to login to dex.</span></span><br><span class="line"><span class="attr">enablePasswordDB:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A static list of passwords to login the end user. By identifying here, dex</span></span><br><span class="line"><span class="comment"># won't look in its underlying storage for passwords.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># If this option isn't chosen users may be added through the gRPC API.</span></span><br><span class="line"><span class="attr">staticPasswords:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">email:</span> <span class="string">"admin@example.com"</span></span><br><span class="line">  <span class="comment"># bcrypt hash of the string "password"</span></span><br><span class="line">  <span class="attr">hash:</span> <span class="string">"$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4W"</span></span><br><span class="line">  <span class="attr">username:</span> <span class="string">"admin"</span></span><br><span class="line">  <span class="attr">userID:</span> <span class="string">"08a8684b-db88-4b73-90a9-3cd1661f5466"</span></span><br></pre></td></tr></table></figure></p>
+<p>为了支持Gitlab，需要</p>
+<ol>
+<li>准备gitlab，可以使用gitlab.com，或者自行搭建的私有仓库，用Docker运行Gitlab非常容易，参见<a href="http://blog.kimq.cn/2017/06/19/gitlab-env/">http://blog.kimq.cn/2017/06/19/gitlab-env/</a></li>
+<li>Gitlab新建<code>applications</code>，其中回调<a href="http://server:5556/dex/callback" target="_blank" rel="noopener">http://server:5556/dex/callback</a>，<em>假设dex服务器的地址是<a href="http://server:5556,下同" target="_blank" rel="noopener">http://server:5556,下同</a></em>。</li>
+<li><p>修改dex配置,假设自行搭建的gitlab服务器地址<a href="http://server:8080" target="_blank" rel="noopener">http://server:8080</a>，注意配置<code>baseURL</code>,<code>redirectURI/clientID/clientSecret</code>和gitlab上保持一致</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">connectors:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">gitlab</span></span><br><span class="line">    <span class="comment"># Required field for connector id.</span></span><br><span class="line">    <span class="attr">id:</span> <span class="string">gitlab</span></span><br><span class="line">    <span class="comment"># Required field for connector name.</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">GitLab</span></span><br><span class="line">    <span class="attr">config:</span></span><br><span class="line">      <span class="comment"># optional, default = https://www.gitlab.com </span></span><br><span class="line">      <span class="attr">baseURL:</span> <span class="string">http://server:8080</span></span><br><span class="line">      <span class="comment"># Credentials can be string literals or pulled from the environment.  </span></span><br><span class="line">      <span class="attr">clientID:</span> <span class="string">7071eb2135f75bf1d8cabd0c48c98ee38b84e25e628e0f9164cd2e40bd99fcd8</span></span><br><span class="line">      <span class="attr">clientSecret:</span> <span class="string">e84f364add4d221cacf36cfe4136cc1c13872ce1ba17158b5ff972221d9f3e21</span></span><br><span class="line">      <span class="attr">redirectURI:</span> <span class="string">http://server:5556/dex/callback</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>给dex的客户端分配<code>clientID/clientSecret</code>，在Gitlab上生成的clientID/clientSecret仅仅供dex自己使用（<em>站在gitlab角度看，dex是客户端</em>），分配的方式比较麻烦，dex提供了grpc的接口，参见<code>github.com/coreos/dex/Documentation/api.md</code>，编译成功之后有一个<code>github.com/coreos/dex/bin/grpc-client</code>。我用了一种比较讨巧的办法先测试，写一个Web API，参见<code>github.com/coreos/dex/server/server.go</code>和<code>github.com/coreos/dex/server/handlers.go</code></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">handleWithCORS(<span class="string">"/token"</span>, s.handleToken)</span><br><span class="line">handleWithCORS(<span class="string">"/test"</span>, s.test)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 下面的参数`id`和`secret`就是新分配的`clientID/clientSecret`</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *Server)</span> <span class="title">test</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">	s.storage.CreateClient(storage.Client&#123;</span><br><span class="line">		ID:           <span class="string">"tt"</span>,</span><br><span class="line">		Secret:       <span class="string">"123456"</span>,</span><br><span class="line">		RedirectURIs: []<span class="keyword">string</span>&#123;<span class="string">"http://qjw.p.kimq.cn/callback"</span>&#125;,</span><br><span class="line">		Name:         <span class="string">"hehe"</span>,</span><br><span class="line">	&#125;)</span><br><span class="line">	w.Write([]<span class="keyword">byte</span>(<span class="string">"Hello, world!"</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>运行客户端</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"encoding/json"</span></span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line"></span><br><span class="line">	oidc <span class="string">"github.com/coreos/go-oidc"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"golang.org/x/net/context"</span></span><br><span class="line">	<span class="string">"golang.org/x/oauth2"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> domain = <span class="string">"http://server:5556/dex"</span></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	clientID     = <span class="string">"tt"</span></span><br><span class="line">	clientSecret = <span class="string">"123456"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	ctx := context.Background()</span><br><span class="line"></span><br><span class="line">	provider, err := oidc.NewProvider(ctx, domain)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	oidcConfig := &amp;oidc.Config&#123;</span><br><span class="line">		ClientID: clientID,</span><br><span class="line">	&#125;</span><br><span class="line">	verifier := provider.Verifier(oidcConfig)</span><br><span class="line"></span><br><span class="line">	config := oauth2.Config&#123;</span><br><span class="line">		ClientID:     clientID,</span><br><span class="line">		ClientSecret: clientSecret,</span><br><span class="line">		Endpoint:     provider.Endpoint(),</span><br><span class="line">		RedirectURL:  <span class="string">"http://qjw.p.kimq.cn/callback"</span>,</span><br><span class="line">		Scopes:       []<span class="keyword">string</span>&#123;oidc.ScopeOpenID&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	state := <span class="string">"foobar"</span> <span class="comment">// Don't do this in production.</span></span><br><span class="line"></span><br><span class="line">	http.HandleFunc(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		http.Redirect(w, r, config.AuthCodeURL(state), http.StatusFound)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	http.HandleFunc(<span class="string">"/callback"</span>, <span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.URL.Query().Get(<span class="string">"state"</span>) != state &#123;</span><br><span class="line">			http.Error(w, <span class="string">"state did not match"</span>, http.StatusBadRequest)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		oauth2Token, err := config.Exchange(ctx, r.URL.Query().Get(<span class="string">"code"</span>))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, <span class="string">"Failed to exchange token: "</span>+err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		rawIDToken, ok := oauth2Token.Extra(<span class="string">"id_token"</span>).(<span class="keyword">string</span>)</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			http.Error(w, <span class="string">"No id_token field in oauth2 token."</span>, http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		idToken, err := verifier.Verify(ctx, rawIDToken)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, <span class="string">"Failed to verify ID Token: "</span>+err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		oauth2Token.AccessToken = <span class="string">"*REDACTED*"</span></span><br><span class="line"></span><br><span class="line">		resp := <span class="keyword">struct</span> &#123;</span><br><span class="line">			OAuth2Token   *oauth2.Token</span><br><span class="line">			IDTokenClaims *json.RawMessage <span class="comment">// ID Token payload is just JSON.</span></span><br><span class="line">		&#125;&#123;oauth2Token, <span class="built_in">new</span>(json.RawMessage)&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err := idToken.Claims(&amp;resp.IDTokenClaims); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		data, err := json.MarshalIndent(resp, <span class="string">""</span>, <span class="string">"    "</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			http.Error(w, err.Error(), http.StatusInternalServerError)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">		w.Write(data)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	log.Fatal(http.ListenAndServe(<span class="string">"0.0.0.0:8000"</span>, <span class="literal">nil</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="Connector绑定"><a href="#Connector绑定" class="headerlink" title="Connector绑定"></a>Connector绑定</h2><p>dex并未就client和特定的connector（比如gitlab）做绑定，若connector只有一个，就直接跳转，否则列出来让用户选</p>
+<p>加入dex同时设置了gitlab和github的connector，并且我希望这些clientid只能使用gitlab，另外一些只能使用github做授权，就无法实现。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/05/28/oauth/" data-id="ckdbgbyxd004d43poy93cyt03" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/05/28/oauth/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-plantuml" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/25/plantuml/">使用plantuml画UML图</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/05/25/plantuml/" class="article-date"><time datetime="2018-05-25T13:14:21.000Z" itemprop="datePublished">2018-05-25</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>官网<a href="http://plantuml.com/" target="_blank" rel="noopener">http://plantuml.com/</a></p>
+<p>主流的工具都支持<a href="http://plantuml.com/running" target="_blank" rel="noopener">渲染</a></p>
+<ol>
+<li><a href="http://plugins.intellij.net/plugin/?idea&amp;id=7017" target="_blank" rel="noopener">intellij</a></li>
+<li><a href="http://plantuml.com/eclipse" target="_blank" rel="noopener">eclipse</a></li>
+<li><a href="https://github.com/jvantuyl/sublime_diagram_plugin" target="_blank" rel="noopener">sublime</a></li>
+<li><a href="https://atom.io/packages/plantuml" target="_blank" rel="noopener">atom</a></li>
+<li><a href="https://github.com/brianmaher84/PlantUML_Notepad-_UDL" target="_blank" rel="noopener">notepad++</a></li>
+<li><a href="https://marketplace.visualstudio.com/items?itemName=okazuki.okazukiplantuml" target="_blank" rel="noopener">vscode</a></li>
+<li><a href="http://plugins.netbeans.org/plugin/49069/plantuml" target="_blank" rel="noopener">netbeans</a></li>
+</ol>
+<h2 id="活动图-流程图"><a href="#活动图-流程图" class="headerlink" title="活动图/流程图"></a>活动图/流程图</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@startuml</span><br><span class="line">start</span><br><span class="line">if (condition A) then (yes)</span><br><span class="line">  :Text 1;</span><br><span class="line">elseif (condition B) then (yes)</span><br><span class="line">  :Text 2;</span><br><span class="line">  stop</span><br><span class="line">elseif (condition C) then (yes)</span><br><span class="line">  :Text 3;</span><br><span class="line">elseif (condition D) then (yes)</span><br><span class="line">  :Text 4;</span><br><span class="line">else (nothing)</span><br><span class="line">  :Text else;</span><br><span class="line">endif</span><br><span class="line">stop</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h2 id="状态图"><a href="#状态图" class="headerlink" title="状态图"></a>状态图</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@startuml</span><br><span class="line">scale 350 width</span><br><span class="line">[*] --&gt; NotShooting</span><br><span class="line"></span><br><span class="line">state NotShooting &#123;</span><br><span class="line">  [*] --&gt; Idle</span><br><span class="line">  Idle --&gt; Configuring : EvConfig</span><br><span class="line">  Configuring --&gt; Idle : EvConfig</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">state Configuring &#123;</span><br><span class="line">  [*] --&gt; NewValueSelection</span><br><span class="line">  NewValueSelection --&gt; NewValuePreview : EvNewValue</span><br><span class="line">  NewValuePreview --&gt; NewValueSelection : EvNewValueRejected</span><br><span class="line">  NewValuePreview --&gt; NewValueSelection : EvNewValueSaved</span><br><span class="line">  </span><br><span class="line">  state NewValuePreview &#123;</span><br><span class="line">	 State1 -&gt; State2</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h2 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@startuml</span><br><span class="line">actor Bob #red</span><br><span class="line">&apos; The only difference between actor</span><br><span class="line">&apos;and participant is the drawing</span><br><span class="line">participant Alice</span><br><span class="line">participant &quot;I have a really\nlong name&quot; as L #99FF99</span><br><span class="line">/&apos; You can also declare:</span><br><span class="line">   participant L as &quot;I have a really\nlong name&quot;  #99FF99</span><br><span class="line">  &apos;/</span><br><span class="line"></span><br><span class="line">Alice-&gt;Bob: Authentication Request</span><br><span class="line">Bob-&gt;Alice: Authentication Response</span><br><span class="line">Bob-&gt;L: Log transaction</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<h2 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">@startuml</span><br><span class="line">class Foo1 &#123;</span><br><span class="line">  You can use</span><br><span class="line">  several lines</span><br><span class="line">  ..</span><br><span class="line">  as you want</span><br><span class="line">  and group</span><br><span class="line">  ==</span><br><span class="line">  things together.</span><br><span class="line">  __</span><br><span class="line">  You can have as many groups</span><br><span class="line">  as you want</span><br><span class="line">  --</span><br><span class="line">  End of class</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class User &#123;</span><br><span class="line">  .. Simple Getter ..</span><br><span class="line">  + getName()</span><br><span class="line">  + getAddress()</span><br><span class="line">  .. Some setter ..</span><br><span class="line">  + setName()</span><br><span class="line">  __ private data __</span><br><span class="line">  int age</span><br><span class="line">  -- encrypted --</span><br><span class="line">  String password</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p>完整查看官网<a href="http://plantuml.com/" target="_blank" rel="noopener">http://plantuml.com/</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://www.jianshu.com/p/e92a52770832" target="_blank" rel="noopener">https://www.jianshu.com/p/e92a52770832</a></li>
+<li><a href="https://yuque.com/yuque/help/editor-puml" target="_blank" rel="noopener">https://yuque.com/yuque/help/editor-puml</a></li>
+<li><a href="https://blog.csdn.net/zhangjikuan/article/details/53484558" target="_blank" rel="noopener">https://blog.csdn.net/zhangjikuan/article/details/53484558</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/05/25/plantuml/" data-id="ckdbgbyxf004k43pov30fofay" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/05/25/plantuml/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/uml/">uml</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-build-time-secrets-with-docker-containers" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/05/23/build-time-secrets-with-docker-containers/">Docker编译期间传递隐私数据</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2018/05/23/build-time-secrets-with-docker-containers/" class="article-date"><time datetime="2018-05-23T11:34:09.000Z" itemprop="datePublished">2018-05-23</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/环境搭建/">环境搭建</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>所谓的隐私数据，比如一些私有的token、密码、ssh key之类的不可公开但是编译期间却需要的信息</p>
+<p>比如在docker编译期间，需要clone一个私有git仓库的代码，一般使用ssh key或者一个access token，这个密钥仅仅在编译期有用，并且不能暴露出去</p>
+<h1 id="几种常见思路"><a href="#几种常见思路" class="headerlink" title="几种常见思路"></a>几种常见思路</h1><ol>
+<li>Dockerfile ENV variable</li>
+<li>Docker build time variables</li>
+</ol>
+<p>留意<code>build-arg</code></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build –build-arg HTTP_PROXY=http://10.20.30.2:1234 .</span><br></pre></td></tr></table></figure>
+<p>这两种方式，实际都会在镜像中留下记录，也就是若获取到镜像，可以找到这些token，所以能达到目的，但并不安全</p>
+<h1 id="dockito-vault"><a href="#dockito-vault" class="headerlink" title="dockito/vault"></a><a href="https://github.com/dockito/vault" target="_blank" rel="noopener">dockito/vault</a></h1><p><a href="https://github.com/dockito/vault" target="_blank" rel="noopener">dockito/vault</a>的思路很简单，在同一个docker环境下运行一个镜像，在里面运行一个http server。打包的docker镜像，则通过http协议去下载ssh key或者token，用完再删除。</p>
+<p>这里的关键问题是<code>如何找到服务器的地址</code></p>
+<p>考虑到默认配置下，同一个docker环境下的容器共享同一个ip内网，所以在目标容器中获取默认网关IP，同时<code>dockito/vault</code>绑定到这个IP即可实现</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>先打一个基础镜像，避免每次测试都要去apt-get和curl</p>
+<p>file:<code>dockerfile.base</code>,你可以使用其他镜像，比如<a href="https://alpinelinux.org/" target="_blank" rel="noopener">Alpine Linux</a><br><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">14.04</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y curl git &amp;&amp; \</span></span><br><span class="line"><span class="bash">        curl -L https://raw.githubusercontent.com/dockito/vault/master/ONVAULT &gt; /usr/bin/ONVAULT &amp;&amp; \</span></span><br><span class="line"><span class="bash">        chmod +x /usr/bin/ONVAULT</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t base:0.1 . -f Dockerfile.base</span><br></pre></td></tr></table></figure>
+<h3 id="运行vault"><a href="#运行vault" class="headerlink" title="运行vault"></a>运行vault</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/$ docker run --rm -it  -p 172.17.0.1:14242:3000 -v ~/.ssh:/vault/.ssh dockito/vault</span><br><span class="line"></span><br><span class="line">&gt; dockito-vault@1.0.0 start /usr/src/app</span><br><span class="line">&gt; node index.js</span><br><span class="line"></span><br><span class="line">Service started on port 3000</span><br></pre></td></tr></table></figure>
+<p>或者调试模式<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/$ docker run --rm -it  -p 172.17.0.1:14242:3000 -v ~/.ssh:/vault/.ssh dockito/vault /bin/sh</span><br><span class="line">/usr/src/app <span class="comment"># node index</span></span><br><span class="line">Service started on port 3000</span><br></pre></td></tr></table></figure></p>
+<p>在宿主主机访问下面地址确认，参见<a href="https://github.com/dockito/vault/blob/master/index.js" target="_blank" rel="noopener">https://github.com/dockito/vault/blob/master/index.js</a></p>
+<ol>
+<li><a href="http://172.17.0.1:14242/_ping" target="_blank" rel="noopener">http://172.17.0.1:14242/_ping</a></li>
+<li><a href="http://172.17.0.1:14242/ONVAULT" target="_blank" rel="noopener">http://172.17.0.1:14242/ONVAULT</a></li>
+<li><a href="http://172.17.0.1:14242/ssh.tgz" target="_blank" rel="noopener">http://172.17.0.1:14242/ssh.tgz</a></li>
+</ol>
+<h3 id="目标镜像"><a href="#目标镜像" class="headerlink" title="目标镜像"></a>目标镜像</h3><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> base:<span class="number">0.1</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ONVAULT git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/$ docker build -t b:0.1 .</span><br><span class="line">Sending build context to Docker daemon   131 MB</span><br><span class="line">Step 1/2 : FROM base:0.1</span><br><span class="line"> ---&gt; e8e50a0502d0</span><br><span class="line">Step 2/2 : RUN ONVAULT git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> 2747e4ef93b9</span><br><span class="line">[Dockito Vault] Downloading private keys...</span><br><span class="line">[Dockito Vault] Using ssh key: id_rsa</span><br><span class="line">[Dockito Vault] Executing <span class="built_in">command</span>: git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span><br><span class="line">Cloning into <span class="string">'flask-swagger'</span>...</span><br><span class="line">[Dockito Vault] Removing private keys...</span><br><span class="line"> ---&gt; 3591a1e64c2d</span><br><span class="line">Removing intermediate container 2747e4ef93b9</span><br><span class="line">Successfully built 3591a1e64c2d</span><br></pre></td></tr></table></figure>
+<p>具体怎么获取ssh key以及销毁，在脚本<a href="https://github.com/dockito/vault/blob/master/ONVAULT" target="_blank" rel="noopener">https://github.com/dockito/vault/blob/master/ONVAULT</a></p>
+<h2 id="使用定制ssh-key"><a href="#使用定制ssh-key" class="headerlink" title="使用定制ssh key"></a>使用定制ssh key</h2><p>生成key，名称务必保持<code>id_rsa</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@king:~/$ ssh-keygen</span><br><span class="line">Generating public/private rsa key pair.</span><br><span class="line">Enter file <span class="keyword">in</span> <span class="built_in">which</span> to save the key (/home/king/.ssh/id_rsa):  id_rsa</span><br><span class="line">Enter passphrase (empty <span class="keyword">for</span> no passphrase):</span><br><span class="line">Enter same passphrase again:</span><br><span class="line">Your identification has been saved <span class="keyword">in</span> id_rsa.</span><br><span class="line">Your public key has been saved <span class="keyword">in</span> id_rsa.pub.</span><br><span class="line">The key fingerprint is:</span><br><span class="line">SHA256:fXnNp2bZXa9G7EhrjqsaZS/4W9XKgGB+YN5esolUWnQ king@king</span><br><span class="line">The key<span class="string">'s randomart image is:</span></span><br><span class="line"><span class="string">+---[RSA 2048]----+</span></span><br><span class="line"><span class="string">|        . E      |</span></span><br><span class="line"><span class="string">|       . .       |</span></span><br><span class="line"><span class="string">|      = o        |</span></span><br><span class="line"><span class="string">|     = B o   o o |</span></span><br><span class="line"><span class="string">|      = S + +.o =|</span></span><br><span class="line"><span class="string">|     . B * =.oo+=|</span></span><br><span class="line"><span class="string">|      + = o.o== +|</span></span><br><span class="line"><span class="string">|       o o .+oo. |</span></span><br><span class="line"><span class="string">|      ..+oo+...  |</span></span><br><span class="line"><span class="string">+----[SHA256]-----+</span></span><br></pre></td></tr></table></figure></p>
+<p>新建<code>config</code>，确保和上面步骤的id_rsa同一目录，假如目录是<code>/home/king/tmp</code>，留意选项<code>StrictHostKeyChecking</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Host *</span><br><span class="line">    StrictHostKeyChecking no</span><br></pre></td></tr></table></figure></p>
+<p>运行server<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --rm -it -p 172.17.0.1:14242:3000 -v ~/tmp:/vault/.ssh dockito/vault</span><br></pre></td></tr></table></figure></p>
+<p>将id_rsa.pub作为deploy key设置到gitlab/github上</p>
+<p>然后重新build</p>
+<h3 id="非id-rsa的key"><a href="#非id-rsa的key" class="headerlink" title="非id_rsa的key"></a>非<code>id_rsa</code>的key</h3><p>在脚本<a href="https://github.com/dockito/vault/blob/master/ONVAULT" target="_blank" rel="noopener">ONVAULT</a>，若设置了环境变量<code>VAULT_SSH_KEY</code>，会自动更新配置config<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> [[  <span class="string">"<span class="variable">$VAULT_SSH_KEY</span>"</span> != <span class="string">"id_rsa"</span> ]]; <span class="keyword">then</span></span><br><span class="line">	<span class="comment"># configure the ssh to any host to use this ssh key</span></span><br><span class="line">	<span class="built_in">echo</span> -e <span class="string">"\nHost *\nIdentityFile ~/.ssh/<span class="variable">$VAULT_SSH_KEY</span>"</span> &gt;&gt; ~/.ssh/config</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure></p>
+<p>重命名</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">mv id_rsa gitlab &amp;&amp; mv id_rsa.pub gitlab.pub</span><br></pre></td></tr></table></figure>
+<p>留意环境变量<code>VAULT_SSH_KEY</code></p>
+<figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> base:<span class="number">0.1</span></span><br><span class="line"><span class="keyword">ENV</span> VAULT_SSH_KEY gitlab</span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> ONVAULT git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/$ ./b.sh </span><br><span class="line">Untagged: b:0.1</span><br><span class="line">Deleted: sha256:60987f8c94</span><br><span class="line">Sending build context to Docker daemon   131 MB</span><br><span class="line">Step 1/3 : FROM base:0.1</span><br><span class="line"> ---&gt; e8e50a0502d0</span><br><span class="line">Step 2/3 : ENV VAULT_SSH_KEY gitlab</span><br><span class="line"> ---&gt; Using cache</span><br><span class="line"> ---&gt; 8b92fa1adab3</span><br><span class="line">Step 3/3 : RUN ONVAULT git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span><br><span class="line"> ---&gt; Running <span class="keyword">in</span> 43e70f25b64e</span><br><span class="line">[Dockito Vault] Downloading private keys...</span><br><span class="line">[Dockito Vault] Using ssh key: gitlab</span><br><span class="line">[Dockito Vault] Executing <span class="built_in">command</span>: git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span><br><span class="line">Cloning into <span class="string">'flask-swagger'</span>...</span><br><span class="line">Warning: Permanently added <span class="string">'gitlab.kimq.cn,139.224.170.165'</span> (ECDSA) to the list of known hosts.</span><br><span class="line">[Dockito Vault] Removing private keys...</span><br><span class="line"> ---&gt; 1400a685ef0a</span><br><span class="line">Removing intermediate container 43e70f25b64e</span><br><span class="line">Successfully built 1400a685ef0a</span><br></pre></td></tr></table></figure>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[Dockito Vault] Executing <span class="built_in">command</span>: git <span class="built_in">clone</span> git@gitlab.kimq.cn:kingqiu/flask-swagger.git</span><br><span class="line">Cloning into <span class="string">'flask-swagger'</span>...</span><br><span class="line">fatal: cannot run ssh: No such file or directory</span><br><span class="line">fatal: unable to fork</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>apk add –update –virtual openssh-client</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Collecting git+ssh://git@gitlab.kimq.cn/kingqiu/flask-swagger.git (from -r requirements.txt (line 57))</span><br><span class="line">  Cloning ssh://git@gitlab.kimq.cn/kingqiu/flask-swagger.git to /tmp/pip-o1noeq66-build</span><br><span class="line">Bad owner or permissions on /root/.ssh/config</span><br><span class="line">fatal: Could not <span class="built_in">read</span> from remote repository.</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>chmod 0600 config &amp;&amp; chown <code>whoami</code>:<code>id -g -n</code> config</p>
+</blockquote>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://elasticcompute.io/2016/01/22/build-time-secrets-with-docker-containers/" target="_blank" rel="noopener">https://elasticcompute.io/2016/01/22/build-time-secrets-with-docker-containers/</a></li>
+<li><a href="https://github.com/dockito/vault" target="_blank" rel="noopener">https://github.com/dockito/vault</a></li>
+<li><a href="https://github.com/mdsol/docker-ssh-exec" target="_blank" rel="noopener">https://github.com/mdsol/docker-ssh-exec</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2018/05/23/build-time-secrets-with-docker-containers/" data-id="ckdbgbyv8000843poq9mxxgmz" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2018/05/23/build-time-secrets-with-docker-containers/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/docker/">docker</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <div id="page-nav">
+    <nav><ul class="pagination"><li><a class="page-prev" rel="prev" href="/"><i class="fa fa-chevron-left"></i> Prev</a></li><li><a class="page-number" href="/">1</a></li><li class="active"><span class="page-number">2</span></li><li><a class="page-number" href="/page/3/">3</a></li><li><a class="page-number" href="/page/4/">4</a></li><li class="disabled"><span class="page-space">&hellip;</span></li><li><a class="page-number" href="/page/7/">7</a></li><li><a class="page-next" rel="next" href="/page/3/">Next <i class="fa fa-chevron-right"></i></a></li></ul></nav>
+  </div>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

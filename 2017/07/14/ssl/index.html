@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>证书与Nginx部署 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="证书类别按照审核方式，一般的CA机构提供三种类型的SSL证书：域名型SSL(DV SSL)，企业型SSL(OV SSL)以及增强型SSL(EV SSL)证书。 三种证书底层的技术实现是一致的，区别在于证书发布方对申请方的审核程度，在证书的颁发对象中有很多字段，比如  CN Common Name OU Organization Unit O Organization Name L Locality">
+<meta name="keywords" content="nginx,证书,签名">
+<meta property="og:type" content="article">
+<meta property="og:title" content="证书与Nginx部署">
+<meta property="og:url" content="http://blog.kimq.cn/2017/07/14/ssl/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="证书类别按照审核方式，一般的CA机构提供三种类型的SSL证书：域名型SSL(DV SSL)，企业型SSL(OV SSL)以及增强型SSL(EV SSL)证书。 三种证书底层的技术实现是一致的，区别在于证书发布方对申请方的审核程度，在证书的颁发对象中有很多字段，比如  CN Common Name OU Organization Unit O Organization Name L Locality">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="证书与Nginx部署">
+<meta name="twitter:description" content="证书类别按照审核方式，一般的CA机构提供三种类型的SSL证书：域名型SSL(DV SSL)，企业型SSL(OV SSL)以及增强型SSL(EV SSL)证书。 三种证书底层的技术实现是一致的，区别在于证书发布方对申请方的审核程度，在证书的颁发对象中有很多字段，比如  CN Common Name OU Organization Unit O Organization Name L Locality">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-ssl" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      证书与Nginx部署
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/07/14/ssl/" class="article-date"><time datetime="2017-07-14T13:04:43.000Z" itemprop="datePublished">2017-07-14</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="证书类别"><a href="#证书类别" class="headerlink" title="证书类别"></a>证书类别</h1><p>按照审核方式，一般的CA机构提供三种类型的SSL证书：域名型SSL(DV SSL)，企业型SSL(OV SSL)以及增强型SSL(EV SSL)证书。</p>
+<p>三种证书底层的技术实现是一致的，区别在于证书发布方对申请方的审核程度，在证书的<strong>颁发对象</strong>中有很多字段，比如</p>
+<ol>
+<li>CN Common Name</li>
+<li>OU Organization Unit</li>
+<li>O Organization Name</li>
+<li>L Locality</li>
+<li>S State/Provice</li>
+<li>C Country</li>
+</ol>
+<p>一个典型的EV证书颁发对象（工商银行）,可以看到各种字段非常详尽<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CN = corporbank-simp.icbc.com.cn</span><br><span class="line">OU = Software Development Center</span><br><span class="line">O = Industrial and Commercial Bank of China Limited</span><br><span class="line">STREET = NO.55 Fuxingmen Nei Street Xicheng District, Beijing</span><br><span class="line">L = Beijing</span><br><span class="line">S = Beijing</span><br><span class="line">PostalCode = 100140</span><br><span class="line">C = CN</span><br><span class="line">SERIALNUMBER = 100000000003965</span><br><span class="line">2.5.4.15 = Private Organization</span><br><span class="line">1.3.6.1.4.1.311.60.2.1.2 = BEIJING</span><br><span class="line">1.3.6.1.4.1.311.60.2.1.3 = CN</span><br></pre></td></tr></table></figure></p>
+<p>百度的OV证书<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CN = baidu.com</span><br><span class="line">OU = service operation department.</span><br><span class="line">O = BeiJing Baidu Netcom Science Technology Co., Ltd</span><br><span class="line">L = beijing</span><br><span class="line">S = beijing</span><br><span class="line">C = CN</span><br></pre></td></tr></table></figure></p>
+<p>在腾讯云上申请的DV证书，就剩下可怜的一行，这种免费证书不支持多域名和泛域名（比如*.qiujinwu.com），只能写死某个域名。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">CN = ycy.qiujinwu.com</span><br></pre></td></tr></table></figure></p>
+<p><a href="http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/" target="_blank" rel="noopener">关于证书的支持范围</a></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>单域名</th>
+<th>多域名</th>
+<th>泛域名</th>
+<th>多泛域名</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DV</td>
+<td>支持</td>
+<td>支持</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>OV</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>EV</td>
+<td>支持</td>
+<td>支持</td>
+<td>不支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>举例</td>
+<td><a href="http://www.barretlee.com" target="_blank" rel="noopener">www.barretlee.com</a></td>
+<td><a href="http://www.barretlee.com" target="_blank" rel="noopener">www.barretlee.com</a> <br><a href="http://www.xiaohuzige.com" target="_blank" rel="noopener">www.xiaohuzige.com</a> <br><a href="http://www.barret.cc" target="_blank" rel="noopener">www.barret.cc</a></td>
+<td>*.barretlee.com</td>
+<td><em>.barretlee.com <br> </em>.xiaohuzige.com <br>*.barret.cc</td>
+</tr>
+</tbody>
+</table>
+<h2 id="配置Nginx"><a href="#配置Nginx" class="headerlink" title="配置Nginx"></a>配置Nginx</h2><p>配置服务器证书即可，实现Https的访问，对于上面的免费DV证书，就可以实现全网的可信任Https</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">root</span> /var/www/html;</span><br><span class="line">    <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> /tmp/a/server.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /tmp/a/server.key;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_session_cache</span>    shared:SSL:<span class="number">1m</span>;</span><br><span class="line">    <span class="attribute">ssl_session_timeout</span>  <span class="number">5m</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_ciphers</span>  HIGH:!aNULL:!MD5;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span>  <span class="literal">on</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="自建CA"><a href="#自建CA" class="headerlink" title="自建CA"></a>自建CA</h1><p>证书支持一个树状的层级认证链关系，例如Google首页的证书<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Builtin Object Token:GeoTrust Global CA</span><br><span class="line">  Google Internet Authority G2</span><br><span class="line">    *.google.com.hk</span><br></pre></td></tr></table></figure></p>
+<p>按照通行的做法，会建多级ca，一个root ca和若干个和若干层intermediate ca，然后再一堆的服务器/客户端证书，此内容重点参考<a href="http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/" target="_blank" rel="noopener">http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/</a></p>
+<h2 id="工具shell"><a href="#工具shell" class="headerlink" title="工具shell"></a>工具shell</h2><p>由于创建公私钥，证书、签名的过程需要输入密码等各种参数，为了方便测试，下面的脚本进行了封装，支持批量化运行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 常用后缀</span></span><br><span class="line">key=<span class="string">".key"</span> <span class="comment"># 私（公）钥</span></span><br><span class="line">crt=<span class="string">".crt"</span> <span class="comment"># 证书</span></span><br><span class="line">csr=<span class="string">".csr"</span> <span class="comment"># 证书签名请求</span></span><br><span class="line">p12=<span class="string">".p12"</span> <span class="comment"># 打包了私钥的证书</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建私（公）钥</span></span><br><span class="line"><span class="function"><span class="title">create_key</span></span>()&#123;</span><br><span class="line">    <span class="comment"># 加密方式，可以但不限这些，</span></span><br><span class="line">    <span class="comment"># aes256/des3/aes128</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2048 可以作为参数，亦可调整大小</span></span><br><span class="line">    name=<span class="string">"<span class="variable">$&#123;1&#125;</span><span class="variable">$&#123;key&#125;</span>"</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 1 ];<span class="keyword">then</span></span><br><span class="line">        openssl genrsa -aes256 -passout pass:<span class="variable">$&#123;2&#125;</span> -out <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span> 2048</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    	<span class="comment"># 不填写参数则无密码</span></span><br><span class="line">        openssl genrsa -out <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span> 2048</span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 移除私（公）钥的密码</span></span><br><span class="line"><span class="function"><span class="title">remove_key_pwd</span></span>()&#123;</span><br><span class="line">    <span class="comment"># notify passin &amp; passout</span></span><br><span class="line">    name=<span class="string">"<span class="variable">$&#123;1&#125;</span><span class="variable">$&#123;key&#125;</span>"</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 1 ];<span class="keyword">then</span></span><br><span class="line">        openssl rsa -<span class="keyword">in</span> <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span> -passin pass:<span class="string">"<span class="variable">$&#123;2&#125;</span>"</span> -out <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        openssl rsa -<span class="keyword">in</span> <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span> -out <span class="string">"<span class="variable">$&#123;name&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出证书详情</span></span><br><span class="line"><span class="function"><span class="title">check_crt</span></span>()&#123;</span><br><span class="line">    openssl x509 -noout -text -<span class="keyword">in</span> <span class="string">"<span class="variable">$&#123;1&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 基于测试，SUJECT作为一个全局的参数存在，除了Common Name</span></span><br><span class="line">C=<span class="string">"CN"</span></span><br><span class="line">ST=<span class="string">"GD"</span></span><br><span class="line">L=<span class="string">"SZ"</span></span><br><span class="line">O=<span class="string">"0MyCompany"</span></span><br><span class="line">OU=<span class="string">"Department"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 自签名</span></span><br><span class="line"><span class="function"><span class="title">self_sign</span></span>()&#123;</span><br><span class="line">	<span class="comment"># SUJECT 的Common Name</span></span><br><span class="line">    common_name=<span class="variable">$1</span></span><br><span class="line">    output=<span class="variable">$2</span></span><br><span class="line">    <span class="comment"># 是否输入了密码</span></span><br><span class="line">    password_param=<span class="string">""</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 2 ];<span class="keyword">then</span></span><br><span class="line">        password_param=<span class="string">"-passin pass:<span class="variable">$&#123;3&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    SUBJECT=<span class="string">"/C=<span class="variable">$&#123;C&#125;</span>/ST=<span class="variable">$&#123;ST&#125;</span>/L=<span class="variable">$&#123;L&#125;</span>/O=<span class="variable">$&#123;O&#125;</span>/OU=<span class="variable">$&#123;OU&#125;</span>/CN=<span class="variable">$&#123;common_name&#125;</span>"</span></span><br><span class="line">    <span class="comment"># 留意-config -extensions</span></span><br><span class="line">    openssl req -config `<span class="built_in">pwd</span>`/ca_openssl.cnf \</span><br><span class="line">        <span class="variable">$&#123;password_param&#125;</span> -subj <span class="variable">$&#123;SUBJECT&#125;</span>  \</span><br><span class="line">        -extensions v3_ca \</span><br><span class="line">        -key <span class="string">"<span class="variable">$&#123;output&#125;</span><span class="variable">$&#123;key&#125;</span>"</span> -new -x509 \</span><br><span class="line">        -days 7200 -sha256 -out <span class="string">"<span class="variable">$&#123;output&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建证书签名请求</span></span><br><span class="line"><span class="function"><span class="title">create_csr</span></span>()&#123;</span><br><span class="line">	<span class="comment"># SUJECT 的Common Name</span></span><br><span class="line">    common_name=<span class="variable">$1</span></span><br><span class="line">    output=<span class="variable">$2</span></span><br><span class="line">    <span class="comment"># 和函数self_sign一样</span></span><br><span class="line">    SUBJECT=<span class="string">"/C=<span class="variable">$&#123;C&#125;</span>/ST=<span class="variable">$&#123;ST&#125;</span>/L=<span class="variable">$&#123;L&#125;</span>/O=<span class="variable">$&#123;O&#125;</span>/OU=<span class="variable">$&#123;OU&#125;</span>/CN=<span class="variable">$&#123;common_name&#125;</span>"</span></span><br><span class="line">    <span class="comment"># 是否输入了密码</span></span><br><span class="line">    password_param=<span class="string">""</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 2 ];<span class="keyword">then</span></span><br><span class="line">        password_param=<span class="string">"-passin pass:<span class="variable">$&#123;3&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    <span class="comment"># 留意-config -extensions</span></span><br><span class="line">    openssl req -config `<span class="built_in">pwd</span>`/imm_openssl.cnf <span class="variable">$&#123;password_param&#125;</span> -new -sha256 -subj <span class="variable">$&#123;SUBJECT&#125;</span> \</span><br><span class="line">        -key <span class="string">"<span class="variable">$&#123;output&#125;</span><span class="variable">$&#123;key&#125;</span>"</span> -out <span class="string">"<span class="variable">$&#123;output&#125;</span><span class="variable">$&#123;csr&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># ca签名，包括root ca给intermediate签名，以及intermediate ca和业务证书签名</span></span><br><span class="line"><span class="function"><span class="title">ca_sign</span></span>()&#123;</span><br><span class="line">    input=<span class="variable">$1</span></span><br><span class="line">    cafile=<span class="variable">$2</span></span><br><span class="line">    <span class="comment"># 是否输入了密码</span></span><br><span class="line">    password_param=<span class="string">""</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 2 ];<span class="keyword">then</span></span><br><span class="line">        password_param=<span class="string">"-passin pass:<span class="variable">$&#123;3&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    extensionsparam=<span class="string">""</span></span><br><span class="line">    cnfparam=<span class="string">"-config `pwd`/imm_openssl.cnf"</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;cafile&#125;</span>"</span> == <span class="string">"ca"</span> ];<span class="keyword">then</span></span><br><span class="line">    	<span class="comment"># root ca签名的情形，使用ca_openssl.cnf，以及指定extensions</span></span><br><span class="line">        cnfparam=<span class="string">"-config `pwd`/ca_openssl.cnf"</span></span><br><span class="line">        extensionsparam=<span class="string">"-extensions v3_intermediate_ca"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># -batch without （Y/N）prompt</span></span><br><span class="line">    openssl ca <span class="variable">$&#123;cnfparam&#125;</span> <span class="variable">$&#123;password_param&#125;</span> <span class="variable">$&#123;extensionsparam&#125;</span> \</span><br><span class="line">        -batch -days 3600 -notext -md sha256 \</span><br><span class="line">        -<span class="keyword">in</span> <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;csr&#125;</span>"</span> -out <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span> <span class="comment">#\</span></span><br><span class="line">        <span class="comment"># 由于使用了conf指定ca，这些参数是多余的</span></span><br><span class="line">        <span class="comment">#-cert "$&#123;cafile&#125;$&#123;crt&#125;" -keyfile "$&#123;cafile&#125;$&#123;key&#125;"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证证书</span></span><br><span class="line"><span class="function"><span class="title">verify_crt</span></span>()&#123;</span><br><span class="line">    input=<span class="variable">$&#123;1&#125;</span></span><br><span class="line">    cafile=<span class="variable">$&#123;2&#125;</span></span><br><span class="line">    openssl verify -CAfile <span class="string">"<span class="variable">$&#123;cafile&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 将证书和私钥打包成p12格式</span></span><br><span class="line"><span class="function"><span class="title">export_p12</span></span>() &#123;</span><br><span class="line">    input=<span class="variable">$&#123;1&#125;</span></span><br><span class="line">    opassword=<span class="variable">$&#123;2&#125;</span></span><br><span class="line">    <span class="comment"># 是否输入了密码</span></span><br><span class="line">    password_param=<span class="string">""</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;#&#125;</span>"</span> -gt 2 ];<span class="keyword">then</span></span><br><span class="line">        password_param=<span class="string">"-passin pass:<span class="variable">$&#123;3&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">    openssl pkcs12 <span class="variable">$&#123;password_param&#125;</span> -passout pass:<span class="variable">$&#123;opassword&#125;</span> \</span><br><span class="line">        -<span class="built_in">export</span> -clcerts -<span class="keyword">in</span> <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span> \</span><br><span class="line">        -inkey <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;key&#125;</span>"</span> -out <span class="string">"<span class="variable">$&#123;input&#125;</span><span class="variable">$&#123;p12&#125;</span>"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>由于不同的ca有不同的会话环境，添加工具函数<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="title">create_conf</span></span>()&#123;</span><br><span class="line">    rdir=<span class="string">"<span class="variable">$&#123;1&#125;</span>"</span></span><br><span class="line">    <span class="comment"># 生成环境应该考虑相对路径，以及安全性的问题</span></span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">"<span class="variable">$&#123;rdir&#125;</span>"</span> == <span class="string">"/"</span> ];<span class="keyword">then</span></span><br><span class="line">        <span class="built_in">return</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        rm -rf <span class="string">"<span class="variable">$&#123;rdir&#125;</span>"</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">    mkdir -p <span class="string">"<span class="variable">$&#123;rdir&#125;</span>"</span></span><br><span class="line">    <span class="built_in">cd</span> <span class="string">"<span class="variable">$&#123;rdir&#125;</span>"</span></span><br><span class="line">    mkdir -p certs crl csr newcerts private</span><br><span class="line">    touch index.txt</span><br><span class="line">    <span class="built_in">echo</span> 1000 &gt; serial</span><br><span class="line">    <span class="built_in">cd</span> -</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="创建证书"><a href="#创建证书" class="headerlink" title="创建证书"></a>创建证书</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 全局的密码，方便测试</span></span><br><span class="line">pass=123456</span><br><span class="line"><span class="comment"># ca chain，方便@1批量导入@2nginx需要</span></span><br><span class="line">cachain=<span class="string">"cachain"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建证书（含intermediate证书和业务证书）并签名</span></span><br><span class="line"><span class="function"><span class="title">create_and_sign</span></span>()&#123;</span><br><span class="line">	<span class="comment"># 输入文件，不含后缀</span></span><br><span class="line">    output=<span class="variable">$&#123;1&#125;</span></span><br><span class="line">    <span class="comment"># common name</span></span><br><span class="line">    cname=<span class="variable">$&#123;2&#125;</span></span><br><span class="line">    <span class="comment"># ca文件名称，不含后缀</span></span><br><span class="line">    caname=<span class="variable">$&#123;3&#125;</span></span><br><span class="line">    <span class="comment"># 创建证书私钥</span></span><br><span class="line">    create_key <span class="variable">$&#123;output&#125;</span> <span class="variable">$&#123;pass&#125;</span></span><br><span class="line">    <span class="comment"># 创建证书签名请求</span></span><br><span class="line">    create_csr <span class="variable">$&#123;cname&#125;</span> <span class="variable">$&#123;output&#125;</span> <span class="variable">$&#123;pass&#125;</span></span><br><span class="line">    <span class="comment"># 用指定的ca进行签名</span></span><br><span class="line">    ca_sign <span class="variable">$&#123;output&#125;</span> <span class="variable">$&#123;caname&#125;</span> <span class="variable">$&#123;pass&#125;</span></span><br><span class="line">    <span class="comment"># 打印信息</span></span><br><span class="line">    check_crt <span class="variable">$&#123;output&#125;</span></span><br><span class="line">    <span class="comment"># 校验</span></span><br><span class="line">    verify_crt <span class="variable">$&#123;output&#125;</span> <span class="variable">$&#123;cachain&#125;</span></span><br><span class="line">    <span class="comment"># 导出p12证书</span></span><br><span class="line">    export_p12 <span class="variable">$&#123;output&#125;</span> <span class="variable">$&#123;pass&#125;</span> <span class="variable">$&#123;pass&#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> [ <span class="variable">$&#123;caname&#125;</span> = <span class="string">"ca"</span> ];<span class="keyword">then</span></span><br><span class="line">    	<span class="comment"># intermediate证书，需要更新cachain并且放置在最签名，rootca在最底部（注意顺序）</span></span><br><span class="line">        tmpfile=<span class="string">"/tmp/$<span class="variable">$_tmp_</span>$$"</span></span><br><span class="line">        cat <span class="string">"<span class="variable">$&#123;output&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span> | cat - <span class="string">"<span class="variable">$&#123;cachain&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span> &gt; <span class="string">"<span class="variable">$&#123;tmpfile&#125;</span>"</span> \</span><br><span class="line">            &amp;&amp; mv <span class="string">"<span class="variable">$&#123;tmpfile&#125;</span>"</span> <span class="string">"<span class="variable">$&#123;cachain&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    	<span class="comment"># 业务证书移除密码</span></span><br><span class="line">        remove_key_pwd <span class="string">"<span class="variable">$&#123;output&#125;</span>"</span> <span class="variable">$&#123;pass&#125;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在这里创建一个root ca和intermediate ca</span></span><br><span class="line"><span class="comment"># init两个ca的环境，置于如何关联到这两个目录，在conf文件中配置</span></span><br><span class="line">create_conf ca</span><br><span class="line">create_conf imm</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建root ca的私钥</span></span><br><span class="line">create_key ca <span class="variable">$&#123;pass&#125;</span></span><br><span class="line"><span class="comment"># 自签名</span></span><br><span class="line">self_sign root_ca ca <span class="variable">$&#123;pass&#125;</span></span><br><span class="line">check_crt ca</span><br><span class="line"><span class="comment"># 更新到cachain</span></span><br><span class="line">cat <span class="string">"ca<span class="variable">$&#123;crt&#125;</span>"</span> &gt; <span class="string">"<span class="variable">$&#123;cachain&#125;</span><span class="variable">$&#123;crt&#125;</span>"</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建intermediate ca 证书</span></span><br><span class="line">create_and_sign intermediate intermediate_ca ca</span><br><span class="line"><span class="comment"># 创建服务器证书，common name必须和域名匹配</span></span><br><span class="line">create_and_sign server <span class="string">"ycy.qiujinwu.com"</span> intermediate</span><br><span class="line"><span class="comment"># 创建客户证书，用于作客户端认证（双向认证）</span></span><br><span class="line">create_and_sign kingqiu <span class="string">"kingqiu"</span> intermediate</span><br></pre></td></tr></table></figure>
+<h3 id="cnf配置"><a href="#cnf配置" class="headerlink" title="cnf配置"></a><a href="http://www.barretlee.com/blog/2016/04/24/detail-about-ca-and-certs/" target="_blank" rel="noopener">cnf配置</a></h3><p>上述的脚本有两个cnf文件，分别是ca_openssl.cnf和imm_openssl.cnf,原始文件在<a href="https://github.com/barretlee/autocreate-ca" target="_blank" rel="noopener">https://github.com/barretlee/autocreate-ca</a><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget -O ca_openssl.cnf \</span><br><span class="line">	https://raw.githubusercontent.com/barretlee/autocreate-ca/master/cnf/root-ca</span><br><span class="line">wget -O imm_openssl.cnf \</span><br><span class="line">	https://raw.githubusercontent.com/barretlee/autocreate-ca/master/cnf/intermediate-ca</span><br></pre></td></tr></table></figure></p>
+<p>两者的区别<br><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/c$ diff *.cnf</span><br><span class="line">1,2c1,2</span><br><span class="line">&lt; # OpenSSL root CA configuration file.</span><br><span class="line">&lt; # Copy to `/root/ca/openssl.cnf`.</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; # OpenSSL intermediate CA configuration file.</span><br><span class="line">&gt; # Copy to `/root/ca/intermediate/openssl.cnf`.</span><br><span class="line">10c10</span><br><span class="line">&lt; dir               = /root/ca</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; dir               = /root/ca/intermediate</span><br><span class="line">19,20c19,20</span><br><span class="line">&lt; private_key       = $dir/private/ca.key.pem</span><br><span class="line">&lt; certificate       = $dir/certs/ca.cert.pem</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; private_key       = $dir/private/intermediate.key.pem</span><br><span class="line">&gt; certificate       = $dir/certs/intermediate.cert.pem</span><br><span class="line">24c24</span><br><span class="line">&lt; crl               = $dir/crl/ca.crl.pem</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; crl               = $dir/crl/intermediate.crl.pem</span><br><span class="line">35c35</span><br><span class="line">&lt; policy            = policy_strict</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; policy            = policy_loose</span><br></pre></td></tr></table></figure></p>
+<p>这些配置和运行上述脚本的路径，以及文件名相关，我做了如下修改<br><figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/b$ diff ca_openssl.cnf imm_openssl.cnf </span><br><span class="line">1,2c1,2</span><br><span class="line">&lt; # OpenSSL root CA configuration file.</span><br><span class="line">&lt; # Copy to `/root/ca/openssl.cnf`.</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; # OpenSSL intermediate CA configuration file.</span><br><span class="line">&gt; # Copy to `/root/ca/intermediate/openssl.cnf`.</span><br><span class="line">10c10</span><br><span class="line">&lt; dir               = /tmp/b/ca</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; dir               = /tmp/b/imm</span><br><span class="line">19,20c19,20</span><br><span class="line">&lt; private_key       = $dir/../ca.key</span><br><span class="line">&lt; certificate       = $dir/../ca.crt</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; private_key       = $dir/../intermediate.key</span><br><span class="line">&gt; certificate       = $dir/../intermediate.crt</span><br><span class="line">24c24</span><br><span class="line">&lt; crl               = $dir/ca.crl.pem</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; crl               = $dir/intermediate.crl.pem</span><br><span class="line">35c35</span><br><span class="line">&lt; policy            = policy_strict</span><br><span class="line"><span class="comment">---</span></span><br><span class="line">&gt; policy            = policy_loose</span><br></pre></td></tr></table></figure></p>
+<p>注意：</p>
+<ol>
+<li>CA_default/dir的路径和证书的路径匹配</li>
+<li>private_key、certificate和crl的路径正确</li>
+</ol>
+<figure class="highlight ini"><table><tr><td class="code"><pre><span class="line"><span class="section">[ CA_default ]</span></span><br><span class="line"><span class="comment"># Directory and file locations.</span></span><br><span class="line"><span class="attr">dir</span>               = /tmp/b/ca</span><br><span class="line"><span class="attr">certs</span>             = <span class="variable">$dir</span>/certs</span><br><span class="line"><span class="attr">crl_dir</span>           = <span class="variable">$dir</span>/crl</span><br><span class="line"><span class="attr">new_certs_dir</span>     = <span class="variable">$dir</span>/newcerts</span><br><span class="line"><span class="attr">database</span>          = <span class="variable">$dir</span>/index.txt</span><br><span class="line"><span class="attr">serial</span>            = <span class="variable">$dir</span>/serial</span><br><span class="line"><span class="attr">RANDFILE</span>          = <span class="variable">$dir</span>/.rand</span><br><span class="line"></span><br><span class="line"><span class="comment"># The root key and root certificate.</span></span><br><span class="line"><span class="attr">private_key</span>       = <span class="variable">$dir</span>/../ca.key</span><br><span class="line"><span class="attr">certificate</span>       = <span class="variable">$dir</span>/../ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># For certificate revocation lists.</span></span><br><span class="line"><span class="attr">crlnumber</span>         = <span class="variable">$dir</span>/crlnumber</span><br><span class="line"><span class="attr">crl</span>               = <span class="variable">$dir</span>/ca.crl.pem</span><br><span class="line"><span class="attr">crl_extensions</span>    = crl_ext</span><br><span class="line"><span class="attr">default_crl_days</span>  = <span class="number">30</span></span><br></pre></td></tr></table></figure>
+<p>运行之后，生成如下文件</p>
+<blockquote>
+<p>.<br>├── ca<br>│   ├── certs<br>│   ├── crl<br>│   ├── csr<br>│   ├── index.txt<br>│   ├── index.txt.attr<br>│   ├── index.txt.old<br>│   ├── newcerts<br>│   ├── private<br>│   ├── serial<br>│   └── serial.old<br>├── cachain.crt<br>├── ca.crt<br>├── ca.key<br>├── ca_openssl.cnf<br>├── imm<br>│   ├── certs<br>│   ├── crl<br>│   ├── csr<br>│   ├── index.txt<br>│   ├── index.txt.attr<br>│   ├── index.txt.attr.old<br>│   ├── index.txt.old<br>│   ├── newcerts<br>│   ├── private<br>│   ├── serial<br>│   └── serial.old<br>├── imm_openssl.cnf<br>├── intermediate.crt<br>├── intermediate.csr<br>├── intermediate.key<br>├── intermediate.p12<br>├── kingqiu.crt<br>├── kingqiu.csr<br>├── kingqiu.key<br>├── kingqiu.p12<br>├── server.crt<br>├── server.csr<br>├── server.key<br>└── server.p12</p>
+</blockquote>
+<h2 id="配置Nginx服务器证书"><a href="#配置Nginx服务器证书" class="headerlink" title="配置Nginx服务器证书"></a>配置Nginx服务器证书</h2><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">root</span> /var/www/html;</span><br><span class="line">    <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> /tmp/b/server.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /tmp/b/server.key;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>添加Host之后即可访问<a href="https://ycy.qiujinwu.com/index.nginx-debian.html" target="_blank" rel="noopener">https://ycy.qiujinwu.com/index.nginx-debian.html</a>，由于是自建ca，浏览器是不信任的</p>
+<h3 id="Linux下添加信任"><a href="#Linux下添加信任" class="headerlink" title="Linux下添加信任"></a>Linux下添加信任</h3><p>chrome和opera打开的界面都是一样的，并且数据互通。打开【证书管理器】之后，打开tab【授权中心】，选择【cachain.crt】，就一次性将root ca和intermediate ca一并导入了（必须都导入，否则无法通过信任，业务证书也无法看到完整的证书链），</p>
+<h3 id="Windows下添加信任"><a href="#Windows下添加信任" class="headerlink" title="Windows下添加信任"></a>Windows下添加信任</h3><p>双击ca.crt和intermediate.crt依次安装到【受信任的根证书颁发机构】</p>
+<p>再次刷新，即可看到锁变绿了，chrome有时需要关闭重新打开才能信任。</p>
+<h2 id="双向认证"><a href="#双向认证" class="headerlink" title="双向认证"></a>双向认证</h2><p>注意nginx客户端的ca证书，<strong>使用的是cachain.crt证书链</strong><br><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span>       <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">root</span> /var/www/html;</span><br><span class="line">    <span class="attribute">ssl</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> /tmp/b/server.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /tmp/b/server.key;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_verify_client</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">ssl_verify_depth</span> <span class="number">2</span>;</span><br><span class="line">    <span class="attribute">ssl_client_certificate</span> /tmp/b/cachain.crt;</span><br><span class="line">    <span class="attribute">proxy_set_header</span> X-SSL-Client-Cert <span class="variable">$ssl_client_cert</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>Linux下，打开【证书管理器】之后，打开tab【您的证书】，选择【kingqiu.p12】，输入密码，导入证书</p>
+<p>Windows下，直接双击kingqiu.p12导入到默认的位置即可。</p>
+<p>接下来再次访问就会弹出对话框选择证书，若无匹配的证书，就报错【400 Bad Request。No required SSL certificate was sent】</p>
+<h2 id="典型的问题"><a href="#典型的问题" class="headerlink" title="典型的问题"></a>典型的问题</h2><p>Linux下chrome无法导入intermediate.crt，ca.crt无问题，换成opera正常。chrome提示【证书授权中心导入错误-无法解析文件】</p>
+<p>提示O/S等不匹配</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">Using configuration from /etc/pki/tls/openssl.cnf</span><br><span class="line">Check that the request matches the signature</span><br><span class="line">Signature ok</span><br><span class="line">The countryName field needed to be the same <span class="keyword">in</span> the</span><br><span class="line">CA certificate (NL) and the request (RO)</span><br></pre></td></tr></table></figure>
+<p>king@king:/tmp/a$ sudo vi /etc/ssl/openssl.cnf<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># For the CA policy</span></span><br><span class="line">[ policy_match ]</span><br><span class="line">countryName     = optional</span><br><span class="line">stateOrProvinceName = optional</span><br><span class="line">organizationName    = optional</span><br><span class="line"><span class="comment">#countryName        = match</span></span><br><span class="line"><span class="comment">#stateOrProvinceName    = match</span></span><br><span class="line"><span class="comment">#organizationName   = match</span></span><br><span class="line">organizationalUnitName  = optional</span><br><span class="line">commonName      = supplied</span><br><span class="line">emailAddress        = optional</span><br></pre></td></tr></table></figure></p>
+<p>无法作为ca加入信任的授权中心</p>
+<p>这通常是v3 extension的<strong>CA flag</strong>未启用或者不存在<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/c$ openssl x509 -noout -text -<span class="keyword">in</span> intermediate.crt </span><br><span class="line">Certificate:</span><br><span class="line">    Data:</span><br><span class="line">        Version: 3 (0x2)</span><br><span class="line">        Serial Number: 4096 (0x1000)</span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption</span><br><span class="line">        Issuer: C=CN, ST=fasdf, OU=R&amp;D, CN=kingqiu</span><br><span class="line">        Validity</span><br><span class="line">            Not Before: Jul 14 10:00:14 2017 GMT</span><br><span class="line">            Not After : May 23 10:00:14 2027 GMT</span><br><span class="line">        Subject: C=CN, ST=afdasf, OU=R&amp;D, CN=intermediate_ca</span><br><span class="line">        Subject Public Key Info:</span><br><span class="line">            Public Key Algorithm: rsaEncryption</span><br><span class="line">                Public-Key: (2048 bit)</span><br><span class="line">                Modulus:</span><br><span class="line">                    00:c0:81:d1:fb:2b:b8:0f:b6:8b:30:04:46:d0:78:</span><br><span class="line">                    28:8d</span><br><span class="line">                Exponent: 65537 (0x10001)</span><br><span class="line">        X509v3 extensions:</span><br><span class="line">            X509v3 Subject Key Identifier: </span><br><span class="line">                0D:6A:86:F1:62:AE:6A:74:05:12:31:09:BD:25:3B:B6:4E:98:BF:8E</span><br><span class="line">            X509v3 Authority Key Identifier: </span><br><span class="line">                keyid:E1:79:75:26:9D:C9:B4:FF:03:77:F9:5D:2F:BD:CB:C7:C6:DE:2A:20</span><br><span class="line"></span><br><span class="line">            X509v3 Basic Constraints: critical</span><br><span class="line">            	<span class="comment"># 注意这里</span></span><br><span class="line">                CA:TRUE, pathlen:0</span><br><span class="line">            X509v3 Key Usage: critical</span><br><span class="line">                Digital Signature, Certificate Sign, CRL Sign</span><br><span class="line">    Signature Algorithm: sha256WithRSAEncryption</span><br><span class="line">         ce:79:c0:61:5c:39:66:f2:cf:30:34:ee:8b:7c:e1:f5:24:53:</span><br><span class="line">         1e:d7:cf:ed</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/07/14/ssl/" data-id="ckdbgbyy0005j43po4bsg6hh4" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/07/14/ssl/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/签名/">签名</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/证书/">证书</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/07/14/rsa/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">证书和签名学习汇总</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/07/22/cgi_web-server/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">CGI网关服务器漫谈</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/07/14/ssl/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="随笔">
+<meta property="og:type" content="website">
+<meta property="og:title" content="个人笔记">
+<meta property="og:url" content="http://blog.kimq.cn/page/6/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="随笔">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="个人笔记">
+<meta name="twitter:description" content="随笔">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          
+  
+    <article id="post-noexport-json-xml-gob" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/09/noexport-json-xml-gob/">Struct未导出变量序列化时的坑</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/09/noexport-json-xml-gob/" class="article-date"><time datetime="2017-03-09T06:26:27.000Z" itemprop="datePublished">2017-03-09</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Go默认使用大小写来区分变量/函数是否导出，所以如果一个Struct需要对外使用，但是又未导出就会出现意想不到的bug</p>
+<p>特别是常用的编解码（序列化/反序列化），json，xml，gob等</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line">	<span class="string">"encoding/json"</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">type</span> MyData <span class="keyword">struct</span> &#123;</span><br><span class="line">	One <span class="keyword">int</span></span><br><span class="line">	two <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	in := MyData&#123;<span class="number">1</span>,<span class="string">"two"</span>&#125;</span><br><span class="line">	fmt.Printf(<span class="string">"%#v\n"</span>,in) <span class="comment">//prints main.MyData&#123;One:1, two:"two"&#125;</span></span><br><span class="line">	encoded,_ := json.Marshal(in)</span><br><span class="line">	fmt.Println(<span class="keyword">string</span>(encoded)) <span class="comment">//prints &#123;"One":1&#125;</span></span><br><span class="line">	<span class="keyword">var</span> out MyData</span><br><span class="line">	json.Unmarshal(encoded,&amp;out)</span><br><span class="line">	fmt.Printf(<span class="string">"%#v\n"</span>,out) <span class="comment">//prints main.MyData&#123;One:1, two:""&#125;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>为了避免大写在某些格式不符合规范的情况，通常这些框架都支持自定义序列化的tag，例如</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> MyData <span class="keyword">struct</span> &#123;</span><br><span class="line">	One <span class="keyword">int</span> <span class="string">`json:"one"`</span></span><br><span class="line">	Two <span class="keyword">string</span> <span class="string">`json:"two"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>参考 <a href="http://colobu.com/2015/09/07/gotchas-and-common-mistakes-in-go-golang/#" target="_blank" rel="noopener">http://colobu.com/2015/09/07/gotchas-and-common-mistakes-in-go-golang/#</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/09/noexport-json-xml-gob/" data-id="ckdbgbyxb004a43poiq7b86jn" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/09/noexport-json-xml-gob/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-martini-inject" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/09/martini-inject/">Martini路由框架</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/09/martini-inject/" class="article-date"><time datetime="2017-03-09T03:27:49.000Z" itemprop="datePublished">2017-03-09</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong><a href="https://github.com/go-martini/martini" target="_blank" rel="noopener">go-martini/martini</a></strong>是一个非常简单，流行的Golang web框架，并且非常的小巧简单灵活易扩展，也有非常多的插件，见<strong><a href="https://github.com/martini-contrib" target="_blank" rel="noopener">https://github.com/martini-contrib</a></strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"github.com/go-martini/martini"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    m := martini.Classic()</span><br><span class="line">    m.Get(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line">    &#125;)</span><br><span class="line">    m.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Inject"><a href="#Inject" class="headerlink" title="Inject"></a>Inject</h1><p><strong><a href="https://github.com/go-martini/martini" target="_blank" rel="noopener">go-martini/martini</a></strong>的灵活性多亏了<strong><a href="https://github.com/codegangsta/inject" target="_blank" rel="noopener">codegangsta/inject</a></strong>，后者是一个Golang的注入小框架，代码非常简单，利用Golang自带的reflect库完成函数参数的自动适配。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"github.com/codegangsta/inject"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义一个空interface&#123;&#125;, 必须是interface&#123;&#125;类型MapTo才能接受</span></span><br><span class="line"><span class="keyword">type</span> SpecialString <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原定义Foo(s1,s2 string), 改成</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Foo</span><span class="params">(s1 <span class="keyword">string</span>, s2 SpecialString)</span></span> &#123;</span><br><span class="line">    fmt.Println(s1, s2.(<span class="keyword">string</span>)) <span class="comment">// type assertion</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ij := inject.New()</span><br><span class="line">    <span class="comment">// 注入string类型的"a"</span></span><br><span class="line">    ij.Map(<span class="string">"a"</span>)</span><br><span class="line">    <span class="comment">// 注入SpecialString类型的"b"</span></span><br><span class="line">    ij.MapTo(<span class="string">"b"</span>, (*SpecialString)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 调用Foo函数时，会自动查找已经注入的值，并自动传递。</span></span><br><span class="line">    <span class="comment">// inject包的设计确保不会有两个相同类型的值（限制）</span></span><br><span class="line">    <span class="comment">// 若找不到会抛出运行时错误</span></span><br><span class="line">    ij.Invoke(Foo)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Map和MapTo的区别在于后者可以指定注入value的类型</p>
+<p>除了自动注入函数的参数外，还支持自动注入Struct的成员变量，参见Apply函数（利用了Struct成员的tag特性）</p>
+<h2 id="SpecialString-nil"><a href="#SpecialString-nil" class="headerlink" title="(*SpecialString)(nil))"></a>(*SpecialString)(nil))</h2><p>这种写法对于初学者很费解，原理得从interface{}的内部表述说起</p>
+<p>为了支持reflect，interface{}内部存储了实际对象的Kind（类型）和Value（值），例如var v interface{} = “aaaa”，那么v的类型就是string，值就是”aaaa”，回到inject，由于Mapto第二个参数只需要一个类型，所以我们只需要初始化一个正确的Kind，Value为nil的interface{}即可。</p>
+<p>由于Go是有区分Struct指针和对象，初始化一个对象需要分配额外的内存，而指针就很简单（学C的很好理解），所以这里起始就是传入的一个指针，并且value是nil，用最小的开销实现了一个类型的表述和传导。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Str <span class="keyword">struct</span>&#123;</span><br><span class="line">	b <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> b *Str = <span class="literal">nil</span></span><br><span class="line">	<span class="keyword">var</span> a = (*Str)(<span class="literal">nil</span>)</span><br><span class="line">    <span class="comment">// 变量a,b都是一个类型为Str的空指针</span></span><br><span class="line">	fmt.Print(a)</span><br><span class="line">	fmt.Print(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而inject在内部会自动获取指针指向变量的类型，见<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// InterfaceOf dereferences a pointer to an Interface type.</span></span><br><span class="line"><span class="comment">// It panics if value is not an pointer to an interface.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InterfaceOf</span><span class="params">(value <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">reflect</span>.<span class="title">Type</span></span> &#123;</span><br><span class="line">	t := reflect.TypeOf(value)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获取实际的类型，用for循环是为了确保多级指针（指向指针的指针）</span></span><br><span class="line">	<span class="keyword">for</span> t.Kind() == reflect.Ptr &#123;</span><br><span class="line">		t = t.Elem()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> t.Kind() != reflect.Interface &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"Called ... interface. (*MyInterface)(nil)"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Martini"><a href="#Martini" class="headerlink" title="Martini"></a>Martini</h1><p>主要的逻辑参考【github.com/go-martini/martini/martini.go】和【github.com/go-martini/martini/router.go】</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>ClassicMartini用两个匿名对象实现继承</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ClassicMartini <span class="keyword">struct</span> &#123;</span><br><span class="line">	*Martini</span><br><span class="line">	Router</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Martini <span class="keyword">struct</span> &#123;</span><br><span class="line">	inject.Injector</span><br><span class="line">	handlers []Handler</span><br><span class="line">	action   Handler</span><br><span class="line">	logger   *log.Logger</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Classic</span><span class="params">()</span> *<span class="title">ClassicMartini</span></span> &#123;</span><br><span class="line">	r := NewRouter()</span><br><span class="line">	m := New()</span><br><span class="line">	m.Use(Logger())</span><br><span class="line">	m.Use(Recovery())</span><br><span class="line">	m.Use(Static(<span class="string">"public"</span>))</span><br><span class="line">    <span class="comment">// Mapto注入router处理器</span></span><br><span class="line">	m.MapTo(r, (*Routes)(<span class="literal">nil</span>))</span><br><span class="line">	m.Action(r.Handle)</span><br><span class="line">	<span class="keyword">return</span> &amp;ClassicMartini&#123;m, r&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>m.Use用于注入中间件，存储在Martini.handlers，m.Action存储实际的路由处理入口，存储在Martini.action，他们的调用顺序见<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *context)</span> <span class="title">handler</span><span class="params">()</span> <span class="title">Handler</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> c.index &lt; <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">		<span class="keyword">return</span> c.handlers[c.index]</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 最后调用</span></span><br><span class="line">	<span class="keyword">if</span> c.index == <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">		<span class="keyword">return</span> c.action</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">"invalid index for context handler"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="运行入口"><a href="#运行入口" class="headerlink" title="运行入口"></a>运行入口</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Run the http server on a given host and port.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">RunOnAddr</span><span class="params">(addr <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	logger := m.Injector.Get(reflect.TypeOf(m.logger)).Interface().(*log.Logger)</span><br><span class="line">	logger.Printf(<span class="string">"listening on %s (%s)\n"</span>, addr, Env)</span><br><span class="line">	logger.Fatalln(http.ListenAndServe(addr, m))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到传入的m变量，它必须实现接口http.Handler接口，回调如下<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">ServeHTTP</span><span class="params">(res http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">	m.createContext(res, req).run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> context <span class="keyword">struct</span> &#123;</span><br><span class="line">	inject.Injector</span><br><span class="line">	handlers []Handler</span><br><span class="line">	action   Handler</span><br><span class="line">	rw       ResponseWriter</span><br><span class="line">	index    <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">createContext</span><span class="params">(res http.ResponseWriter, req *http.Request)</span> *<span class="title">context</span></span> &#123;</span><br><span class="line">	c := &amp;context&#123;inject.New(), m.handlers, m.action, NewResponseWriter(res), <span class="number">0</span>&#125;</span><br><span class="line">    <span class="comment">// 从m继承注入的变量，比如logger之类的全局变量</span></span><br><span class="line">	c.SetParent(m)</span><br><span class="line">    <span class="comment">// 注入自己</span></span><br><span class="line">	c.MapTo(c, (*Context)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注入responce</span></span><br><span class="line">	c.MapTo(c.rw, (*http.ResponseWriter)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注入request</span></span><br><span class="line">	c.Map(req)</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后运行Run函数，先依次运行middleware，然后运行路由总入口，参见handler()函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *context)</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> c.index &lt;= <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">        <span class="comment">// 最终会触发router.Handle</span></span><br><span class="line">		_, err := c.Invoke(c.handler())</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		c.index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> c.Written() &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在router.Handle找到最匹配的route，调用route.Handle函数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 所有的路由对象</span></span><br><span class="line">	routes     []*route</span><br><span class="line">	notFounds  []Handler</span><br><span class="line">	groups     []group</span><br><span class="line">	routesLock sync.RWMutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">type</span> route <span class="keyword">struct</span> &#123;</span><br><span class="line">	method   <span class="keyword">string</span></span><br><span class="line">	regex    *regexp.Regexp</span><br><span class="line">    <span class="comment">// 所有的handle</span></span><br><span class="line">	handlers []Handler</span><br><span class="line">	pattern  <span class="keyword">string</span></span><br><span class="line">	name     <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *route)</span> <span class="title">Handle</span><span class="params">(c Context, res http.ResponseWriter)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 构建新的对象，</span></span><br><span class="line">	context := &amp;routeContext&#123;c, <span class="number">0</span>, r.handlers&#125;</span><br><span class="line">    <span class="comment">// 注入新的变量</span></span><br><span class="line">	c.MapTo(context, (*Context)(<span class="literal">nil</span>))</span><br><span class="line">	c.MapTo(r, (*Route)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注意这里调用的是routeContext的run</span></span><br><span class="line">	context.run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> routeContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 继承了最初的Context，后者又继承了Martini注入的变量</span></span><br><span class="line">	Context</span><br><span class="line">	index    <span class="keyword">int</span></span><br><span class="line">	handlers []Handler</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 依次触发所有的handle</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *routeContext)</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> r.index &lt; <span class="built_in">len</span>(r.handlers) &#123;</span><br><span class="line">		handler := r.handlers[r.index]</span><br><span class="line">        <span class="comment">// 依次触发回调</span></span><br><span class="line">		vals, err := r.Invoke(handler)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		r.index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// if the handler returned something, write it to the http response</span></span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(vals) &gt; <span class="number">0</span> &#123;</span><br><span class="line">			ev := r.Get(reflect.TypeOf(ReturnHandler(<span class="literal">nil</span>)))</span><br><span class="line">			handleReturn := ev.Interface().(ReturnHandler)</span><br><span class="line">			handleReturn(r, vals)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> r.Written() &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://my.oschina.net/achun/blog/192912" target="_blank" rel="noopener">https://my.oschina.net/achun/blog/192912</a></li>
+<li><a href="http://betazk.github.io/2014/11/%E5%AF%B9martini%E8%BF%99%E4%B8%AA%E6%A1%86%E6%9E%B6%E4%B8%ADinject%E9%83%A8%E5%88%86%E7%9A%84%E7%90%86%E8%A7%A3/" target="_blank" rel="noopener">http://betazk.github.io/2014/11/%E5%AF%B9martini%E8%BF%99%E4%B8%AA%E6%A1%86%E6%9E%B6%E4%B8%ADinject%E9%83%A8%E5%88%86%E7%9A%84%E7%90%86%E8%A7%A3/</a></li>
+<li><a href="http://memoryleak.io/go/martini/2015/10/24/martini-inject.html" target="_blank" rel="noopener">http://memoryleak.io/go/martini/2015/10/24/martini-inject.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/09/martini-inject/" data-id="ckdbgbywy003j43pow7m444qs" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/09/martini-inject/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/martini/">martini</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-drone5" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/08/drone5/">Drone学习笔记5</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/08/drone5/" class="article-date"><time datetime="2017-03-08T08:04:32.000Z" itemprop="datePublished">2017-03-08</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="插件"><a href="#插件" class="headerlink" title="插件"></a>插件</h1><p>drone不仅仅只是自动编译，还可以利用插件做一些其他事情，比如结果通知，打包目标文件成一个docker镜像。drone的插件可浏览<a href="http://plugins.drone.io/" target="_blank" rel="noopener">http://plugins.drone.io/</a>，一些常用的比如</p>
+<ol>
+<li><a href="http://plugins.drone.io/drone-plugins/drone-docker/" target="_blank" rel="noopener">http://plugins.drone.io/drone-plugins/drone-docker/</a></li>
+<li><a href="http://plugins.drone.io/appleboy/drone-scp/" target="_blank" rel="noopener">http://plugins.drone.io/appleboy/drone-scp/</a></li>
+<li><a href="http://plugins.drone.io/drone-plugins/drone-slack/" target="_blank" rel="noopener">http://plugins.drone.io/drone-plugins/drone-slack/</a></li>
+<li><a href="http://plugins.drone.io/peloton/drone-rancher/" target="_blank" rel="noopener">http://plugins.drone.io/peloton/drone-rancher/</a></li>
+</ol>
+<p>插件的.drone.yml有自己的语法，具体要根据插件的帮助文档分析</p>
+<h1 id="矩阵编译"><a href="#矩阵编译" class="headerlink" title="矩阵编译"></a>矩阵编译</h1><p><a href="http://readme.drone.io/usage/matrix-guide/" target="_blank" rel="noopener">http://readme.drone.io/usage/matrix-guide/</a> 意思就是根据几个变量的组合，基于所有的条件各执行一次pipeline</p>
+<h1 id="开发插件"><a href="#开发插件" class="headerlink" title="开发插件"></a>开发插件</h1><p>官网提供了简单的插件教程，支持golang，bash，node和python</p>
+<ol>
+<li><a href="http://readme.drone.io/plugins/creating-custom-plugins-bash/" target="_blank" rel="noopener">http://readme.drone.io/plugins/creating-custom-plugins-bash/</a></li>
+<li><a href="http://readme.drone.io/plugins/creating-custom-plugins-golang/" target="_blank" rel="noopener">http://readme.drone.io/plugins/creating-custom-plugins-golang/</a></li>
+</ol>
+<p>目前企业微信开发了API，理论上开发一个通知企业微信的插件也是可以的。</p>
+<h1 id="私有Docker-Registry"><a href="#私有Docker-Registry" class="headerlink" title="私有Docker Registry"></a>私有Docker Registry</h1><p>随着docker越来越成熟，为了更好地管理这些docker，就冒出了<strong><a href="https://docs.docker.com/compose/" target="_blank" rel="noopener">docker compose</a></strong>这样的工具，以及更高层次的比如<strong><a href="http://rancher.com/" target="_blank" rel="noopener">rancher</a></strong></p>
+<p>而运行公司业务的docker镜像，显然也有必要放在自己的私有Registry内，然后通过drone插件一键上传到私有的Registry，当然也可以直接发布到rancher的测试环境。</p>
+<p>搭建私有的Registry很简单，官方的registry就包含镜像【registry:2.0】，直接运行即可。<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -p 5000:5000 registry:2.0</span><br></pre></td></tr></table></figure></p>
+<p>推送也很简单<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker push localhost:5000/hello:latest</span><br></pre></td></tr></table></figure></p>
+<p>参考<a href="http://dockone.io/article/324" target="_blank" rel="noopener">http://dockone.io/article/324</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/08/drone5/" data-id="ckdbgbyvr001543po06jtsek9" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/08/drone5/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drone/">drone</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/持续集成/">持续集成</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-drone4" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/08/drone4/">Drone学习笔记4</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/08/drone4/" class="article-date"><time datetime="2017-03-08T03:17:22.000Z" itemprop="datePublished">2017-03-08</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>找到一个编译成功过的resp【qjw/test】，点击restart</p>
+<h1 id="发起编译请求"><a href="#发起编译请求" class="headerlink" title="发起编译请求"></a>发起编译请求</h1><p>前端发送POST请求【/api/repos/qjw/test/builds/2】，2是build的id。同时发起ws Get请求【ws://test.ycy.qiujinwu.com/ws/logs/qjw/test/2/1】，2是build的id，1是job的id。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">ws.GET(<span class="string">"/logs/:owner/:name/:build/:number"</span>,</span><br><span class="line">			session.SetRepo(),</span><br><span class="line">			session.SetPerm(),</span><br><span class="line">			session.MustPull,</span><br><span class="line">			server.LogStream,</span><br><span class="line">		)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetRepo</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">var</span> (</span><br><span class="line">			owner = c.Param(<span class="string">"owner"</span>)</span><br><span class="line">			name  = c.Param(<span class="string">"name"</span>)</span><br><span class="line">			user  = User(c)</span><br><span class="line">		)</span><br><span class="line"></span><br><span class="line"><span class="comment">// LogStream streams the build log output to the client.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LogStream</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	repo := session.Repo(c)</span><br><span class="line">	buildn, _ := strconv.Atoi(c.Param(<span class="string">"build"</span>))</span><br><span class="line">	jobn, _ := strconv.Atoi(c.Param(<span class="string">"number"</span>))</span><br></pre></td></tr></table></figure>
+<p>发起编译的请求最终会跑到</p>
+<p>src/github.com/drone/drone/server/build.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PostBuild</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 获得后端实例</span></span><br><span class="line">	remote_ := remote.FromContext(c)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 从数据库中获取的resp对象，通过前置的middleware完成了查询</span></span><br><span class="line">	repo := session.Repo(c)</span><br><span class="line">	fork := c.DefaultQuery(<span class="string">"fork"</span>, <span class="string">"false"</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获得当前用户</span></span><br><span class="line">	user, err := store.GetUser(c, repo.UserID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Errorf(<span class="string">"failure to find repo owner %s. %s"</span>, repo.FullName, err)</span><br><span class="line">		c.AbortWithError(<span class="number">500</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获得build number</span></span><br><span class="line">	build, err := store.GetBuildNumber(c, repo, num)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Errorf(<span class="string">"failure to get build %d. %s"</span>, num, err)</span><br><span class="line">		c.AbortWithError(<span class="number">404</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 拉取.drone.yml文件</span></span><br><span class="line">	<span class="comment">// fetch the .drone.yml file from the database</span></span><br><span class="line">	config := ToConfig(c)</span><br><span class="line">	raw, err := remote_.File(user, repo, build, config.Yaml)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Errorf(<span class="string">"failure to get build config for %s. %s"</span>, repo.FullName, err)</span><br><span class="line">		c.AbortWithError(<span class="number">404</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 检查是否有签名文件</span></span><br><span class="line">	<span class="comment">// Fetch secrets file but don't exit on error as it's optional</span></span><br><span class="line">	sec, err := remote_.File(user, repo, build, config.Shasum)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Debugf(<span class="string">"cannot find build secrets for %s. %s"</span>, repo.FullName, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 验证签名</span></span><br><span class="line">	signature, err := jose.ParseSigned(<span class="keyword">string</span>(sec))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Debugf(<span class="string">"cannot parse .drone.yml.sig file. %s"</span>, err)</span><br><span class="line">	&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="built_in">len</span>(sec) == <span class="number">0</span> &#123;</span><br><span class="line">		log.Debugf(<span class="string">"cannot parse .drone.yml.sig file. empty file"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		signed = <span class="literal">true</span></span><br><span class="line">		output, err := signature.Verify([]<span class="keyword">byte</span>(repo.Hash))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Debugf(<span class="string">"cannot verify .drone.yml.sig file. %s"</span>, err)</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">string</span>(output) != <span class="keyword">string</span>(raw) &#123;</span><br><span class="line">			log.Debugf(<span class="string">"cannot verify .drone.yml.sig file. no match. %q &lt;&gt; %q"</span>, <span class="keyword">string</span>(output), <span class="keyword">string</span>(raw))</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			verified = <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 发送请求到tast list</span></span><br><span class="line">	client := stomp.MustFromContext(c)</span><br><span class="line">	client.SendJSON(<span class="string">"/topic/events"</span>, model.Event&#123;</span><br><span class="line">		Type:  model.Enqueued,</span><br><span class="line">		Repo:  *repo,</span><br><span class="line">		Build: *build,</span><br><span class="line">	&#125;,</span><br><span class="line">		stomp.WithHeader(<span class="string">"repo"</span>, repo.FullName),</span><br><span class="line">		stomp.WithHeader(<span class="string">"private"</span>, strconv.FormatBool(repo.IsPrivate)),</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, job := <span class="keyword">range</span> jobs &#123;</span><br><span class="line">		broker, _ := stomp.FromContext(c)</span><br><span class="line">		<span class="comment">// 发送请求到agent</span></span><br><span class="line">		broker.SendJSON(<span class="string">"/queue/pending"</span>, &amp;model.Work&#123;</span><br><span class="line">			Signed:    signed,</span><br><span class="line">			Verified:  verified,</span><br><span class="line">			User:      user,</span><br><span class="line">			Repo:      repo,</span><br><span class="line">			Build:     build,</span><br><span class="line">			BuildLast: last,</span><br><span class="line">			Job:       job,</span><br><span class="line">			Netrc:     netrc,</span><br><span class="line">			Yaml:      <span class="keyword">string</span>(raw),</span><br><span class="line">			Secrets:   secs,</span><br><span class="line">			System:    &amp;model.System&#123;Link: httputil.GetURL(c.Request)&#125;,</span><br><span class="line">		&#125;,</span><br><span class="line">			stomp.WithHeader(</span><br><span class="line">				<span class="string">"platform"</span>,</span><br><span class="line">				yaml.ParsePlatformDefault(raw, <span class="string">"linux/amd64"</span>),</span><br><span class="line">			),</span><br><span class="line">			stomp.WithHeaders(</span><br><span class="line">				yaml.ParseLabel(raw),</span><br><span class="line">			),</span><br><span class="line">		)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="drone-yml签名"><a href="#drone-yml签名" class="headerlink" title=".drone.yml签名"></a>.drone.yml签名</h2><p>签名通过cli完成</p>
+<p>src/github.com/drone/drone/drone/sign.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> signCmd = cli.Command&#123;</span><br><span class="line">	Name:  <span class="string">"sign"</span>,</span><br><span class="line">	Usage: <span class="string">"creates a secure yaml file"</span>,</span><br><span class="line">	Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := sign(c); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatalln(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	Flags: []cli.Flag&#123;</span><br><span class="line">		cli.StringFlag&#123;</span><br><span class="line">			Name:  <span class="string">"in"</span>,</span><br><span class="line">			Usage: <span class="string">"input file"</span>,</span><br><span class="line">			Value: <span class="string">".drone.yml"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		cli.StringFlag&#123;</span><br><span class="line">			Name:  <span class="string">"out"</span>,</span><br><span class="line">			Usage: <span class="string">"output file signature"</span>,</span><br><span class="line">			Value: <span class="string">".drone.yml.sig"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>最终调用接口<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">repo.POST(<span class="string">"/sign"</span>, session.MustPush, server.Sign)</span><br></pre></td></tr></table></figure></p>
+<h1 id="agent接收"><a href="#agent接收" class="headerlink" title="agent接收"></a>agent接收</h1><p>src/github.com/drone/drone/drone/agent/agent.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">(c *cli.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 初始化全局的docker实例</span></span><br><span class="line">	docker, err := dockerclient.NewDockerClient(c.String(<span class="string">"docker-host"</span>), tls)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logrus.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> client *stomp.Client</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 收到请求的回调</span></span><br><span class="line">	handler := <span class="function"><span class="keyword">func</span><span class="params">(m *stomp.Message)</span></span> &#123;</span><br><span class="line">		running.Add(<span class="number">1</span>)</span><br><span class="line">		<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			running.Done()</span><br><span class="line">			client.Ack(m.Ack)</span><br><span class="line">		&#125;()</span><br><span class="line"></span><br><span class="line">		r := pipeline&#123;</span><br><span class="line">			drone:  client,</span><br><span class="line">			docker: docker,</span><br><span class="line">			config: config&#123;</span><br><span class="line">				platform:   c.String(<span class="string">"docker-os"</span>) + <span class="string">"/"</span> + c.String(<span class="string">"docker-arch"</span>),</span><br><span class="line">				timeout:    c.Duration(<span class="string">"timeout"</span>),</span><br><span class="line">				namespace:  c.String(<span class="string">"namespace"</span>),</span><br><span class="line">				privileged: c.StringSlice(<span class="string">"privileged"</span>),</span><br><span class="line">				pull:       c.BoolT(<span class="string">"pull"</span>),</span><br><span class="line">				logs:       <span class="keyword">int64</span>(c.Int(<span class="string">"max-log-size"</span>)) * <span class="number">1000000</span>,</span><br><span class="line">				extension:  c.StringSlice(<span class="string">"extension"</span>),</span><br><span class="line">			&#125;,</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		work := <span class="built_in">new</span>(model.Work)</span><br><span class="line">		m.Unmarshal(work)</span><br><span class="line">		r.run(work)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="comment">// dial the drone server to establish a TCP connection.</span></span><br><span class="line">		client, err = stomp.Dial(server)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			logger.Warningf(<span class="string">"connection failed, retry in %v. %s"</span>, backoff, err)</span><br><span class="line">			&lt;-time.After(backoff)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		opts := []stomp.MessageOption&#123;</span><br><span class="line">			stomp.WithCredentials(<span class="string">"x-token"</span>, accessToken),</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 连接mq</span></span><br><span class="line">		<span class="comment">// initialize the stomp session and authenticate.</span></span><br><span class="line">		<span class="keyword">if</span> err = client.Connect(opts...); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			logger.Warningf(<span class="string">"session failed, retry in %v. %s"</span>, backoff, err)</span><br><span class="line">			&lt;-time.After(backoff)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 订阅topic</span></span><br><span class="line">		<span class="comment">// subscribe to the pending build queue.</span></span><br><span class="line">		client.Subscribe(<span class="string">"/queue/pending"</span>, stomp.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(m *stomp.Message)</span></span> &#123;</span><br><span class="line">			<span class="keyword">go</span> handler(m) <span class="comment">// HACK until we a channel based Subscribe implementation</span></span><br><span class="line">		&#125;), opts...)</span><br></pre></td></tr></table></figure></p>
+<p>在上面开始有了pipeline的概念，参见.drone.yml的pipeline定义。</p>
+<p>在【m.Unmarshal(work)】会反序列化MQ消息到Work struct<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Work represents an item for work to be</span></span><br><span class="line"><span class="comment">// processed by a worker.</span></span><br><span class="line"><span class="keyword">type</span> Work <span class="keyword">struct</span> &#123;</span><br><span class="line">	Signed    <span class="keyword">bool</span>      <span class="string">`json:"signed"`</span></span><br><span class="line">	Verified  <span class="keyword">bool</span>      <span class="string">`json:"verified"`</span></span><br><span class="line">	Yaml      <span class="keyword">string</span>    <span class="string">`json:"config"`</span></span><br><span class="line">	YamlEnc   <span class="keyword">string</span>    <span class="string">`json:"secret"`</span></span><br><span class="line">	Repo      *Repo     <span class="string">`json:"repo"`</span></span><br><span class="line">	Build     *Build    <span class="string">`json:"build"`</span></span><br><span class="line">	BuildLast *Build    <span class="string">`json:"build_last"`</span></span><br><span class="line">	Job       *Job      <span class="string">`json:"job"`</span></span><br><span class="line">	Netrc     *Netrc    <span class="string">`json:"netrc"`</span></span><br><span class="line">	Keys      *Key      <span class="string">`json:"keys"`</span></span><br><span class="line">	System    *System   <span class="string">`json:"system"`</span></span><br><span class="line">	Secrets   []*Secret <span class="string">`json:"secrets"`</span></span><br><span class="line">	User      *User     <span class="string">`json:"user"`</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>重点关注<strong>Yaml</strong>字段</p>
+<h2 id="Docker-client"><a href="#Docker-client" class="headerlink" title="Docker client"></a>Docker client</h2><p>drone 并没有直接使用的第三方开源的client，而是封装一个接口，代码实现在【src/github.com/drone/drone/build/docker】。在后端再使用第三方<strong><a href="https://godoc.org/github.com/samalba/dockerclient" target="_blank" rel="noopener">samalba/dockerclient</a></strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Engine defines the container runtime engine.</span></span><br><span class="line"><span class="keyword">type</span> Engine <span class="keyword">interface</span> &#123;</span><br><span class="line">	ContainerStart(*yaml.Container) (<span class="keyword">string</span>, error)</span><br><span class="line">	ContainerStop(<span class="keyword">string</span>) error</span><br><span class="line">	ContainerRemove(<span class="keyword">string</span>) error</span><br><span class="line">	ContainerWait(<span class="keyword">string</span>) (*State, error)</span><br><span class="line">	ContainerLogs(<span class="keyword">string</span>) (io.ReadCloser, error)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Topic"><a href="#Topic" class="headerlink" title="Topic"></a>Topic</h1><ol>
+<li>/queue/updates server接收来自agent的执行结果</li>
+<li>/topic/logs.%d server接收来自agent的编译实时日志</li>
+<li>/topic/events 事件列表，用于刷新drone ui左边列表的任务，和agent无交互</li>
+<li>/topic/cancel 向agent发送任务取消指令</li>
+<li>/queue/pending 向agent发送编译指令，含1. 用户手动触发、2. git仓库回调触发比如push了新代码</li>
+</ol>
+<p>/topic/logs 和 /topic/events最终会关联到两个ws接口，用于实时刷新web ui。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">ws.GET(<span class="string">"/feed"</span>, server.EventStream)</span><br><span class="line">ws.GET(<span class="string">"/logs/:owner/:name/:build/:number"</span>,</span><br><span class="line">    session.SetRepo(),</span><br><span class="line">    session.SetPerm(),</span><br><span class="line">    session.MustPull,</span><br><span class="line">    server.LogStream,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h1 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h1><p>接下来会创建一个Agent对象，并Run</p>
+<p>src/github.com/drone/drone/drone/agent/exec.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *pipeline)</span> <span class="title">run</span><span class="params">(w *model.Work)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建cancel channel</span></span><br><span class="line">	cancel := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>, <span class="number">1</span>)</span><br><span class="line">    <span class="comment">// 创建docker实例</span></span><br><span class="line">	engine := docker.NewClient(r.docker)</span><br><span class="line">	<span class="comment">// 创建agent实例</span></span><br><span class="line">	a := agent.Agent&#123;</span><br><span class="line">    	<span class="comment">// 发送build日志</span></span><br><span class="line">		Update:    agent.NewClientUpdater(r.drone),</span><br><span class="line">		Logger:    agent.NewClientLogger(r.drone, w.Job.ID, r.config.logs),</span><br><span class="line">		Engine:    engine,</span><br><span class="line">		Timeout:   r.config.timeout,</span><br><span class="line">		Platform:  r.config.platform,</span><br><span class="line">		Namespace: r.config.namespace,</span><br><span class="line">		Escalate:  r.config.privileged,</span><br><span class="line">		Extension: r.config.extension,</span><br><span class="line">		Pull:      r.config.pull,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 支持取消编译事件</span></span><br><span class="line">	<span class="comment">// signal for canceling the build.</span></span><br><span class="line">	sub, err := r.drone.Subscribe(<span class="string">"/topic/cancel"</span>, stomp.HandlerFunc(cancelFunc))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logrus.Errorf(<span class="string">"Error subscribing to /topic/cancel. %s"</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	a.Run(w, cancel)</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>接着解释.drone.yml，并执行docker</p>
+<p>src/github.com/drone/drone/agent/agent.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Agent)</span> <span class="title">Run</span><span class="params">(payload *model.Work, cancel &lt;-<span class="keyword">chan</span> <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 预处理</span></span><br><span class="line">	spec, err := a.prep(payload)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Update是一个value为函数的回调值，用于更新任务状态，见agent.NewClientUpdater</span></span><br><span class="line">	a.Update(payload)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 执行</span></span><br><span class="line">	err = a.exec(spec, payload, cancel)</span><br><span class="line"></span><br><span class="line">	a.Update(payload)</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><p>预处理有两个任务很关键</p>
+<ol>
+<li>使用配置的密文替换.drone.yml的变量，参见envsubst.Eval</li>
+<li>解析.drone.xml，保存到Config结构中，参见conf, err := yaml.ParseString(w.Yaml)</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Config represents the build configuration Yaml document.</span></span><br><span class="line"><span class="keyword">type</span>  <span class="keyword">struct</span> &#123;</span><br><span class="line">	Image     <span class="keyword">string</span></span><br><span class="line">	Build     *Build</span><br><span class="line">	Workspace *Workspace</span><br><span class="line">	Pipeline  []*Container</span><br><span class="line">	Services  []*Container</span><br><span class="line">	Volumes   []*Volume</span><br><span class="line">	Networks  []*Network</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Agent)</span> <span class="title">prep</span><span class="params">(w *model.Work)</span> <span class="params">(*yaml.Config, error)</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	envs := toEnv(w)</span><br><span class="line">	envSecrets := <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// list of secrets to interpolate in the yaml</span></span><br><span class="line">	<span class="keyword">for</span> _, secret := <span class="keyword">range</span> w.Secrets &#123;</span><br><span class="line">		<span class="keyword">if</span> (w.Verified || secret.SkipVerify) &amp;&amp; secret.MatchEvent(w.Build.Event) &#123;</span><br><span class="line">			envSecrets[secret.Name] = secret.Value</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	w.Yaml, err = envsubst.Eval(w.Yaml, <span class="function"><span class="keyword">func</span><span class="params">(s <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">		env, ok := envSecrets[s]</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			env, _ = envs[s]</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> strings.Contains(env, <span class="string">"\n"</span>) &#123;</span><br><span class="line">			env = fmt.Sprintf(<span class="string">"%q"</span>, env)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> env</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	conf, err := yaml.ParseString(w.Yaml)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> conf, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="密文"><a href="#密文" class="headerlink" title="密文"></a>密文</h3><p>drone数据库有一个专门的表sercrets用来存储这些字段，webui没有提供入口配置，需要使用cli，具体参见官方文档<a href="http://readme.drone.io/cli/drone-secret-add/" target="_blank" rel="noopener">http://readme.drone.io/cli/drone-secret-add/</a>。这些密文通过mq从server带过来，agent并不直接存储。</p>
+<p>关于密文使用，参见官方<a href="http://readme.drone.io/usage/secret-guide/" target="_blank" rel="noopener">http://readme.drone.io/usage/secret-guide/</a></p>
+<p>具体的替换过程，使用函数envsubst.Eval，代码在<a href="https://github.com/drone/drone/tree/master/vendor/github.com/drone/envsubst" target="_blank" rel="noopener">https://github.com/drone/drone/tree/master/vendor/github.com/drone/envsubst</a>，支持的模式如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Supported Functions:</span><br><span class="line">    $&#123;var^&#125;</span><br><span class="line">    $&#123;var^^&#125;</span><br><span class="line">    $&#123;var,&#125;</span><br><span class="line">    $&#123;var,,&#125;</span><br><span class="line">    $&#123;var:position&#125;</span><br><span class="line">    $&#123;var:position:length&#125;</span><br><span class="line">    $&#123;var#substring&#125;</span><br><span class="line">    $&#123;var##substring&#125;</span><br><span class="line">    $&#123;var%substring&#125;</span><br><span class="line">    $&#123;var%%substring&#125;</span><br><span class="line">    $&#123;var/substring/replacement&#125;</span><br><span class="line">    $&#123;var//substring/replacement&#125;</span><br><span class="line">    $&#123;var/#substring/replacement&#125;</span><br><span class="line">    $&#123;var/%substring/replacement&#125;</span><br><span class="line">    $&#123;#var&#125;</span><br><span class="line">    $&#123;var=default&#125;</span><br><span class="line">    $&#123;var:=default&#125;</span><br><span class="line">    $&#123;var:-default&#125;</span><br><span class="line"></span><br><span class="line">Unsupported Functions:</span><br><span class="line">    $&#123;var-default&#125;</span><br><span class="line">    $&#123;var+default&#125;</span><br><span class="line">    $&#123;var:?default&#125;</span><br><span class="line">    $&#123;var:+default&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="解析-drone-yml"><a href="#解析-drone-yml" class="headerlink" title="解析.drone.yml"></a>解析.drone.yml</h2><p>解析的入口在yaml.ParseString，代码实现在【src/github.com/drone/drone/yaml】，关于Config结构，我们重点关注以下两个字段<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span>  <span class="keyword">struct</span> &#123;</span><br><span class="line">	Pipeline  []*Container</span><br><span class="line">	Services  []*Container</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他们最终都会存储为一个<strong>有序</strong>的链表，代码实现【src/github.com/drone/drone/yaml/container.go】，下面是最简单的.drone.yml</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">pipeline:</span></span><br><span class="line">  <span class="attr">build:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">golang</span></span><br><span class="line">    <span class="attr">commands:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">go</span> <span class="string">get</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">go</span> <span class="string">build</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">go</span> <span class="string">test</span></span><br><span class="line"></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">postgres:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">postgres:9.4.5</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">POSTGRES_USER=myapp</span></span><br></pre></td></tr></table></figure>
+<p>所以.drone.yml支持哪些字段，看看【src/github.com/drone/drone/yaml】的对象定义即可，关注对象字段tag和UnmarshalYAML函数。<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Container defines a Docker container.</span></span><br><span class="line"><span class="keyword">type</span> Container <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID             <span class="keyword">string</span></span><br><span class="line">	Name           <span class="keyword">string</span></span><br><span class="line">	Image          <span class="keyword">string</span></span><br><span class="line">	Build          <span class="keyword">string</span></span><br><span class="line">	Pull           <span class="keyword">bool</span></span><br><span class="line">	AuthConfig     Auth</span><br><span class="line">	Detached       <span class="keyword">bool</span></span><br><span class="line">	Disabled       <span class="keyword">bool</span></span><br><span class="line">	Privileged     <span class="keyword">bool</span></span><br><span class="line">	WorkingDir     <span class="keyword">string</span></span><br><span class="line">	Environment    <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">	Labels         <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">	Entrypoint     []<span class="keyword">string</span></span><br><span class="line">	Command        []<span class="keyword">string</span></span><br><span class="line">	Commands       []<span class="keyword">string</span></span><br><span class="line">	ExtraHosts     []<span class="keyword">string</span></span><br><span class="line">	Volumes        []<span class="keyword">string</span></span><br><span class="line">	VolumesFrom    []<span class="keyword">string</span></span><br><span class="line">	Devices        []<span class="keyword">string</span></span><br><span class="line">	Network        <span class="keyword">string</span></span><br><span class="line">	DNS            []<span class="keyword">string</span></span><br><span class="line">	DNSSearch      []<span class="keyword">string</span></span><br><span class="line">	MemSwapLimit   <span class="keyword">int64</span></span><br><span class="line">	MemLimit       <span class="keyword">int64</span></span><br><span class="line">	ShmSize        <span class="keyword">int64</span></span><br><span class="line">	CPUQuota       <span class="keyword">int64</span></span><br><span class="line">	CPUShares      <span class="keyword">int64</span></span><br><span class="line">	CPUSet         <span class="keyword">string</span></span><br><span class="line">	OomKillDisable <span class="keyword">bool</span></span><br><span class="line">	Constraints    Constraints</span><br><span class="line"></span><br><span class="line">	Vargs <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>解析完.drone.xml之后，会自动在前面加上一个clone的容器</p>
+<p>src/github.com/drone/drone/yaml/transform/clone.go</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Clone transforms the Yaml to include a clone step.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Clone</span><span class="params">(c *yaml.Config, plugin <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> plugin &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">""</span>, <span class="string">"git"</span>:</span><br><span class="line">		plugin = <span class="string">"plugins/git:latest"</span></span><br><span class="line">	<span class="keyword">case</span> <span class="string">"hg"</span>:</span><br><span class="line">		plugin = <span class="string">"plugins/hg:latest"</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, p := <span class="keyword">range</span> c.Pipeline &#123;</span><br><span class="line">		<span class="keyword">if</span> p.Name == clone &#123;</span><br><span class="line">			<span class="keyword">if</span> p.Image == <span class="string">""</span> &#123;</span><br><span class="line">				p.Image = plugin</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	s := &amp;yaml.Container&#123;</span><br><span class="line">		Image: plugin,</span><br><span class="line">		Name:  clone,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c.Pipeline = <span class="built_in">append</span>([]*yaml.Container&#123;s&#125;, c.Pipeline...)</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后还会加上一个busybox的容器，我的理解这个容器的目的仅仅是为了在最开始挂载磁盘，以便维持pipeline各个容器的共享代码。<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// lookup ambassador configuration by architecture and os</span></span><br><span class="line"><span class="keyword">var</span> lookupAmbassador = <span class="keyword">map</span>[<span class="keyword">string</span>]ambassador&#123;</span><br><span class="line">	<span class="string">"linux/amd64"</span>: &#123;</span><br><span class="line">		image:      <span class="string">"busybox:latest"</span>,</span><br><span class="line">		entrypoint: []<span class="keyword">string</span>&#123;<span class="string">"/bin/sleep"</span>&#125;,</span><br><span class="line">		command:    []<span class="keyword">string</span>&#123;<span class="string">"86400"</span>&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">	<span class="string">"linux/arm"</span>: &#123;</span><br><span class="line">		image:      <span class="string">"armhf/alpine:latest"</span>,</span><br><span class="line">		entrypoint: []<span class="keyword">string</span>&#123;<span class="string">"/bin/sleep"</span>&#125;,</span><br><span class="line">		command:    []<span class="keyword">string</span>&#123;<span class="string">"86400"</span>&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Pod transforms the containers in the Yaml to use Pod networking, where every</span></span><br><span class="line"><span class="comment">// container shares the localhost connection.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Pod</span><span class="params">(c *yaml.Config, platform <span class="keyword">string</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	rand := base64.RawURLEncoding.EncodeToString(</span><br><span class="line">		securecookie.GenerateRandomKey(<span class="number">8</span>),</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// choose the ambassador configuration based on os and architecture</span></span><br><span class="line">	conf, ok := lookupAmbassador[platform]</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		conf = defaultAmbassador</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> _, container := <span class="keyword">range</span> containers &#123;</span><br><span class="line">		container.VolumesFrom = <span class="built_in">append</span>(container.VolumesFrom, ambassador.ID)</span><br><span class="line">		<span class="keyword">if</span> container.Network == <span class="string">""</span> &#123;</span><br><span class="line">			container.Network = network</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>留意pod函数最后的for循环，<strong>通过VolumesFrom实现了所有容器共享一个磁盘，从而共享代码等数据</strong></p>
+<h2 id="执行容器"><a href="#执行容器" class="headerlink" title="执行容器"></a>执行容器</h2><p>src/github.com/drone/drone/build/config.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Pipeline creates a build Pipeline using the specific configuration for</span></span><br><span class="line"><span class="comment">// the given Yaml specification.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Config)</span> <span class="title">Pipeline</span><span class="params">(spec *yaml.Config)</span> *<span class="title">Pipeline</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	pipeline := Pipeline&#123;</span><br><span class="line">		engine: c.Engine,</span><br><span class="line">		pipe:   <span class="built_in">make</span>(<span class="keyword">chan</span> *Line, c.Buffer),</span><br><span class="line">		next:   <span class="built_in">make</span>(<span class="keyword">chan</span> error),</span><br><span class="line">		done:   <span class="built_in">make</span>(<span class="keyword">chan</span> error),</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> containers []*yaml.Container</span><br><span class="line">	containers = <span class="built_in">append</span>(containers, spec.Services...)</span><br><span class="line">	containers = <span class="built_in">append</span>(containers, spec.Pipeline...)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, c := <span class="keyword">range</span> containers &#123;</span><br><span class="line">		<span class="keyword">if</span> c.Disabled &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		next := &amp;element&#123;Container: c&#125;</span><br><span class="line">		<span class="keyword">if</span> pipeline.head == <span class="literal">nil</span> &#123;</span><br><span class="line">			pipeline.head = next</span><br><span class="line">			pipeline.tail = next</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			pipeline.tail.next = next</span><br><span class="line">			pipeline.tail = next</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		pipeline.next &lt;- <span class="literal">nil</span></span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> &amp;pipeline</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(a *Agent)</span> <span class="title">exec</span><span class="params">(spec *yaml.Config, payload *model.Work, cancel &lt;-<span class="keyword">chan</span> <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	conf := build.Config&#123;</span><br><span class="line">		Engine: a.Engine,</span><br><span class="line">		Buffer: <span class="number">500</span>,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pipeline := conf.Pipeline(spec)</span><br><span class="line">	<span class="keyword">defer</span> pipeline.Teardown()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// setup the build environment</span></span><br><span class="line">	<span class="keyword">if</span> err := pipeline.Setup(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	replacer := NewSecretReplacer(payload.Secrets)</span><br><span class="line">	timeout := time.After(time.Duration(payload.Repo.Timeout) * time.Minute)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-pipeline.Done():</span><br><span class="line">			<span class="keyword">return</span> pipeline.Err()</span><br><span class="line">		<span class="keyword">case</span> &lt;-cancel:</span><br><span class="line">			pipeline.Stop()</span><br><span class="line">			<span class="keyword">return</span> fmt.Errorf(<span class="string">"termination request received, build cancelled"</span>)</span><br><span class="line">		<span class="keyword">case</span> &lt;-timeout:</span><br><span class="line">			pipeline.Stop()</span><br><span class="line">			<span class="keyword">return</span> fmt.Errorf(<span class="string">"maximum time limit exceeded, build cancelled"</span>)</span><br><span class="line">		<span class="keyword">case</span> &lt;-time.After(a.Timeout):</span><br><span class="line">			pipeline.Stop()</span><br><span class="line">			<span class="keyword">return</span> fmt.Errorf(<span class="string">"terminal inactive for %v, build cancelled"</span>, a.Timeout)</span><br><span class="line">		<span class="keyword">case</span> &lt;-pipeline.Next():</span><br><span class="line"></span><br><span class="line">			<span class="comment">// TODO(bradrydzewski) this entire block of code should probably get</span></span><br><span class="line">			<span class="comment">// encapsulated in the pipeline.</span></span><br><span class="line">			status := model.StatusSuccess</span><br><span class="line">			<span class="keyword">if</span> pipeline.Err() != <span class="literal">nil</span> &#123;</span><br><span class="line">				status = model.StatusFailure</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">// updates the build status passed into each container. I realize this is</span></span><br><span class="line">			<span class="comment">// a bit out of place and will work to resolve.</span></span><br><span class="line">			pipeline.Head().Environment[<span class="string">"DRONE_BUILD_STATUS"</span>] = status</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> !pipeline.Head().Constraints.Match(</span><br><span class="line">				a.Platform,</span><br><span class="line">				payload.Build.Deploy,</span><br><span class="line">				payload.Build.Event,</span><br><span class="line">				payload.Build.Branch,</span><br><span class="line">				status, payload.Job.Environment) &#123; <span class="comment">// <span class="doctag">TODO:</span> fix this whole section</span></span><br><span class="line"></span><br><span class="line">				pipeline.Skip()</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				pipeline.Exec()</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">case</span> line := &lt;-pipeline.Pipe():</span><br><span class="line">			line.Out = replacer.Replace(line.Out)</span><br><span class="line">			a.Logger(line)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结束之后会自动停止和删除容器，但不会删除镜像，参见[src/github.com/drone/drone/build/pipeline.go]</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/08/drone4/" data-id="ckdbgbyvq001243poqodu8or7" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/08/drone4/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drone/">drone</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/持续集成/">持续集成</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-drone3" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/08/drone3/">Drone学习笔记3</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/08/drone3/" class="article-date"><time datetime="2017-03-08T03:04:27.000Z" itemprop="datePublished">2017-03-08</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h1><p>drone入口在【src/github.com/drone/drone/drone/main.go】，整个目录【src/github.com/drone/drone/drone】都是各种入口，包括drone server/agent和各种cli调用，除了server/agent，cli都是对【src/github.com/drone/drone/client】的一个封装调用。</p>
+<p>每一个命令行调用都包含一堆的参数，并且子命令又包含一堆参数，这依赖于<strong><a href="https://github.com/urfave/cli" target="_blank" rel="noopener">urfave/cli</a></strong>。注意main函数的app变量。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	envflag.Parse()</span><br><span class="line"></span><br><span class="line">	app := cli.NewApp()</span><br><span class="line">	app.Name = <span class="string">"drone"</span></span><br><span class="line">	app.Version = version.Version</span><br><span class="line">	app.Usage = <span class="string">"command line utility"</span></span><br><span class="line">	app.Flags = []cli.Flag&#123;</span><br><span class="line">		cli.StringFlag&#123;</span><br><span class="line">			Name:   <span class="string">"t, token"</span>,</span><br><span class="line">			Usage:  <span class="string">"server auth token"</span>,</span><br><span class="line">			EnvVar: <span class="string">"DRONE_TOKEN"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">		cli.StringFlag&#123;</span><br><span class="line">			Name:   <span class="string">"s, server"</span>,</span><br><span class="line">			Usage:  <span class="string">"server location"</span>,</span><br><span class="line">			EnvVar: <span class="string">"DRONE_SERVER"</span>,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">	app.Commands = []cli.Command&#123;</span><br><span class="line">		agent.AgentCmd,</span><br><span class="line">		agentsCmd,</span><br><span class="line">		buildCmd,</span><br><span class="line">		deployCmd,</span><br><span class="line">		execCmd,</span><br><span class="line">		infoCmd,  <span class="comment">//-------------------</span></span><br><span class="line">		secretCmd,</span><br><span class="line">		serverCmd,</span><br><span class="line">		signCmd,</span><br><span class="line">		repoCmd,</span><br><span class="line">		userCmd,</span><br><span class="line">		orgCmd,</span><br><span class="line">		globalCmd,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	app.Run(os.Args)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>src/github.com/drone/drone/drone/info.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> infoCmd = cli.Command&#123;</span><br><span class="line">	Name:  <span class="string">"info"</span>,</span><br><span class="line">	Usage: <span class="string">"show information about the current user"</span>,</span><br><span class="line">	Action: <span class="function"><span class="keyword">func</span><span class="params">(c *cli.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> err := info(c); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Fatalln(err)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">	Flags: []cli.Flag&#123;</span><br><span class="line">		cli.StringFlag&#123;</span><br><span class="line">			Name:  <span class="string">"format"</span>,</span><br><span class="line">			Usage: <span class="string">"format output"</span>,</span><br><span class="line">			Value: tmplUserInfo,</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Cli"><a href="#Cli" class="headerlink" title="Cli"></a>Cli</h1><p>drone cli仅仅是对【src/github.com/drone/drone/client】的一个封装调用，本质上就是一个http请求，只不过使用不同的jwt token。</p>
+<p>src/github.com/drone/drone/drone/user_list.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">userList</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	client, err := newClient(c)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	users, err := client.UserList() <span class="comment">//---------------------</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> || <span class="built_in">len</span>(users) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/client/client.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Client is used to communicate with a Drone server.</span></span><br><span class="line"><span class="keyword">type</span> Client <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Self returns the currently authenticated user.</span></span><br><span class="line">	Self() (*model.User, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// User returns a user by login.</span></span><br><span class="line">	User(<span class="keyword">string</span>) (*model.User, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// UserList returns a list of all registered users.</span></span><br><span class="line">	UserList() ([]*model.User, error)</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/client/client_impl.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	pathUsers         = <span class="string">"%s/api/users"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// UserList returns a list of all registered users.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *client)</span> <span class="title">UserList</span><span class="params">()</span> <span class="params">([]*model.User, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> out []*model.User</span><br><span class="line">	uri := fmt.Sprintf(pathUsers, c.base)</span><br><span class="line"></span><br><span class="line">	log.Print(<span class="string">"user list uri %s\n"</span>,uri)</span><br><span class="line">	err := c.get(uri, &amp;out)</span><br><span class="line">	<span class="keyword">return</span> out, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h1><p>drone的路由实现在【src/github.com/drone/drone/router/router.go】，使用<strong><a href="https://github.com/gin-gonic/gin" target="_blank" rel="noopener">gin-gonic/gin</a></strong>。</p>
+<p>src/github.com/drone/drone/drone/server.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">server</span><span class="params">(c *cli.Context)</span> <span class="title">error</span></span> &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// setup the server and start the listener</span></span><br><span class="line">	handler := router.Load(</span><br><span class="line">		ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, <span class="literal">true</span>),</span><br><span class="line">		middleware.Version,</span><br><span class="line">		middleware.Config(c),</span><br><span class="line">		middleware.Cache(c),</span><br><span class="line">		middleware.Store(c),</span><br><span class="line">		middleware.Remote(c),</span><br><span class="line">		middleware.Agents(c),</span><br><span class="line">		middleware.Broker(c),</span><br><span class="line">	)</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/router/router.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// Load loads the router</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Load</span><span class="params">(middleware ...gin.HandlerFunc)</span> <span class="title">http</span>.<span class="title">Handler</span></span> &#123;</span><br><span class="line">	e.Use(header.NoCache)</span><br><span class="line">	e.Use(header.Options)</span><br><span class="line">	e.Use(header.Secure)</span><br><span class="line">	e.Use(middleware...)</span><br><span class="line">	e.Use(session.SetUser())</span><br><span class="line">	e.Use(token.Refresh)</span><br><span class="line"></span><br><span class="line">	e.GET(<span class="string">"/login"</span>, server.ShowLogin)</span><br><span class="line">	e.GET(<span class="string">"/login/form"</span>, server.ShowLoginForm)</span><br><span class="line">	e.GET(<span class="string">"/logout"</span>, server.GetLogout)</span><br><span class="line">	e.NoRoute(server.ShowIndex)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// TODO above will Go away with React UI</span></span><br><span class="line"></span><br><span class="line">	user := e.Group(<span class="string">"/api/user"</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		user.Use(session.MustUser())</span><br><span class="line">		user.GET(<span class="string">""</span>, server.GetSelf)</span><br><span class="line">		user.GET(<span class="string">"/feed"</span>, server.GetFeed)</span><br><span class="line">		user.GET(<span class="string">"/repos"</span>, server.GetRepos)</span><br><span class="line">		user.GET(<span class="string">"/repos/remote"</span>, server.GetRemoteRepos)</span><br><span class="line">		user.POST(<span class="string">"/token"</span>, server.PostToken)</span><br><span class="line">		user.DELETE(<span class="string">"/token"</span>, server.DeleteToken)</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这其中有一个有意思的用法，用以支持<strong>同一个group内部分接口适用的middleware，但又不需要每一个适用的接口写一次</strong>。<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">repos := e.Group(<span class="string">"/api/repos/:owner/:name"</span>)</span><br><span class="line">&#123;</span><br><span class="line">	repos.POST(<span class="string">""</span>, server.PostRepo)</span><br><span class="line"></span><br><span class="line">	repo := repos.Group(<span class="string">""</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		repo.Use(session.SetRepo())</span><br><span class="line">		repo.Use(session.SetPerm())</span><br><span class="line">		repo.Use(session.MustPull)</span><br><span class="line"></span><br><span class="line">		repo.GET(<span class="string">""</span>, server.GetRepo)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这其中最关键的就是各种midlleware的使用，其中<strong>大量使用闭包用于支持全局的初始化</strong></p>
+<h1 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h1><p>通过下面的中间件设置当前的用户，如果没有无所谓，具体的校验在后面<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetUser</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		<span class="keyword">var</span> user *model.User</span><br><span class="line">		<span class="comment">// 获取token，并验证</span></span><br><span class="line">		t, err := token.ParseRequest(c.Request, <span class="function"><span class="keyword">func</span><span class="params">(t *token.Token)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">			<span class="keyword">var</span> err error</span><br><span class="line">			<span class="comment">// 继续查询数据库是否存在用户</span></span><br><span class="line">			user, err = store.GetUserLogin(c, t.Text)</span><br><span class="line">			<span class="keyword">return</span> user.Hash, err</span><br><span class="line">		&#125;)</span><br><span class="line">		<span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">			confv := c.MustGet(<span class="string">"config"</span>)</span><br><span class="line">			<span class="keyword">if</span> conf, ok := confv.(*model.Config); ok &#123;</span><br><span class="line">				<span class="comment">// 是否admin</span></span><br><span class="line">				user.Admin = conf.IsAdmin(user)</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 最后设置当前的user到gin.Context</span></span><br><span class="line">			c.Set(<span class="string">"user"</span>, user)</span><br><span class="line"></span><br><span class="line">			<span class="comment">// 普通的web token，需要验证csrf token</span></span><br><span class="line">			<span class="keyword">if</span> t.Kind == token.SessToken &#123;</span><br><span class="line">				err = token.CheckCsrf(c.Request, <span class="function"><span class="keyword">func</span><span class="params">(t *token.Token)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">					<span class="keyword">return</span> user.Hash, <span class="literal">nil</span></span><br><span class="line">				&#125;)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>获取当前user就比较简单<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">User</span><span class="params">(c *gin.Context)</span> *<span class="title">model</span>.<span class="title">User</span></span> &#123;</span><br><span class="line">	<span class="comment">// 从gin.Context获取当前的user，可能不存在</span></span><br><span class="line">	<span class="comment">// 参考对比 SetUser c.Set("user", user)</span></span><br><span class="line">	v, ok := c.Get(<span class="string">"user"</span>)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	u, ok := v.(*model.User)</span><br><span class="line">	<span class="keyword">if</span> !ok &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> u</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过下面两个中间件用于授权认证<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MustRepoAdmin</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		user := User(c)</span><br><span class="line">		perm := Perm(c)</span><br><span class="line">		<span class="keyword">switch</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> user == <span class="literal">nil</span>:</span><br><span class="line">			c.String(<span class="number">401</span>, <span class="string">"User not authorized"</span>)</span><br><span class="line">			c.Abort()</span><br><span class="line">		<span class="keyword">case</span> perm.Admin == <span class="literal">false</span>:</span><br><span class="line">			c.String(<span class="number">403</span>, <span class="string">"User not authorized"</span>)</span><br><span class="line">			c.Abort()</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			c.Next()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">MustUser</span><span class="params">()</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		user := User(c)</span><br><span class="line">		<span class="keyword">switch</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> user == <span class="literal">nil</span>:</span><br><span class="line">			c.String(<span class="number">401</span>, <span class="string">"User not authorized"</span>)</span><br><span class="line">			c.Abort()</span><br><span class="line">		<span class="keyword">default</span>:</span><br><span class="line">			c.Next()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="全局配置"><a href="#全局配置" class="headerlink" title="全局配置"></a>全局配置</h1><p>前面提到一个DRONE_OPEN的环境变量，drone使用一个全局配置对象保存这些配置，但是和普通的全局对象不同的时，它利用了gin.Context的Context。也就是上面保存当前用户的方式。</p>
+<p>总之，可变（比如当前登录用户）和不变（全局配置）都使用同样的方式，即通过一个闭包获取/保存对象到gin.Context，然后在用的时候从gin.Context获取。</p>
+<p>src/github.com/drone/drone/router/middleware/config.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Config</span><span class="params">(cli *cli.Context)</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	v := setupConfig(cli)</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		c.Set(configKey, v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// helper function to create the configuration from the CLI context.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupConfig</span><span class="params">(c *cli.Context)</span> *<span class="title">model</span>.<span class="title">Config</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;model.Config&#123;</span><br><span class="line">		Open:   c.Bool(<span class="string">"open"</span>),</span><br><span class="line">		Yaml:   c.String(<span class="string">"yaml"</span>),</span><br><span class="line">		Shasum: c.String(<span class="string">"yaml"</span>) + <span class="string">".sig"</span>,</span><br><span class="line">		Secret: c.String(<span class="string">"agent-secret"</span>),</span><br><span class="line">		Admins: sliceToMap(c.StringSlice(<span class="string">"admin"</span>)),</span><br><span class="line">		Orgs:   sliceToMap(c.StringSlice(<span class="string">"orgs"</span>)),</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>当使用oauth登录之后，回调如下<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">auth := e.Group(<span class="string">"/authorize"</span>)</span><br><span class="line">&#123;</span><br><span class="line">    auth.GET(<span class="string">""</span>, server.GetLogin)</span><br><span class="line">    auth.POST(<span class="string">""</span>, server.GetLogin)</span><br><span class="line">    auth.POST(<span class="string">"/token"</span>, server.GetLoginToken)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/server/login.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetLogin</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">    <span class="comment">// 获取全局配置对象</span></span><br><span class="line">	config := ToConfig(c)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// get the user from the database</span></span><br><span class="line">	u, err := store.GetUserLogin(c, tmpuser.Login)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// if self-registration is disabled we should return a not authorized error</span></span><br><span class="line">        <span class="comment">// 检查</span></span><br><span class="line">		<span class="keyword">if</span> !config.Open &amp;&amp; !config.IsAdmin(tmpuser) &#123;</span><br><span class="line">			logrus.Errorf(<span class="string">"cannot register %s. registration closed"</span>, tmpuser.Login)</span><br><span class="line">			c.Redirect(<span class="number">303</span>, <span class="string">"/login?error=access_denied"</span>)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h1><p>src/github.com/drone/drone/router/middleware/store.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Store is a middleware function that initializes the Datastore and attaches to</span></span><br><span class="line"><span class="comment">// the context of every http.Request.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Store</span><span class="params">(cli *cli.Context)</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	v := setupStore(cli)</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">    	<span class="comment">// 将数据库对象设置到gin.Context</span></span><br><span class="line">		store.ToContext(c, v)</span><br><span class="line">		c.Next()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// helper function to create the datastore from the CLI context.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupStore</span><span class="params">(c *cli.Context)</span> <span class="title">store</span>.<span class="title">Store</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> datastore.New(</span><br><span class="line">		c.String(<span class="string">"driver"</span>),</span><br><span class="line">		c.String(<span class="string">"datasource"</span>),</span><br><span class="line">	)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/store/datastore/store.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// New creates a database connection for the given driver and datasource</span></span><br><span class="line"><span class="comment">// and returns a new Store.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">New</span><span class="params">(driver, config <span class="keyword">string</span>)</span> <span class="title">store</span>.<span class="title">Store</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> From(</span><br><span class="line">		open(driver, config),</span><br><span class="line">	)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// helper function to setup the meddler default driver</span></span><br><span class="line"><span class="comment">// based on the selected driver name.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupMeddler</span><span class="params">(driver <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 根据配置，获取实际的数据库对象</span></span><br><span class="line">	<span class="keyword">switch</span> driver &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"sqlite3"</span>:</span><br><span class="line">		meddler.Default = meddler.SQLite</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"mysql"</span>:</span><br><span class="line">		meddler.Default = meddler.MySQL</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"postgres"</span>:</span><br><span class="line">		meddler.Default = meddler.PostgreSQL</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// helper function to setup the databsae by performing</span></span><br><span class="line"><span class="comment">// automated database migration steps.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupDatabase</span><span class="params">(driver <span class="keyword">string</span>, db *sql.DB)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> migrations = &amp;migrate.AssetMigrationSource&#123;</span><br><span class="line">		Asset:    ddl.Asset,</span><br><span class="line">		AssetDir: ddl.AssetDir,</span><br><span class="line">		Dir:      driver,</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// UP 确保最新，如果没有就创建表什么的</span></span><br><span class="line">	_, err := migrate.Exec(db, driver, migrations, migrate.Up)</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// open opens a new database connection with the specified</span></span><br><span class="line"><span class="comment">// driver and connection string and returns a store.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">open</span><span class="params">(driver, config <span class="keyword">string</span>)</span> *<span class="title">sql</span>.<span class="title">DB</span></span> &#123;</span><br><span class="line">	db, err := sql.Open(driver, config)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logrus.Errorln(err)</span><br><span class="line">		logrus.Fatalln(<span class="string">"database connection failed"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> driver == <span class="string">"mysql"</span> &#123;</span><br><span class="line">		<span class="comment">// per issue https://github.com/go-sql-driver/mysql/issues/257</span></span><br><span class="line">		db.SetMaxIdleConns(<span class="number">0</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 设置数据库</span></span><br><span class="line">	setupMeddler(driver)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 确保数据库/表是最新的</span></span><br><span class="line">	<span class="keyword">if</span> err := setupDatabase(driver, db); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logrus.Errorln(err)</span><br><span class="line">		logrus.Fatalln(<span class="string">"migration failed"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="Migrate"><a href="#Migrate" class="headerlink" title="Migrate"></a>Migrate</h2><p>使用<strong><a href="https://github.com/rubenv/sql-migrate" target="_blank" rel="noopener">rubenv/sql-migrate</a></strong>，一些类似的主流框架包括<strong><a href="https://github.com/pressly/goose" target="_blank" rel="noopener">pressly/goose</a></strong></p>
+<p>很多migrate框架都可以用自己的格式写migrate脚本，<a href="https://flask-migrate.readthedocs.io/en/latest/" target="_blank" rel="noopener">flask-migrate</a>甚至可以自己根据model来生成migrate脚本。这样的好处是不用sql那么啰嗦，但问题也不少</p>
+<ol>
+<li>需要学习它的特定语法</li>
+<li>大部分都不完善，容易被坑</li>
+<li>flask-migrate生成的脚本有时候并不完善，需要在手动改改</li>
+</ol>
+<p>所以用sql写migrate挺好，</p>
+<h2 id="orm"><a href="#orm" class="headerlink" title="orm"></a>orm</h2><p>drone没有使用大而全的orm框架，而是一个小巧的<strong><a href="https://github.com/russross/meddler" target="_blank" rel="noopener">russross/meddler</a></strong></p>
+<p>src/github.com/drone/drone/store/datastore/users.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(db *datastore)</span> <span class="title">GetUserLogin</span><span class="params">(login <span class="keyword">string</span>)</span> <span class="params">(*model.User, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> usr = <span class="built_in">new</span>(model.User)</span><br><span class="line">	<span class="keyword">var</span> err = meddler.QueryRow(db, usr, rebind(userLoginQuery), login)</span><br><span class="line">	<span class="keyword">return</span> usr, err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> userLoginQuery = <span class="string">`</span></span><br><span class="line"><span class="string">SELECT *</span></span><br><span class="line"><span class="string">FROM users</span></span><br><span class="line"><span class="string">WHERE user_login=?</span></span><br><span class="line"><span class="string">LIMIT 1</span></span><br><span class="line"><span class="string">`</span></span><br></pre></td></tr></table></figure></p>
+<p>一些相对完善的如<strong><a href="https://github.com/jinzhu/gorm" target="_blank" rel="noopener">jinzhu/gorm</a></strong>，文档也不错<a href="http://jinzhu.me/gorm/" target="_blank" rel="noopener">http://jinzhu.me/gorm/</a>，但还是要学习那一套语法，要命的是这种自定义的语法存在潜在的风险，可能生成的不对的sql或者低效的sql脚本。相对完善的orm如<strong><a href="https://www.sqlalchemy.org/" target="_blank" rel="noopener">sqlalchemy</a></strong>，但要学习那一套复杂的语法也并不容易。</p>
+<p>drone由于查询较为简单，所有的查询都封装在【src/github.com/drone/drone/store】，对外只暴露接口Store</p>
+<p>src/github.com/drone/drone/store/store.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Store <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// GetUser gets a user by unique ID.</span></span><br><span class="line">	GetUser(<span class="keyword">int64</span>) (*model.User, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// GetUserLogin gets a user by unique Login name.</span></span><br><span class="line">	GetUserLogin(<span class="keyword">string</span>) (*model.User, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// GetUserList gets a list of all users in the system.</span></span><br><span class="line">	GetUserList() ([]*model.User, error)</span><br></pre></td></tr></table></figure></p>
+<h1 id="git后端适配"><a href="#git后端适配" class="headerlink" title="git后端适配"></a>git后端适配</h1><p>由于drone支持多种git后端，例如github，gitlib等，所以对此做了一层封装，代码在【src/github.com/drone/drone/remote】，和数据库一样，只暴露了接口</p>
+<p>src/github.com/drone/drone/remote/remote.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Remote <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Login authenticates the session and returns the</span></span><br><span class="line">	<span class="comment">// remote user details.</span></span><br><span class="line">	Login(w http.ResponseWriter, r *http.Request) (*model.User, error)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Auth authenticates the session and returns the remote user</span></span><br><span class="line">	<span class="comment">// login for the given token and secret</span></span><br><span class="line">	Auth(token, secret <span class="keyword">string</span>) (<span class="keyword">string</span>, error)</span><br></pre></td></tr></table></figure></p>
+<p>具体的初始化和设置在【src/github.com/drone/drone/router/middleware/remote.go】<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Remote is a middleware function that initializes the Remote and attaches to</span></span><br><span class="line"><span class="comment">// the context of every http.Request.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Remote</span><span class="params">(c *cli.Context)</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">	v, err := setupRemote(c)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		logrus.Fatalln(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		remote.ToContext(c, v)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// helper function to setup the remote from the CLI arguments.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupRemote</span><span class="params">(c *cli.Context)</span> <span class="params">(remote.Remote, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"github"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGithub(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"gitlab"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGitlab(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"bitbucket"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupBitbucket(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"stash"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupStash(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"gogs"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGogs(c)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"version control system not configured"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="websocket"><a href="#websocket" class="headerlink" title="websocket"></a>websocket</h1><p>drone有两个地方用到了websocket</p>
+<ol>
+<li>网站动态刷新内容时，例如编译打包的日志输出</li>
+<li>agent和server通信（drone/mq运行在websocket之上）</li>
+</ol>
+<p>入口在【src/github.com/drone/drone/router/router.go】<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">ws := e.Group(<span class="string">"/ws"</span>)</span><br><span class="line">&#123;</span><br><span class="line">    ws.GET(<span class="string">"/broker"</span>, server.Broker)</span><br><span class="line">    ws.GET(<span class="string">"/feed"</span>, server.EventStream)</span><br><span class="line">    ws.GET(<span class="string">"/logs/:owner/:name/:build/:number"</span>,</span><br><span class="line">        session.SetRepo(),</span><br><span class="line">        session.SetPerm(),</span><br><span class="line">        session.MustPull,</span><br><span class="line">        server.LogStream,</span><br><span class="line">    )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>一个简单的例子</p>
+<p>src/github.com/drone/drone/server/stream.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// LogStream streams the build log output to the client.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">LogStream</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 创建server</span></span><br><span class="line">	ws, err := upgrader.Upgrade(c.Writer, c.Request, <span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> _, ok := err.(websocket.HandshakeError); !ok &#123;</span><br><span class="line">			logrus.Errorf(<span class="string">"Cannot upgrade websocket. %s"</span>, err)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 创建沟通的channel</span></span><br><span class="line">	logs := <span class="built_in">make</span>(<span class="keyword">chan</span> []<span class="keyword">byte</span>)</span><br><span class="line">	done := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">bool</span>)</span><br><span class="line">	<span class="keyword">var</span> eof <span class="keyword">bool</span></span><br><span class="line">	dest := fmt.Sprintf(<span class="string">"/topic/logs.%d"</span>, job.ID)</span><br><span class="line">	client, _ := stomp.FromContext(c)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 订阅特定的topic，用来接收agent通过drone/mq发送过来的日志</span></span><br><span class="line">	sub, err := client.Subscribe(dest, stomp.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(m *stomp.Message)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> m.Header.GetBool(<span class="string">"eof"</span>) &#123;</span><br><span class="line">			eof = <span class="literal">true</span></span><br><span class="line">			done &lt;- <span class="literal">true</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> eof &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 在mq的回调中 通过golang的channel传递出来</span></span><br><span class="line">			logs &lt;- m.Body</span><br><span class="line">		&#125;</span><br><span class="line">		m.Release()</span><br><span class="line">	&#125;))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> buf := &lt;-logs:</span><br><span class="line">            <span class="comment">// 收到消息后，通过ws发送到浏览器客户端</span></span><br><span class="line">			ws.SetWriteDeadline(time.Now().Add(writeWait))</span><br><span class="line">			ws.WriteMessage(websocket.TextMessage, buf)</span><br><span class="line">		<span class="keyword">case</span> &lt;-done:</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		<span class="keyword">case</span> &lt;-ticker.C:</span><br><span class="line">			err := ws.WriteControl(websocket.PingMessage, []<span class="keyword">byte</span>&#123;&#125;, time.Now().Add(writeWait))</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>不得不说，golang的goruntime和channel解决了C后台程序员写并发程序的痛点。</p>
+<p>websocket服务器使用了<strong><a href="https://github.com/gorilla/websocket" target="_blank" rel="noopener">gorilla/websocket</a></strong>，这个<strong><a href="https://github.com/gorilla" target="_blank" rel="noopener">gorilla</a></strong>提供了不少非常优秀的组件，是golang写web程序的首选。</p>
+<p><strong><a href="https://github.com/gorilla/websocket" target="_blank" rel="noopener">gorilla/websocket</a></strong>的用法可以参考<a href="https://github.com/gorilla/websocket/tree/master/examples/chat" target="_blank" rel="noopener">https://github.com/gorilla/websocket/tree/master/examples/chat</a>，当然它也提供了websocket的客户端。</p>
+<h1 id="mq"><a href="#mq" class="headerlink" title="mq"></a>mq</h1><p>drone server和agent使用一个<strong><a href="https://github.com/drone/mq" target="_blank" rel="noopener">mq</a></strong>来通信，底层使用websocket而不是tcp。这个mq使用STOMP协议，是一个典型的订阅发布模型，并且提供确认机制。</p>
+<p>和<strong><a href="https://www.rabbitmq.com/" target="_blank" rel="noopener">rabbitmq</a></strong>之类的mq不同在于用使用go语言编写，所以可以集成到服务内部，而不用单独开启一个服务，这一点和<strong><a href="http://zeromq.org/" target="_blank" rel="noopener">zeromq</a></strong>有点类似。关于和其他主流的mq对比，见官网<a href="http://mq.drone.io/overview/" target="_blank" rel="noopener">http://mq.drone.io/overview/</a></p>
+<h2 id="server-mq初始化"><a href="#server-mq初始化" class="headerlink" title="server mq初始化"></a>server mq初始化</h2><p>通过使用闭包完成全局初始化，然后通过中间件设置到gin.Context</p>
+<p>src/github.com/drone/drone/router/middleware/broker.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Broker is a middleware function that initializes the broker</span></span><br><span class="line"><span class="comment">// and adds the broker client to the request context.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Broker</span><span class="params">(cli *cli.Context)</span> <span class="title">gin</span>.<span class="title">HandlerFunc</span></span> &#123;</span><br><span class="line">    <span class="comment">// 参见环境变量DRONE_SECRET</span></span><br><span class="line">	secret := cli.String(<span class="string">"agent-secret"</span>)</span><br><span class="line">	<span class="keyword">if</span> secret == <span class="string">""</span> &#123;</span><br><span class="line">		logrus.Fatalf(<span class="string">"fatal error. please provide the DRONE_SECRET"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 启动mq server</span></span><br><span class="line">	broker := server.NewServer(</span><br><span class="line">		server.WithCredentials(<span class="string">"x-token"</span>, secret),</span><br><span class="line">	)</span><br><span class="line">    <span class="comment">// 创建mq client</span></span><br><span class="line">	client := broker.Client()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> once sync.Once</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">        <span class="comment">// 设置到gin.Context</span></span><br><span class="line">		c.Set(serverKey, broker)</span><br><span class="line">		c.Set(clientKey, client)</span><br><span class="line">		once.Do(<span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="comment">// this is some really hacky stuff</span></span><br><span class="line">			<span class="comment">// turns out I need to do some refactoring</span></span><br><span class="line">			<span class="comment">// don't judge!</span></span><br><span class="line">			<span class="comment">// will fix in 0.6 release</span></span><br><span class="line">			ctx := c.Copy()</span><br><span class="line">			client.Connect(</span><br><span class="line">				stomp.WithCredentials(<span class="string">"x-token"</span>, secret),</span><br><span class="line">			)</span><br><span class="line">			client.Subscribe(<span class="string">"/queue/updates"</span>, stomp.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(m *stomp.Message)</span></span> &#123;</span><br><span class="line">				<span class="keyword">go</span> handlers.HandleUpdate(ctx, m.Copy())</span><br><span class="line">			&#125;))</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>agent连接server</p>
+<p>src/github.com/drone/drone/drone/agent/agent.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">start</span><span class="params">(c *cli.Context)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> client *stomp.Client</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		<span class="comment">// dial the drone server to establish a TCP connection.</span></span><br><span class="line">		client, err = stomp.Dial(server)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			logger.Warningf(<span class="string">"connection failed, retry in %v. %s"</span>, backoff, err)</span><br><span class="line">			&lt;-time.After(backoff)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		opts := []stomp.MessageOption&#123;</span><br><span class="line">			stomp.WithCredentials(<span class="string">"x-token"</span>, accessToken),</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// initialize the stomp session and authenticate.</span></span><br><span class="line">		<span class="keyword">if</span> err = client.Connect(opts...); err != <span class="literal">nil</span> &#123;</span><br><span class="line">			logger.Warningf(<span class="string">"session failed, retry in %v. %s"</span>, backoff, err)</span><br><span class="line">			&lt;-time.After(backoff)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure></p>
+<p>服务器收到请求之后的处理逻辑很简单，直接转发到mq</p>
+<p>src/github.com/drone/drone/server/broker.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Broker handles connections to the embedded message broker.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Broker</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	broker := c.MustGet(<span class="string">"broker"</span>).(http.Handler)</span><br><span class="line">	broker.ServeHTTP(c.Writer, c.Request)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>agent发送消息在【src/github.com/drone/drone/drone/agent/exec.go】<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *pipeline)</span> <span class="title">run</span><span class="params">(w *model.Work)</span></span> &#123;</span><br><span class="line">	a := agent.Agent&#123;</span><br><span class="line">		Update:    agent.NewClientUpdater(r.drone),</span><br><span class="line">		Logger:    agent.NewClientLogger(r.drone, w.Job.ID, r.config.logs),</span><br><span class="line">		Engine:    engine,</span><br><span class="line">		Timeout:   r.config.timeout,</span><br><span class="line">		Platform:  r.config.platform,</span><br><span class="line">		Namespace: r.config.namespace,</span><br><span class="line">		Escalate:  r.config.privileged,</span><br><span class="line">		Extension: r.config.extension,</span><br><span class="line">		Pull:      r.config.pull,</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/agent/updater.go</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// NewClientUpdater returns an updater that sends updated build details</span></span><br><span class="line"><span class="comment">// to the drone server.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClientUpdater</span><span class="params">(client *stomp.Client)</span> <span class="title">UpdateFunc</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(w *model.Work)</span></span> &#123;</span><br><span class="line">		err := client.SendJSON(<span class="string">"/queue/updates"</span>, w)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			logger.Warningf(<span class="string">"Error updating %s/%s#%d.%d. %s"</span>,</span><br><span class="line">				w.Repo.Owner, w.Repo.Name, w.Build.Number, w.Job.Number, err)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> w.Job.Status != model.StatusRunning &#123;</span><br><span class="line">			<span class="keyword">var</span> dest = fmt.Sprintf(<span class="string">"/topic/logs.%d"</span>, w.Job.ID)</span><br><span class="line">			<span class="keyword">var</span> opts = []stomp.MessageOption&#123;</span><br><span class="line">				stomp.WithHeader(<span class="string">"eof"</span>, <span class="string">"true"</span>),</span><br><span class="line">				stomp.WithRetain(<span class="string">"all"</span>),</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> err := client.Send(dest, []<span class="keyword">byte</span>(<span class="string">"eof"</span>), opts...); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				logger.Warningf(<span class="string">"Error sending eof %s/%s#%d.%d. %s"</span>,</span><br><span class="line">					w.Repo.Owner, w.Repo.Name, w.Build.Number, w.Job.Number, err)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Cache"><a href="#Cache" class="headerlink" title="Cache"></a>Cache</h1><p>drone实现了一个类似于redis，但是集成在一起的缓存器，代码在【src/github.com/drone/drone/cache】</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/08/drone3/" data-id="ckdbgbyvp000y43pokaiek5tt" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/08/drone3/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drone/">drone</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/持续集成/">持续集成</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-drone2" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/07/drone2/">Drone学习笔记2</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/07/drone2/" class="article-date"><time datetime="2017-03-07T14:19:37.000Z" itemprop="datePublished">2017-03-07</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h1><blockquote>
+<p>king@king:~/code/go/src/github.com/drone$ tree . -L 2<br>.<br>├── drone # drone后台代码<br>│   ├── agent # drone agent主要实现，部分在drone/agent/<br>│   ├── build # 运行docker容器的逻辑<br>│   ├── cache # drone自己实现的一个类似redis的内置缓存器<br>│   ├── client # cli的通用封装<br>│   ├── drone # 入口代码，没什么核心逻辑<br>│   ├── model # 通用结构定义<br>│   ├── remote # 抽象封装github/bitbucket等接口逻辑<br>│   ├── router # drone server的路由和各种middleware<br>│   ├── server # drone server实现<br>│   ├── shared # 公共库<br>│   ├── store # 抽象封装数据接口，例如sqlite/mysql等<br>│   ├── version # 版本号<br>│   └── yaml # 解析.drone.yml文件的逻辑<br>├── drone-ui # drone server前端，使用React<br>│   ├── dist<br>│   ├── images<br>│   ├── index.html<br>│   ├── LICENSE<br>│   ├── package.json<br>│   ├── README.md<br>│   ├── src<br>│   ├── webpack.config.js<br>│   └── webpack.devserver.js<br>└── mq # drone实现的一个消息组件，实现了STOMP协议<br>    ├── build.sh<br>    ├── cmd<br>    ├── Dockerfile<br>    ├── LICENSE<br>    ├── logger<br>    ├── README<br>    ├── server<br>    ├── stomp</p>
+</blockquote>
+<h1 id="前端和资源"><a href="#前端和资源" class="headerlink" title="前端和资源"></a>前端和资源</h1><p>前端使用React构建，参考【src/github.com/drone/drone-ui】，还有一些模板资源，见【src/github.com/drone/drone/server/template/files】。</p>
+<p>前端资源首先使用webpack将开发代码编译到dist目录【src/github.com/drone/drone-ui/dist/static】，然后使用<strong><a href="https://github.com/jteeuwen/go-bindata" target="_blank" rel="noopener">go-bindata</a></strong>将dist下的文件打包成【src/github.com/drone/drone-ui/dist/dist_gen.go】</p>
+<blockquote>
+<p>// Code generated by go-bindata.<br>// sources:<br>// dist/index.html<br>// dist/static/app.css<br>// dist/static/app.js<br>// dist/static/drone.svg<br>// dist/static/favicon.ico<br>// DO NOT EDIT!</p>
+</blockquote>
+<p>然后使用<strong><a href="https://github.com/elazarl/go-bindata-assetfs" target="_blank" rel="noopener">go-bindata-assetfs</a></strong>将资源暴露出去。</p>
+<p>src/github.com/drone/drone-ui/dist/dist.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AssetFS</span><span class="params">()</span> *<span class="title">assetfs</span>.<span class="title">AssetFS</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> k := <span class="keyword">range</span> _bintree.Children &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;assetfs.AssetFS&#123;</span><br><span class="line">			Asset: Asset, </span><br><span class="line">			AssetDir: AssetDir, </span><br><span class="line">			AssetInfo: AssetInfo, Prefix: k&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">"unreachable"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/router/router.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">fs := http.FileServer(dist.AssetFS())</span><br><span class="line">e.GET(<span class="string">"/static/*filepath"</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">    fs.ServeHTTP(c.Writer, c.Request)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></p>
+<h2 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h2><p>模板并不需要预先编译打包，</p>
+<p>src/github.com/drone/drone/Makefile<br><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">gen: gen_template gen_migrations</span></span><br><span class="line"></span><br><span class="line"><span class="section">gen_template:</span></span><br><span class="line">	go generate github.com/drone/drone/server/template</span><br><span class="line"></span><br><span class="line"><span class="section">gen_migrations:</span></span><br><span class="line">	go generate github.com/drone/drone/store/datastore/ddl</span><br></pre></td></tr></table></figure></p>
+<p>关于go generate,参考<strong><a href="http://bms.tratao.com/desktop/doc/e7ef69ebefbf43e35d825a07ee232f17" target="_blank" rel="noopener">Golang generate 草案</a></strong></p>
+<p>src/github.com/drone/drone/server/template/template.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> template</span><br><span class="line"></span><br><span class="line"><span class="comment">//go:generate go-bindata -pkg template -o template_gen.go files/</span></span><br></pre></td></tr></table></figure></p>
+<p>src/github.com/drone/drone/server/template/template_gen.go</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Code generated by go-bindata.</span></span><br><span class="line"><span class="comment">// sources:</span></span><br><span class="line"><span class="comment">// files/index.html</span></span><br><span class="line"><span class="comment">// files/login.html</span></span><br><span class="line"><span class="comment">// files/logout.html</span></span><br><span class="line"><span class="comment">// DO NOT EDIT!</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> template</span><br></pre></td></tr></table></figure>
+<p>src/github.com/drone/drone/router/router.go<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line">e.SetHTMLTemplate(template.Load())</span><br></pre></td></tr></table></figure></p>
+<p>经过这么一折腾，所有的静态资源都直接包含在一个单独的可执行程序中了</p>
+<h2 id="数据库迁移脚本"><a href="#数据库迁移脚本" class="headerlink" title="数据库迁移脚本"></a>数据库迁移脚本</h2><p>在Makefile中还有这么一段<br><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">gen_migrations:</span></span><br><span class="line">	go generate github.com/drone/drone/store/datastore/ddl</span><br></pre></td></tr></table></figure></p>
+<p>这用于将支持的数据库的迁移（migrate）sql脚本打包<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> ddl</span><br><span class="line"><span class="comment">//go:generate go-bindata -pkg ddl -o ddl_gen.go sqlite3/ mysql/ postgres/</span></span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/07/drone2/" data-id="ckdbgbyvn000v43povp4i3fcf" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/07/drone2/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drone/">drone</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/持续集成/">持续集成</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-drone1" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/07/drone1/">Drone学习笔记</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/07/drone1/" class="article-date"><time datetime="2017-03-07T08:35:21.000Z" itemprop="datePublished">2017-03-07</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/源码学习/">源码学习</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="https://github.com/drone/drone" target="_blank" rel="noopener">Drone</a>是一个优秀的<a href="http://www.ruanyifeng.com/blog/2015/09/continuous-integration.html" target="_blank" rel="noopener">持续集成（CL）</a>的系统，最大的特色就是它的执行流（pipeline）是在docker里执行，这就确保了每一次环境都保持一致，避免其他干扰。一些其他主流的包括但不限于</p>
+<ol>
+<li><a href="https://jenkins.io/index.html" target="_blank" rel="noopener">Jenkins</a></li>
+<li><a href="https://travis-ci.com/" target="_blank" rel="noopener">Travis</a></li>
+<li><a href="https://www.codeship.io/" target="_blank" rel="noopener">Codeship</a></li>
+<li><a href="https://github.com/Strider-CD/strider" target="_blank" rel="noopener">Strider</a></li>
+</ol>
+<h1 id="安装运行"><a href="#安装运行" class="headerlink" title="安装运行"></a>安装运行</h1><p>可以下载编译好的二进制包，也可以下载源码编译（很简单，参考<a href="https://github.com/drone/drone" target="_blank" rel="noopener">https://github.com/drone/drone</a>）<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git://github.com/drone/drone.git <span class="variable">$GOPATH</span>/src/github.com/drone/drone</span><br><span class="line"><span class="built_in">cd</span> <span class="variable">$GOPATH</span>/src/github.com/drone/drone</span><br><span class="line"></span><br><span class="line">make deps          <span class="comment"># Download required dependencies</span></span><br><span class="line">make gen           <span class="comment"># Generate code</span></span><br><span class="line">make build_static  <span class="comment"># Build the binary</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>建议先仔细阅读官方文档<a href="http://readme.drone.io/" target="_blank" rel="noopener">http://readme.drone.io/</a>，运行参考<a href="http://readme.drone.io/admin/installation-guide/" target="_blank" rel="noopener">http://readme.drone.io/admin/installation-guide/</a>，官方推荐的方式使用docker-compose来运行程序，包含两个后台</p>
+<ol>
+<li>drone server，web服务</li>
+<li>drone agent，代理服务，用于运行docker</li>
+</ol>
+<p>其他一些组件</p>
+<ol>
+<li><a href="https://github.com/drone/mq" target="_blank" rel="noopener">drone/mq</a>，a lightweight STOMP message broker</li>
+<li>drone cli，一堆的工具集合</li>
+</ol>
+<p>完整的帮助如下<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/code/go/src/github.com/drone/drone/release$ ./drone</span><br><span class="line">NAME:</span><br><span class="line">   drone - <span class="built_in">command</span> line utility</span><br><span class="line"></span><br><span class="line">USAGE:</span><br><span class="line">   ./drone [global options] <span class="built_in">command</span> [<span class="built_in">command</span> options] [arguments...]</span><br><span class="line">   </span><br><span class="line">VERSION:</span><br><span class="line">   0.5.0+dev</span><br><span class="line">   </span><br><span class="line">COMMANDS:</span><br><span class="line">   agent        starts the drone agent</span><br><span class="line">   agents       manage agents</span><br><span class="line">   build        manage builds</span><br><span class="line">   deploy       deploy code</span><br><span class="line">   <span class="built_in">exec</span>         execute a <span class="built_in">local</span> build</span><br><span class="line">   info         show information about the current user</span><br><span class="line">   secret       manage secrets</span><br><span class="line">   server       starts the drone server daemon</span><br><span class="line">   sign         creates a secure yaml file</span><br><span class="line">   repo         manage repositories</span><br><span class="line">   user         manage users</span><br><span class="line">   org          manage organizations</span><br><span class="line">   global       manage global state</span><br><span class="line">   <span class="built_in">help</span>, h      Shows a list of commands or <span class="built_in">help</span> <span class="keyword">for</span> one <span class="built_in">command</span></span><br><span class="line">   </span><br><span class="line">GLOBAL OPTIONS:</span><br><span class="line">   -t, --token          server auth token [<span class="variable">$DRONE_TOKEN</span>]</span><br><span class="line">   -s, --server         server location [<span class="variable">$DRONE_SERVER</span>]</span><br><span class="line">   --<span class="built_in">help</span>, -h           show <span class="built_in">help</span></span><br><span class="line">   --version, -v        <span class="built_in">print</span> the version</span><br></pre></td></tr></table></figure></p>
+<h2 id="server"><a href="#server" class="headerlink" title="server"></a>server</h2><p>在运行服务之前，需要准备参数，可以通过命令行查看，代码中的定义见【src/github.com/drone/drone/drone/server.go】，下面是一些搭建drone hello world的参考</p>
+<ol>
+<li><a href="http://www.wtoutiao.com/p/38b2N4A.html" target="_blank" rel="noopener">http://www.wtoutiao.com/p/38b2N4A.html</a></li>
+<li><a href="https://overflow.no/blog/2016/11/14/self-hosted-cdci-environment-with-docker-droneio-and-drone-wall-on-debian-8/" target="_blank" rel="noopener">https://overflow.no/blog/2016/11/14/self-hosted-cdci-environment-with-docker-droneio-and-drone-wall-on-debian-8/</a></li>
+<li><a href="http://tleyden.github.io/blog/2016/02/15/setting-up-a-self-hosted-drone-dot-io-ci-server/" target="_blank" rel="noopener">http://tleyden.github.io/blog/2016/02/15/setting-up-a-self-hosted-drone-dot-io-ci-server/</a></li>
+</ol>
+<p>以github为例，必需的参数如下</p>
+<ol>
+<li>DRONE_OPEN=true，自动创建账户</li>
+<li>DRONE_GITHUB=true，使用github，可选的见【src/github.com/drone/drone/router/middleware/remote.go</li>
+<li>DRONE_GITHUB_CLIENT=${DRONE_GITHUB_CLIENT},从github网站获取</li>
+<li>DRONE_GITHUB_SECRET=${DRONE_GITHUB_SECRET},从github网站获取</li>
+<li>DRONE_SECRET=${DRONE_SECRET}，用于agent连接server的key，具体通过drone/mq验证，使用websocket通道</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// helper function to setup the remote from the CLI arguments.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupRemote</span><span class="params">(c *cli.Context)</span> <span class="params">(remote.Remote, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> &#123;</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"github"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGithub(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"gitlab"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGitlab(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"bitbucket"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupBitbucket(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"stash"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupStash(c)</span><br><span class="line">	<span class="keyword">case</span> c.Bool(<span class="string">"gogs"</span>):</span><br><span class="line">		<span class="keyword">return</span> setupGogs(c)</span><br><span class="line">	<span class="keyword">default</span>:</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">"version control system not configured"</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不使用docker，直接写个脚本即可运行，为了使用依赖管理员权限的功能，增加DRONE_ADMIN，所有的记录存储在后端数据库，默认是sqlite3，当前目录下的drone.sqlite，为了避免在不同的目录出现问题，通过DRONE_DATABASE_DATASOURCE写死路径。</p>
+<p>支持的数据库见【src/github.com/drone/drone/store/datastore/store.go】</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">export</span> DRONE_OPEN=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> DRONE_GITHUB=<span class="literal">true</span></span><br><span class="line"><span class="built_in">export</span> DRONE_GITHUB_SECRET=22222</span><br><span class="line"><span class="built_in">export</span> DRONE_GITHUB_CLIENT=11111</span><br><span class="line"><span class="built_in">export</span> DRONE_SECRET=create_a_random_secret_here</span><br><span class="line"><span class="built_in">export</span> DRONE_DATABASE_DRIVER=sqlite3</span><br><span class="line"><span class="built_in">export</span> DRONE_DATABASE_DATASOURCE=/home/king/code/go/drone.sqlite</span><br><span class="line"><span class="built_in">export</span> DRONE_ADMIN=king1,king2</span><br><span class="line">./drone  <span class="string">"<span class="variable">$&#123;@&#125;</span>"</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// helper function to setup the meddler default driver</span></span><br><span class="line"><span class="comment">// based on the selected driver name.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">setupMeddler</span><span class="params">(driver <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">switch</span> driver &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"sqlite3"</span>:</span><br><span class="line">		meddler.Default = meddler.SQLite</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"mysql"</span>:</span><br><span class="line">		meddler.Default = meddler.MySQL</span><br><span class="line">	<span class="keyword">case</span> <span class="string">"postgres"</span>:</span><br><span class="line">		meddler.Default = meddler.PostgreSQL</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于需要使用github的oauth认证，以及接收推送，所以服务器必须支持公网访问，若要本地测试，可以参考<strong><a href="http://blog.qiujinwu.com/2017/02/13/ngrok-reverse-proxy/" target="_blank" rel="noopener">ngrok反向代理局域网开发机</a></strong></p>
+<h2 id="agent"><a href="#agent" class="headerlink" title="agent"></a>agent</h2><p>agent用于代理执行docker容器，由于docker运行需要超级管理员权限，所以需要sudo，或者切换到root。为了方便测试，最好是将当前用户添加到docker组，参考<a href="https://my.oschina.net/zhouhui321/blog/788431" target="_blank" rel="noopener">https://my.oschina.net/zhouhui321/blog/788431</a><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo gpasswd -a <span class="variable">$&#123;USER&#125;</span> docker</span><br><span class="line">sudo service docker restart</span><br></pre></td></tr></table></figure></p>
+<p>agent完整参数见【src/github.com/drone/drone/drone/agent/agent.go】，必需的参数如下</p>
+<ol>
+<li>DRONE_SERVER=ws://${drone-server}/ws/broker，server的路径</li>
+<li>DRONE_SECRET=${DRONE_SECRET}，在server中配置的token</li>
+</ol>
+<p>同样可以export两个环境变量之后，直接drone agent即可</p>
+<h2 id="cli"><a href="#cli" class="headerlink" title="cli"></a>cli</h2><p>运行上述两个后台之后，就可以用浏览器访问【http//${drone-server}】，若未登录点击【登录/login】会自动跳转到github进行认证，由于设置了【DRONE_OPEN=true】所以认证成功之后，会自动创建以github用户名的账户。</p>
+<p>drone并未使用普通的session管理机制，而是使用<a href="http://www.jianshu.com/p/576dbf44b2ae" target="_blank" rel="noopener">jwt</a>机制，并使用cookie传输，如下</p>
+<blockquote>
+<p>user_sess=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjEuNDg5MDUxNjc5ZSswOSwidGV4dCI6InFqdyIsInR5cGUiOiJzZXNzIn0.SD1uwHk_E7yT-74sVXHwrLPKmonbwRtQTzT8cNPrupg<br>_crsf=MTQ4NzkyMTYzOHxEdi1CQkFFQ180SUFBUkFCRUFBQU12LUNBQUVHYzNSeWFXNW5EQW9BQ0dOemNtWlRZV3gwQm5OMGNtbHVad3dTQUJCS2IzSk5lbVEwWlRaV05XdHdUalZrfHeLaVDFFSGOkLA19-4Y6G5gYkzJatkOn8oNnHj4eb6q;</p>
+</blockquote>
+<p>cli运行依赖的参数包括</p>
+<ol>
+<li>DRONE_SERVER=http://${drone-server} ，server的地址，注意名称和agent的一样，但地址并不一致</li>
+<li>DRONE_TOKEN=fsajdflkas，token就是jwt的token，注意和DRONE_SECRET区别</li>
+</ol>
+<p>我们可以直接将网站的jwt token直接拿来使用，但仅限于查询操作，其他操作会因为csrf限制无权限，参考【src/github.com/drone/drone/router/middleware/session/user.go】</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// if this is a session token (ie not the API token)</span></span><br><span class="line"><span class="comment">// this means the user is accessing with a web browser,</span></span><br><span class="line"><span class="comment">// so we should implement CSRF protection measures.</span></span><br><span class="line"><span class="keyword">if</span> t.Kind == token.SessToken &#123;</span><br><span class="line">    err = token.CheckCsrf(c.Request, <span class="function"><span class="keyword">func</span><span class="params">(t *token.Token)</span> <span class="params">(<span class="keyword">string</span>, error)</span></span> &#123;</span><br><span class="line">        <span class="keyword">return</span> user.Hash, <span class="literal">nil</span></span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// if csrf token validation fails, exit immediately</span></span><br><span class="line">    <span class="comment">// with a not authorized error.</span></span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        c.AbortWithStatus(http.StatusUnauthorized)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里实际上引申出一个session type的东西<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">	UserToken  = <span class="string">"user"</span></span><br><span class="line">	SessToken  = <span class="string">"sess"</span></span><br><span class="line">	HookToken  = <span class="string">"hook"</span></span><br><span class="line">	CsrfToken  = <span class="string">"csrf"</span></span><br><span class="line">	AgentToken = <span class="string">"agent"</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure></p>
+<p>网页授权使用的是SessionToken，而drone cli使用UserToken，具体通过drone网站右上角【ACCOUNT】，再回到左上角【SHOW TOKEN】,参考【src/github.com/drone/drone/router/router.go】</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">user := e.Group(<span class="string">"/api/user"</span>)</span><br><span class="line">&#123;</span><br><span class="line">    user.POST(<span class="string">"/token"</span>, server.PostToken)</span><br><span class="line">    user.DELETE(<span class="string">"/token"</span>, server.DeleteToken)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>cli是一堆的命令集合，具体参考官方文档，有些功能仅限cli使用</p>
+<h2 id="普通账户密码登录"><a href="#普通账户密码登录" class="headerlink" title="普通账户密码登录"></a>普通账户密码登录</h2><p>drone代码中有一些相关的逻辑，但并不完整，所以不可用<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// src/github.com/drone/drone/router/router.go</span></span><br><span class="line">e.GET(<span class="string">"/login"</span>, server.ShowLogin)</span><br><span class="line">e.GET(<span class="string">"/login/form"</span>, server.ShowLoginForm)</span><br><span class="line">e.GET(<span class="string">"/logout"</span>, server.GetLogout)</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// src/github.com/drone/drone/server/pages.go</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// ShowLoginForm displays a login form for systems like Gogs that do not</span></span><br><span class="line"><span class="comment">// yet support oauth workflows.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ShowLoginForm</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	c.HTML(<span class="number">200</span>, <span class="string">"login.html"</span>, gin.H&#123;&#125;)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// src/github.com/drone/drone/server/template/files/login.html</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/07/drone1/" data-id="ckdbgbyvl000q43po1u85w789" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/07/drone1/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/drone/">drone</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/持续集成/">持续集成</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-env" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/05/env/">一些环境的配置</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/05/env/" class="article-date"><time datetime="2017-03-05T07:14:24.000Z" itemprop="datePublished">2017-03-05</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>大部分情况下（特别是生产环境）最好是直接下载docker运行，简单可靠。偶尔为了方便本地测试，直接装在本地也有一定的好处，至少没那么折腾。</p>
+<p>比较稳定（更新没那么频繁）的东西，例如nginx，mysql,直接apt-get就行了</p>
+<h1 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h1><p>jdk默认情况下只有openjdk或者比较老的官方jdk，要安装最新的jdk 1.8，可以</p>
+<p>添加jdk的ppa，参考<a href="http://tipsonubuntu.com/2016/07/31/install-oracle-java-8-9-ubuntu-16-04-linux-mint-18/" target="_blank" rel="noopener">http://tipsonubuntu.com/2016/07/31/install-oracle-java-8-9-ubuntu-16-04-linux-mint-18/</a></p>
+<p>大部分ppa都需要翻墙，这很坑爹，也可以下载tar.gz包解压并配置环境变量，参考<a href="http://blog.csdn.net/chenruicsdn/article/details/53583950" target="_blank" rel="noopener">http://blog.csdn.net/chenruicsdn/article/details/53583950</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo mkdir -p /usr/lib/jvm</span><br><span class="line">sudo tar -zxvf Downloads/jdk-8u112-Linux-x64.tar.gz -C /usr/lib/jvm</span><br><span class="line"><span class="built_in">export</span> JAVA_HOME=/usr/lib/jvm/jdk1.8.0_112</span><br><span class="line"><span class="built_in">export</span> JRE_HOME=<span class="variable">$&#123;JAVA_HOME&#125;</span>/jre</span><br><span class="line"><span class="built_in">export</span> CLASSPATH=.:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib:<span class="variable">$&#123;JAVA_HOME&#125;</span>/lib</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;JAVA_HOME&#125;</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<h1 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h1><p>默认的redis比较老，而有些新特性无法满足其他依赖需要，比如<a href="https://sentry.io/welcome/" target="_blank" rel="noopener">sentry</a>。</p>
+<p>这里使用ppa<a href="http://blog.csdn.net/chenlix/article/details/46696165" target="_blank" rel="noopener">http://blog.csdn.net/chenlix/article/details/46696165</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install -y python-software-properties</span><br><span class="line">sudo apt-get install software-properties-common</span><br><span class="line">sudo add-apt-repository -y ppa:rwky/redis</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install -y redis-server</span><br></pre></td></tr></table></figure>
+<p>关于sentry，可以docker<a href="https://hub.docker.com/_/sentry/" target="_blank" rel="noopener">https://hub.docker.com/_/sentry/</a></p>
+<h1 id="Golang"><a href="#Golang" class="headerlink" title="Golang"></a>Golang</h1><p>去<a href="https://golang.org/dl/" target="_blank" rel="noopener">官网</a>下载最新的包，例如<strong>go1.7.5.linux-amd64.tar.gz</strong>，解压</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> GOROOT=/usr/lib/go/</span><br><span class="line"><span class="built_in">export</span> GOPATH=/home/abc/code/go</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$GOROOT</span>/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<h1 id="Nodejs"><a href="#Nodejs" class="headerlink" title="Nodejs"></a>Nodejs</h1><p>去<a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">官网</a>下载最新的包，例如<strong>node-v6.10.0-linux-x64.tar.xz</strong>，解压</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> NODE_HOME=/usr/lib/node</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$NODE_HOME</span>/bin</span><br><span class="line"><span class="built_in">export</span> NODE_PATH=<span class="variable">$NODE_HOME</span>/lib/node_modules</span><br></pre></td></tr></table></figure>
+<h1 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h1><p>直接安装<a href="https://docs.docker.com/engine/installation/linux/ubuntu/#install-using-the-repository" target="_blank" rel="noopener">官网</a>的指引安装docker-ce，还是很老旧，可以在apt-get purge卸载已经安装的docker版本，然后从<a href="https://apt.dockerproject.org/repo/pool/main/d/docker-engine/" target="_blank" rel="noopener">https://apt.dockerproject.org/repo/pool/main/d/docker-engine/</a>下载（例如）<a href="https://apt.dockerproject.org/repo/pool/main/d/docker-engine/docker-engine_1.13.1-0~ubuntu-xenial_amd64.deb" target="_blank" rel="noopener">docker-engine_1.13.1-0~ubuntu-xenial_amd64.deb</a>，然后dpkg -i 安装。</p>
+<h2 id="配置阿里云加速"><a href="#配置阿里云加速" class="headerlink" title="配置阿里云加速"></a>配置阿里云加速</h2><p>参考<a href="http://warjiang.github.io/devcat/2016/11/28/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91Docker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/" target="_blank" rel="noopener">http://warjiang.github.io/devcat/2016/11/28/%E4%BD%BF%E7%94%A8%E9%98%BF%E9%87%8C%E4%BA%91Docker%E9%95%9C%E5%83%8F%E5%8A%A0%E9%80%9F/</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//如果您的系统是 Ubuntu 15.04 16.04，Docker 1.9 以上</span><br><span class="line"></span><br><span class="line">sudo mkdir -p /etc/systemd/system/docker.service.d</span><br><span class="line">sudo tee /etc/systemd/system/docker.service.d/mirror.conf &lt;&lt;-<span class="string">'EOF'</span></span><br><span class="line">[Service]</span><br><span class="line">ExecStart=</span><br><span class="line">ExecStart=/usr/bin/docker daemon -H fd:// --registry-mirror=https://2h3po24q.mirror.aliyuncs.com</span><br><span class="line">EOF</span><br><span class="line">sudo systemctl daemon-reload</span><br><span class="line">sudo systemctl restart docker</span><br></pre></td></tr></table></figure>
+<p>注意，第一个ExecStart=不能省略，参见<a href="http://askubuntu.com/questions/19320/how-to-enable-or-disable-services" target="_blank" rel="noopener">http://askubuntu.com/questions/19320/how-to-enable-or-disable-services</a></p>
+<h1 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h1><p>一般安装其他软件就把Python连带安装进来了，2和3都有，默认是Python2</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo update-alternatives --install /usr/bin/python python /usr/bin/python2 100</span><br><span class="line">sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 500</span><br><span class="line"></span><br><span class="line">python --version</span><br><span class="line">Python 3.5.2</span><br></pre></td></tr></table></figure>
+<h1 id="rcconf"><a href="#rcconf" class="headerlink" title="rcconf"></a>rcconf</h1><p>可以用rcconf启用/禁用某些服务的自启动</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install rcconf</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/05/env/" data-id="ckdbgbyvu001a43poxaeecryt" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/05/env/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/node/">node</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-cookie-local-storage" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/18/cookie-local-storage/">Cookie和Storeage对比</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/18/cookie-local-storage/" class="article-date"><time datetime="2017-02-18T01:57:49.000Z" itemprop="datePublished">2017-02-18</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果只存储仅限前端使用的数据，毫无疑问，无必要使用cookie</p>
+<p>Storage又区分LocalStorage（本地存储）和sessionStorage（会话存储），LocalStorage和sessionStorage功能上是一样的，但是存储持久时间不一样。</p>
+<ol>
+<li>LocalStorage：浏览器关闭了数据仍然可以保存下来，并可用于所有同源（相同的域名、协议和端口）窗口（或标签页）永久存储，永不失效，除非手动删除</li>
+<li>sessionStorage：数据存储在窗口对象中，窗口关闭后对应的窗口对象消失，存储的数据也会丢失。就是浏览器窗口关闭就失效了。</li>
+</ol>
+<h1 id="主要区别"><a href="#主要区别" class="headerlink" title="主要区别"></a>主要区别</h1><ol>
+<li>cookie可以设置过期时间，domain，path等，storage不支持</li>
+<li>cookie容量很小，storage相对较大，大概5M左右，而cookie只有几K</li>
+<li>默认cookie和storage都可以被js读写，这容易招致<a href="http://www.cnblogs.com/lovesong/p/5199623.html" target="_blank" rel="noopener">XSS攻击</a>，cookie支持<a href="http://www.cnblogs.com/alanzyy/archive/2011/10/14/2212484.html" target="_blank" rel="noopener">HttpOnly属性</a>，禁止js读写。（另一个有用的属性是<strong>secure</strong>）</li>
+<li>cookie自动由浏览器带入服务器，或者由服务器下发，storage是纯客户端的东西，若要发送到服务器，必须用js提取并写入http query参数，form/json参数或者http头等正规渠道。</li>
+<li>cookie自动提交的特性招致了<a href="http://www.cnblogs.com/hyddd/archive/2009/04/09/1432744.html" target="_blank" rel="noopener">crsf攻击</a></li>
+</ol>
+<h1 id="XSS"><a href="#XSS" class="headerlink" title="XSS"></a>XSS</h1><p>XSS 全称“跨站脚本”，是注入攻击的一种。其特点是不对服务器端造成任何伤害，而是通过一些正常的站内交互途径，例如发布评论，提交含有 JavaScript 的内容文本。这时服务器端如果没有过滤或转义掉这些脚本，作为内容发布到了页面上，其他用户访问这个页面的时候就会运行这些脚本。</p>
+<p>又区分</p>
+<ol>
+<li>Stored XSS，持久化，代码是存储在服务器中的，所有访问的用户都受影响，波及方位广。</li>
+<li>Reflected XSS，非持久化，需要欺骗用户自己去点击链接才能触发XSS代码。</li>
+<li>DOM-based or local XSS，基于DOM或本地的XSS攻击。一般是提供一个<strong>免费的wifi</strong>，但是提供免费wifi的网关会往你访问的任何页面插入一段脚本或者是直接返回一个钓鱼页面，从而植入恶意脚本。这种直接存在于页面，无须经过服务器返回就是基于本地的XSS攻击。</li>
+</ol>
+<h3 id="防护"><a href="#防护" class="headerlink" title="防护"></a>防护</h3><ol>
+<li>对用户的输入进行处理，只允许输入合法的值，其它值一概过滤掉。</li>
+<li>对不可信的js来源进行完整性校验，现在前端经常使用cdn的js代码，若受到攻击就容易招致攻击</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"https://example.com/example-framework.js"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">integrity</span>=<span class="string">"sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">crossorigin</span>=<span class="string">"anonymous"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h1 id="CRSF"><a href="#CRSF" class="headerlink" title="CRSF"></a>CRSF</h1><p>CRSF是跨站请求伪造：Cross site request forgery，是一种对网站的恶意利用。它和XSS跨站脚本攻击的不同是，XSS利用站点内的信任用户；CRSF则是通过伪装来自信任用户的请求，来利用受信任的网站。举例就是：攻击者盗用了你的身份，以你的名义向第三方信任网站发送恶意请求，如发邮件，发短信，转账交易等。</p>
+<h3 id="防护-1"><a href="#防护-1" class="headerlink" title="防护"></a>防护</h3><ol>
+<li>勿使用get作更新操作</li>
+<li>服务器根据Referer字段等做一些简单的防护，参见<a href="http://blog.qiujinwu.com/2017/02/17/stolen-chain/" target="_blank" rel="noopener">盗链</a></li>
+<li>在请求中放入攻击者所不能伪造的信息，并且该信息不存在于Cookie之中。通常在http头或者hidden表单中传递，可以从用js直接从cookie读取，或者直接从服务端返回，但这种情况下要配合referer防护使用。</li>
+<li>在请求中加入验证码，但增加了用户的使用成本，影响体验。</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/18/cookie-local-storage/" data-id="ckdbgbyvf000d43po0f28w7rz" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/18/cookie-local-storage/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cookie/">cookie</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/crsf/">crsf</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/xss/">xss</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-cross-domain-cookie" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/17/cross-domain-cookie/">Cookie跨域和单点登录</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/17/cross-domain-cookie/" class="article-date"><time datetime="2017-02-17T07:46:34.000Z" itemprop="datePublished">2017-02-17</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>若只涉及到子域名的cookie共享问题，cookie有一个domain的字段，例如aaa.ccc.com和bbb.ccc.com若要共享，设置domain为【.ccc.com】即可（注意.号不能省）</p>
+<p>若是不同的域名，那就必须想其他办法</p>
+<h1 id="种Cookie"><a href="#种Cookie" class="headerlink" title="种Cookie"></a>种Cookie</h1><p>还是aaa.com和bbb.com。</p>
+<ol>
+<li>aaa登录成功之后，服务器返回cookie</li>
+<li>aaa继续调用一个枚举所有需要种cookie的url列表</li>
+</ol>
+<p>接下来分成两种情况</p>
+<ol>
+<li>返回的地址可以直接登录，例如<a href="http://bbb.com?token=fasdfasf&amp;timestamp=123" target="_blank" rel="noopener">http://bbb.com?token=fasdfasf&amp;timestamp=123</a>。接下来使用jsonp的方式调用这个地址，完成bbb.com的域名种植，成功植入后token失效。为了安全起见，token需要设置有效期</li>
+<li>不用jsonp，返回的地址列表无敏感信息，继续在aaa.com发起一个<a href="http://aaa.com/login_another?domain=bbb.com" target="_blank" rel="noopener">http://aaa.com/login_another?domain=bbb.com</a>的请求，在请求中重定向到<a href="http://bbb.com?token=fasdfa" target="_blank" rel="noopener">http://bbb.com?token=fasdfa</a>完成cookie种植</li>
+</ol>
+<h1 id="偷Cookie"><a href="#偷Cookie" class="headerlink" title="偷Cookie"></a>偷Cookie</h1><p>bbb.com登录时，若本地没有cookie，就用jsonp的方式发起<a href="http://aaa.com/stolen_cookie" target="_blank" rel="noopener">http://aaa.com/stolen_cookie</a>的请求，通过aaa的服务器偷到aaa本机的所有cookie，然后用js设置到当前域名，最后再发起登录</p>
+<p>也可以用stolen_cookie获取一个可以直接登录的token，然后使用这个token完成身份验证。</p>
+<p>更为复杂的可以综合两种方式，比如iframe直接请求<a href="http://aaa.com/stolen_cookie" target="_blank" rel="noopener">http://aaa.com/stolen_cookie</a>，aaa服务器发现已经登录就重定向到带token的bbb.com，最后bbb就种好了cookie，在通过一些渠道通知父页面刷新。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="http://www.cnblogs.com/showker/archive/2010/01/21/1653332.html" target="_blank" rel="noopener">http://www.cnblogs.com/showker/archive/2010/01/21/1653332.html</a></li>
+<li><a href="http://www.oschina.net/question/4873_18517" target="_blank" rel="noopener">http://www.oschina.net/question/4873_18517</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/17/cross-domain-cookie/" data-id="ckdbgbyvh000h43pom3u0mgyu" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/17/cross-domain-cookie/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cookie/">cookie</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/sso/">sso</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <div id="page-nav">
+    <nav><ul class="pagination"><li><a class="page-prev" rel="prev" href="/page/5/"><i class="fa fa-chevron-left"></i> Prev</a></li><li><a class="page-number" href="/">1</a></li><li class="disabled"><span class="page-space">&hellip;</span></li><li><a class="page-number" href="/page/4/">4</a></li><li><a class="page-number" href="/page/5/">5</a></li><li class="active"><span class="page-number">6</span></li><li><a class="page-number" href="/page/7/">7</a></li><li><a class="page-next" rel="next" href="/page/7/">Next <i class="fa fa-chevron-right"></i></a></li></ul></nav>
+  </div>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

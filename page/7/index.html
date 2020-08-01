@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="随笔">
+<meta property="og:type" content="website">
+<meta property="og:title" content="个人笔记">
+<meta property="og:url" content="http://blog.kimq.cn/page/7/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="随笔">
+<meta property="og:locale" content="zh-CN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="个人笔记">
+<meta name="twitter:description" content="随笔">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          
+  
+    <article id="post-stolen-chain" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/17/stolen-chain/">关于盗链</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/17/stolen-chain/" class="article-date"><time datetime="2017-02-17T00:33:18.000Z" itemprop="datePublished">2017-02-17</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>防盗链本质上就是要验证来源，防止对未许可、未授权的请求提供服务，根据验证身份的数据来源可以简单地分为两类</p>
+<ol>
+<li>直接从请求方主动携带的字段中提取，最常用的就是Http 头<strong>Referer</strong>字段，一些严格的验证包括验证<strong>IP地址</strong>，<strong>User Agent</strong>等。</li>
+<li>验证信息需要事先从服务端获取或者按照服务端约定的规则提供</li>
+</ol>
+<h1 id="Referer"><a href="#Referer" class="headerlink" title="Referer"></a>Referer</h1><p>这种方式最流行，最简单，对服务器影响小，一般的cdn（腾讯云，阿里云cdn）都提供Referer防盗链机制，具体可以分为黑名单和白名单，通常支持通配符或者正则表达式，此外一个特例就是是否允许空的Referer。</p>
+<p>一般不推荐不允许Referer为空，因为防盗链做得过于严密对于真实用户也是不方便的，比如隐私模式或HTTPS浏览时，就不存在Referer。对于一些特殊资源比如音视频，使用第三方播放器也可能不存在Referer。</p>
+<p>常用的后端框架例如JavaSpring,NodeExpress,PythonFlask都可以找到基于Referer的防盗链中间件（过滤器），nginx也有插件<a href="http://www.ttlsa.com/nginx/nginx-referer/" target="_blank" rel="noopener">http://www.ttlsa.com/nginx/nginx-referer/</a></p>
+<h2 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h2><p>要破解首先要明确服务提供方的规则，如果对方允许空Referer，那么将图片dom元素置于frame中即可。一种更好的办法是用服务器中转，在服务器中清掉Referer甚至伪造，但带来额外的服务器开销。</p>
+<p>nginx同样可以实现这样的功能</p>
+<h1 id="请求方提供授权信息"><a href="#请求方提供授权信息" class="headerlink" title="请求方提供授权信息"></a>请求方提供授权信息</h1><p>一般理解，授权就是需要登录的那种，在需要授权的web系统中，可以一并对图片等静态资源作授权（<em>而不仅仅是ajax接口或者web网页路径，虽然静态资源通常不会加入授权访问</em>）。</p>
+<h2 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h2><p>若只允许资源在本域访问，可以在非资源请求时下发携带授权信息的cookie，而服务器在<strong>资源请求中验证cookie</strong>，这种方式也很简单，但是若需要授权第三方就比较麻烦。</p>
+<p>要实现第三方授权，可以参考<strong>跨域cookie共享</strong></p>
+<p>这种方案仍然可以用非浏览器的方式获取，</p>
+<h2 id="Url-Token加超时"><a href="#Url-Token加超时" class="headerlink" title="Url Token加超时"></a>Url Token加超时</h2><p>若需要授权第三方使用，可以给他提供一个密钥（对称）或者公钥（非对称），在请求我们资源时，url必须携带token和timestamp,token通过url和timestamp加密得来（具体算法呵呵），</p>
+<h3 id="根据约定的规则"><a href="#根据约定的规则" class="headerlink" title="根据约定的规则"></a>根据约定的规则</h3><p>在我方验证时，需确保token正确，以及时间戳和当前时间戳误差在一定时间内（比方5分钟）。之所以要验证误差，是为了避免因无超时第三方偷懒使用一个固定的地址，而这种固定地址泄漏之后就一直可访问，关于url加密，可以用nginx插件<a href="http://www.ttlsa.com/nginx/nginx-modules-secure_link/" target="_blank" rel="noopener">http://www.ttlsa.com/nginx/nginx-modules-secure_link/</a></p>
+<h2 id="自己提供Token"><a href="#自己提供Token" class="headerlink" title="自己提供Token"></a>自己提供Token</h2><p>这常见于下载站，请求方需要事先获取一个下载url，这个url同样包含一个token和时间戳，时间戳表示过期时间，这样可以避免url一直可用。</p>
+<p>或者简单的，生成一个验证码，并且把验证码放入cookie中，下载时，必须携带这个验证码作为参数，服务器只需要简单的验证cookie中的验证码和参数是否一致，然后删除cookie(使用内存cookie或者超时很短也可以)，确保立即失效。</p>
+<h1 id="会话"><a href="#会话" class="headerlink" title="会话"></a>会话</h1><p>自行/协商生成url 加 超时是个不错的防盗链方法，但有时超时并不一定满足需求，比如专门提供内嵌视频的视频服务提供商，此时商家可能只需要简单地内嵌一个frame网页。</p>
+<p>这种情况下，视频的地址仍然是服务提供商动态生成，比如<a href="http://video.example.com/a.avi?key=fasdfasd" target="_blank" rel="noopener">http://video.example.com/a.avi?key=fasdfasd</a>，由于没有超时，这个地址一直可用，为了避免盗链，服务器后端就需要保存会话。</p>
+<ol>
+<li>在第一次访问时，用参数的key作为key，通过Ip，User Agent，Referer等计算value并将键值对存入数据库或者redis中，</li>
+<li>若key存在，就验证value是否匹配</li>
+</ol>
+<p>这里的key可以看做跟软件序列号一样，可以通过一个算法批量产生，并且能够自验证有效性。以降低非法key对后端数据库造成的查询压力。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://blog.goquxiao.com/posts/2015/06/13/fang-dao-lian-zi-liao-zheng-li/" target="_blank" rel="noopener">https://blog.goquxiao.com/posts/2015/06/13/fang-dao-lian-zi-liao-zheng-li/</a></li>
+<li><a href="http://oneoo.com/2008/09/03/uri-the-use-of-secret-technology-for-the-key-anti-daolian/" target="_blank" rel="noopener">http://oneoo.com/2008/09/03/uri-the-use-of-secret-technology-for-the-key-anti-daolian/</a></li>
+<li><a href="https://onebitbug.me/2013/10/10/use-nginx-lua-module-to-prevent-hotlinking/" target="_blank" rel="noopener">https://onebitbug.me/2013/10/10/use-nginx-lua-module-to-prevent-hotlinking/</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/17/stolen-chain/" data-id="ckdbgbyy4005o43po4a63pwqc" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/17/stolen-chain/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/盗链/">盗链</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-about-cors" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/16/about-cors/">关于跨域</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/16/about-cors/" class="article-date"><time datetime="2017-02-16T11:07:40.000Z" itemprop="datePublished">2017-02-16</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>说到跨域，做过web开发的都知道怎么回事，本文只是做个笔记总结</p>
+<p>常用的几种跨域的方式</p>
+<h1 id="jsonp"><a href="#jsonp" class="headerlink" title="jsonp"></a>jsonp</h1><p>jsonp解决跨域问题的原理是，浏览器的script标签是不受同源策略限制,你可以在你的网页中设置script的src属性问cdn服务器中静态文件的路径(图片也不受限)。那么就可以使用script标签从服务器获取数据，请求时添加一个参数为callbakc=?，?号时你要执行的回调方法。</p>
+<p>服务器返回的数据类似于</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">callBack(&#123;</span><br><span class="line">	<span class="string">"param1"</span>:<span class="literal">true</span>,</span><br><span class="line">    <span class="string">"param2"</span>:[<span class="string">"aa"</span>,<span class="string">"bb"</span>]</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>本质上就是传入的callback调用需要返回的json参数</p>
+<h3 id="不足"><a href="#不足" class="headerlink" title="不足"></a>不足</h3><ol>
+<li>只能用于get方法，无法传递大量数据，或者不适合传输部分数据</li>
+<li>如果出现错误，不会像http请求那样有状态码</li>
+</ol>
+<p>ajax和jsonp这两种技术在调用方式上“看起来”很像，目的也一样，都是请求一个url，然后把服务器返回的数据进行处理，因此jquery和ext等框架都把jsonp作为ajax的一种形式进行了封装。</p>
+<p>但是并不能用ajax去发送jsonp的请求，只能用dom操作动态构建dom元素来加载所谓的js。</p>
+<p>jsonp虽然就比json多个p，但是并不一定要用json格式的数据作为回调的参数返回</p>
+<h1 id="nginx反向代理作中继"><a href="#nginx反向代理作中继" class="headerlink" title="nginx反向代理作中继"></a>nginx反向代理作中继</h1><p>既然浏览器禁止ajax的跨域行为，那么可以简单地然nginx在同域做个转发即可解决问题</p>
+<h1 id="html5支持的cors"><a href="#html5支持的cors" class="headerlink" title="html5支持的cors"></a>html5支持的cors</h1><p>cors本质上就是服务器从头部返回适当的header，告诉浏览器是否允许访问，</p>
+<h3 id="浏览器请求"><a href="#浏览器请求" class="headerlink" title="浏览器请求"></a>浏览器请求</h3><ol>
+<li>Origin 表示请求来自哪个源</li>
+<li>Access-Control-Request-Method 该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法。</li>
+<li>Access-Control-Request-Headers 该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段。</li>
+</ol>
+<h3 id="服务器响应"><a href="#服务器响应" class="headerlink" title="服务器响应"></a>服务器响应</h3><ol>
+<li>Access-Control-Allow-Origin 该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求。</li>
+<li>Access-Control-Allow-Credentials 该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。</li>
+<li>Access-Control-Expose-Headers 该字段可选。CORS请求时，XMLHttpRequest对象的getResponseHeader()方法只能拿到6个基本字段：Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma。如果想拿到其他字段，就必须在Access-Control-Expose-Headers里面指定。上面的例子指定，getResponseHeader(‘FooBar’)可以返回FooBar字段的值。</li>
+<li>Access-Control-Max-Age 该字段可选，用来指定本次预检请求的有效期，单位为秒。上面结果中，有效期是20天（1728000秒），即允许缓存该条回应1728000秒（即20天），在此期间，不用发出另一条预检请求。</li>
+<li>Access-Control-Allow-Methods 该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次”预检”请求。</li>
+<li>Access-Control-Allow-Headers 如果浏览器请求包括Access-Control-Request-Headers字段，则Access-Control-Allow-Headers字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在”预检”中请求的字段。</li>
+</ol>
+<h3 id="非简单请求-amp-预检请求"><a href="#非简单请求-amp-预检请求" class="headerlink" title="非简单请求 &amp; 预检请求"></a>非简单请求 &amp; 预检请求</h3><p>简单请求的条件如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">（1) 请求方法是以下三种方法之一：</span><br><span class="line">  HEAD</span><br><span class="line">  GET</span><br><span class="line">  POST</span><br><span class="line">（2）HTTP的头信息不超出以下几种字段：</span><br><span class="line">  Accept</span><br><span class="line">  Accept-Language</span><br><span class="line">  Content-Language</span><br><span class="line">  Last-Event-ID</span><br><span class="line">  Content-Type：只限于三个值application/x-www-form-urlencoded、multipart/form-data、text/plain</span><br></pre></td></tr></table></figure>
+<p>非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者Content-Type字段的类型是application/json。</p>
+<p>非简单请求的CORS请求，会在正式通信之前，增加一次HTTP查询请求，称为”预检”请求（preflight）。预检请求可能包含上述是那种字段，而其他普通请求只需要Origin即可，如果Origin指定的源，不在许可范围内，服务器会返回一个正常的HTTP回应。浏览器发现，这个回应的头信息没有包含Access-Control-Allow-Origin字段（详见下文），就知道出错了，从而抛出一个错误.</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="http://www.ruanyifeng.com/blog/2016/04/cors.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2016/04/cors.html</a></li>
+<li><a href="http://www.cnblogs.com/dowinning/archive/2012/04/19/json-jsonp-jquery.html" target="_blank" rel="noopener">http://www.cnblogs.com/dowinning/archive/2012/04/19/json-jsonp-jquery.html</a></li>
+<li><a href="http://www.jianshu.com/p/7257e7c60ef5" target="_blank" rel="noopener">http://www.jianshu.com/p/7257e7c60ef5</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/16/about-cors/" data-id="ckdbgbyus000343podql0gxw3" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/16/about-cors/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cors/">cors</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jsonp/">jsonp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/nginx/">nginx</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-redis-client" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/15/redis-client/">Redis客户端</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/15/redis-client/" class="article-date"><time datetime="2017-02-15T07:21:31.000Z" itemprop="datePublished">2017-02-15</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>redis有官方的客户端<a href="https://redis.io/topics/rediscli" target="_blank" rel="noopener">redis-cli</a>，使用也很方便，不过有些时候GUI界面的客户端也是不错的选择。关于redis-cli用法，可参考</p>
+<ol>
+<li><a href="https://gnuhpc.gitbooks.io/redis-all-about/Operation/redis-cli.html" target="_blank" rel="noopener">https://gnuhpc.gitbooks.io/redis-all-about/Operation/redis-cli.html</a></li>
+<li><a href="https://www.kancloud.cn/thinkphp/redis-quickstart/36132" target="_blank" rel="noopener">https://www.kancloud.cn/thinkphp/redis-quickstart/36132</a></li>
+<li><a href="https://maoxian.de/2015/08/1342.html" target="_blank" rel="noopener">https://maoxian.de/2015/08/1342.html</a></li>
+</ol>
+<p>在Windows下有一个用java写的客户端<a href="https://github.com/caoxinyu/RedisClient" target="_blank" rel="noopener">RedisClient</a>，直接用下面的命令即可运行】</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">java -jar redisclient-win32.x86.2.0.jar</span><br></pre></td></tr></table></figure>
+<p>虽说用java，但是用到了一些Windows特有的库，所以并不支持其他平台使用。</p>
+<p>在Linux下，有一个<a href="http://docs.redisdesktop.com/en/latest/install/" target="_blank" rel="noopener">redisdesktop</a>的客户端程序，用QT编写，支持多个平台。本身开源，所以直接<a href="http://docs.redisdesktop.com/en/latest/install/#build-on-linux" target="_blank" rel="noopener">build from source</a>。（<em>需要翻墙</em>）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Get source code:</span></span><br><span class="line">git <span class="built_in">clone</span> --recursive https://github.com/uglide/RedisDesktopManager.git -b 0.8.0 rdm &amp;&amp; <span class="built_in">cd</span> ./rdm</span><br><span class="line"><span class="comment"># ubuntu</span></span><br><span class="line"><span class="built_in">cd</span> src/</span><br><span class="line">./configure</span><br><span class="line"><span class="built_in">source</span> /opt/qt56/bin/qt56-env.sh &amp;&amp; qmake &amp;&amp; make</span><br><span class="line"><span class="comment"># 最终生成的文件路径 bin/linux/release/rdm</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 如果需要安装</span></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>也有不少web应用，推荐<a href="https://github.com/joeferner/redis-commander" target="_blank" rel="noopener">redis-commander</a>，官方的安装方法很简单</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装</span></span><br><span class="line">$ npm install -g redis-commander</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">$ redis-commander</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">king@king:/$ redis-commander --redis-db=1</span><br><span class="line">Using default configuration.</span><br><span class="line">No Save: <span class="literal">true</span></span><br><span class="line">listening on  0.0.0.0 : 8081</span><br><span class="line">Redis Connection localhost:6379 Using Redis DB <span class="comment">#0</span></span><br></pre></td></tr></table></figure>
+<p>这种程序较原生客户端体验稍差，默认情况下，用浏览器打开<a href="http://127.0.0.1:8081" target="_blank" rel="noopener">http://127.0.0.1:8081</a>即可访问，这里有个bug，不管指定哪个redisdb，打印的日志和web ui都是db0，但实际数据是对的。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/15/redis-client/" data-id="ckdbgbyxj004u43poq8xfd3a2" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/15/redis-client/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/">redis</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-jsonschema-validate" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/13/jsonschema-validate/">使用jsonschema作参数校验</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/jsonschema-validate/" class="article-date"><time datetime="2017-02-13T11:44:52.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>jsonschema是一个校验库，比如<a href="https://pypi.python.org/pypi/jsonschema" target="_blank" rel="noopener">python 版本</a>，也有<a href="https://github.com/xeipuuv/gojsonschema" target="_blank" rel="noopener">go 版本</a>。目前前后端分离框架，一般会使用json作为传参的格式，所以用它来作校验也未尝不是一个办法，因为</p>
+<ol>
+<li>规则是标准化的东西，不用去学习一套套的另类规则</li>
+<li>规则可以写到json文件甚至用yaml格式，而不用硬编码到代码中(<em>其他校验方案也有不需要硬编码的</em>)</li>
+<li>在启动时直接cache到内存以提高效率，也可以动态的更新规则</li>
+<li>可以很好地和<a href="https://github.com/swagger-api/swagger-ui" target="_blank" rel="noopener">swagger ui</a>配合使用</li>
+</ol>
+<p>为了支持上述论点，基于<a href="https://github.com/rochacbruno/flasgger" target="_blank" rel="noopener">flasgger</a>开发了项目<a href="https://github.com/qjw/flasgger" target="_blank" rel="noopener">https://github.com/qjw/flasgger</a>。在前者的基础上做了如下修改</p>
+<ol>
+<li>原版本的flasgger使用yaml来编写文档，本项目改成json格式（<em>因为swagger-ui不认yaml</em>）</li>
+<li>完善ref，支持对象定义的相对引用，根目录在配置中指定</li>
+<li>加强校验支持，和swagger使用同一份json定义。增加swag_from注解，提供文档/校验的全局开关和接口独立开关</li>
+<li>支持自定义规则，已规避正则费解和管理的麻烦</li>
+<li>支持自动过滤空置，提高前端开发效率</li>
+<li>自定义错误提示</li>
+</ol>
+<p>完整的说明见<a href="https://github.com/qjw/flasgger" target="_blank" rel="noopener">README</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/jsonschema-validate/" data-id="ckdbgbywq003343po8vcusx54" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/jsonschema-validate/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/jsonschema/">jsonschema</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-ngrok-reverse-proxy" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/13/ngrok-reverse-proxy/">ngrok反向代理局域网开发机</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/ngrok-reverse-proxy/" class="article-date"><time datetime="2017-02-13T10:19:19.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a> / <a class="article-category-link" href="/categories/运营运维/代理/">代理</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="主机和域名"><a href="#主机和域名" class="headerlink" title="主机和域名"></a>主机和域名</h1><p>首先需要准备有固定外网IP的主机和域名，假设使用域名<strong>test.qiujinwu.com</strong>作为提供服务的域名，那么先到dns解析方添加<strong>【A记录】</strong>，注意包含<strong>【test】</strong>和<strong>【*.test】</strong>下面是dnspod的记录</p>
+<p>对于主机，需要放开一个对内和对外的端口，对内默认是【TCP/4443】，对外根据需要配置，例如微信就必须是http80或者https443。</p>
+<h1 id="编译Ngrok"><a href="#编译Ngrok" class="headerlink" title="编译Ngrok"></a>编译Ngrok</h1><p>下载代码</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/inconshreveable/ngrok.git</span><br></pre></td></tr></table></figure>
+<p>其他一些地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/tutumcloud/ngrok.git</span><br></pre></td></tr></table></figure>
+<h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo apt-get install build-essential golang mercurial git</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，ubuntu14.4默认的golang版本是1.2.1，这会导致下面的错误</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ubuntu@VM-61-124-ubuntu:~$ go version</span><br><span class="line">go version go1.2.1 linux/amd64</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">src/github.com/gorilla/websocket/client.go:361: unknown tls.Config field &apos;GetCertificate&apos; in struct literal</span><br><span class="line">src/github.com/gorilla/websocket/client.go:370: unknown tls.Config field &apos;ClientSessionCache&apos; in struct literal</span><br><span class="line">src/github.com/gorilla/websocket/client.go:373: unknown tls.Config field &apos;CurvePreferences&apos; in struct literal</span><br><span class="line">make: *** [client] Error 2</span><br></pre></td></tr></table></figure>
+<p>所以需要将golang升级到1.7。我个人是直接下载【<a href="https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz" target="_blank" rel="noopener">https://storage.googleapis.com/golang/go1.7.linux-amd64.tar.gz</a>】，然后<br>【tar zxvf go1.7.linux-amd64.tar.gz -C /usr/local】，并且【find /usr -name “go*”】找到匹配的路径，全部都覆盖了一遍。，我在ubuntu 16.04 go版本比较新，没有这些鬼问题。</p>
+<p>最终的版本如下</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@kingqiu:~/proxy/ngrok.bak$ go version</span><br><span class="line">go version go1.7 linux/amd64</span><br></pre></td></tr></table></figure>
+<h1 id="编译代码"><a href="#编译代码" class="headerlink" title="编译代码"></a>编译代码</h1><p>运行以下命令，注意把域名改掉</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">openssl genrsa -out rootCA.key 2048</span><br><span class="line">openssl req -x509 -new -nodes -key rootCA.key -subj <span class="string">"/CN=test.qiujinwu.com"</span> -days 5000 -out rootCA.pem</span><br><span class="line">openssl genrsa -out device.key 2048</span><br><span class="line">openssl req -new -key device.key -subj <span class="string">"/CN=test.qiujinwu.com"</span> -out device.csr</span><br><span class="line">openssl x509 -req -<span class="keyword">in</span> device.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out device.crt -days 5000</span><br><span class="line">cp rootCA.pem assets/client/tls/ngrokroot.crt</span><br><span class="line">cp device.crt assets/server/tls/snakeoil.crt</span><br><span class="line">cp device.key assets/server/tls/snakeoil.key</span><br></pre></td></tr></table></figure>
+<p>然后（这里必须要sudo，不然某个地方提示没权限）</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo make release-server release-client</span><br></pre></td></tr></table></figure>
+<p>若成功，则会在bin目录下生成客户端和服务端</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">(venv) king@kingqiu:~/proxy/ngrok$ ls bin/</span><br><span class="line">go-bindata  ngrok  ngrokd</span><br></pre></td></tr></table></figure>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>将ngrokd拷贝到外网的服务器，运行以下命令</p>
+<p>注意domian必须和证书保持完全一致，后面两个端口分别是http、https的端口</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sudo ./bin/ngrokd -domain=<span class="string">"test.qiujinwu.com"</span> -httpAddr=<span class="string">":80"</span> -httpsAddr=<span class="string">":9082"</span> -tunnelAddr=<span class="string">":4443"</span></span><br></pre></td></tr></table></figure>
+<h2 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h2><p>新建ngrok.cfg作为客户端的配置，用来定义服务器信息</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">server_addr: test.qiujinwu.com:4443</span><br><span class="line">trust_host_root_certs: <span class="literal">false</span></span><br></pre></td></tr></table></figure>
+<p>运行命令</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./ngrok -subdomain 【子域名qjw】-proto=http -config=./ngrok.cfg 【端口5000】</span><br></pre></td></tr></table></figure>
+<p>这条命令就是把本地的5000端口代理到qjw.test.qiujinwu.com上去了。</p>
+<h1 id="特殊场景"><a href="#特殊场景" class="headerlink" title="特殊场景"></a>特殊场景</h1><p>考虑一些特殊的需求，例如微信必须要求是80端口，但是服务器已经有其他程序占用了该端口，或者同时运行两个ngrok程序，但又必须分享80端口。这时就需要依赖nginx反向代理来支持</p>
+<p>首先，反向代理有一个问题，如下，客户端代理链接包含了ngrok服务器绑定的本地端口（也就是nginx代理到的端口），这时直接访问80端口，ngrok服务器会提示找不到隧道，需要对nginx代理出来的http做一些处理，见下面的分析。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ngrok (Ctrl+C to quit)</span><br><span class="line"></span><br><span class="line">Tunnel Status online </span><br><span class="line">Version 1.7/1.7 </span><br><span class="line">Forwarding http://qjw.test.qiujinwu.com:8001 -&gt; 127.0.0.1:8188 </span><br><span class="line">Web Interface 127.0.0.1:4040 </span><br><span class="line"><span class="comment"># Conn 0</span></span><br><span class="line">Avg Conn Time 0.00ms</span><br></pre></td></tr></table></figure>
+<p>这种情况下需要在nginx转发配置做一些小改动</p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">upstream</span> ngrok1 &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8001</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> <span class="regexp">*.test.qiujinwu.com</span>;</span><br><span class="line">	<span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Host  <span class="variable">$http_host</span>:<span class="number">8001</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Connection <span class="string">""</span>;</span><br><span class="line">		<span class="attribute">proxy_pass</span>      http://ngrok1 ;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="attribute">upstream</span> ngrok &#123;</span><br><span class="line">    <span class="attribute">server</span> <span class="number">127.0.0.1:8002</span>;</span><br><span class="line">    <span class="attribute">keepalive</span> <span class="number">64</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">	<span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">	<span class="attribute">server_name</span> <span class="regexp">*.test</span>2.qiujinwu.com;</span><br><span class="line">	<span class="attribute">location</span> / &#123;</span><br><span class="line"></span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Real-IP <span class="variable">$remote_addr</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Forwarded-For <span class="variable">$proxy_add_x_forwarded_for</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Host  <span class="variable">$http_host</span>:<span class="number">8002</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> X-Nginx-Proxy <span class="literal">true</span>;</span><br><span class="line">		<span class="attribute">proxy_set_header</span> Connection <span class="string">""</span>;</span><br><span class="line">		<span class="attribute">proxy_pass</span>      http://ngrok ;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ngrokd运行，分别通过nginx代理到8001和8002端口，内网机器则通过4443和4444来连接</p>
+<h2 id="去除端口"><a href="#去除端口" class="headerlink" title="去除端口"></a>去除端口</h2><p>代理到本地之后，http的请求就变成了<a href="http://www.domain.com:8002/path#path，为了保持一致，在本地最好用nginx将这个8002去掉" target="_blank" rel="noopener">http://www.domain.com:8002/path#path，为了保持一致，在本地最好用nginx将这个8002去掉</a><br><figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">8088</span>;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="comment">#include proxy_params;</span></span><br><span class="line">        <span class="attribute">proxy_set_header</span> Host  <span class="variable">$host</span>;</span><br><span class="line">        <span class="attribute">proxy_pass</span> http://127.0.0.1:5000;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line">&#123;</span><br><span class="line">./ngrokd -domain=<span class="string">"test.qiujinwu.com"</span> -httpAddr=<span class="string">":8001"</span> -tunnelAddr=<span class="string">":4443"</span> -httpsAddr=<span class="string">":9082"</span></span><br><span class="line">&#125;&amp;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">./ngrokd_qiye -domain=<span class="string">"test2.qiujinwu.com"</span> -httpAddr=<span class="string">":8002"</span> -tunnelAddr=<span class="string">":4444"</span> -httpsAddr=<span class="string">":9083"</span></span><br><span class="line">&#125;&amp;</span><br></pre></td></tr></table></figure>
+<h2 id="其他做法"><a href="#其他做法" class="headerlink" title="其他做法"></a>其他做法</h2><ol>
+<li>用docker欺骗ngrok服务器</li>
+<li>若需要代理连个服务，并不需要架设连个ngrok服务，跑两个客户端，配置两个不同的<strong>subdomain</strong>即可。</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://hocg.in/2016/08/31/Ngrok%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" target="_blank" rel="noopener">https://hocg.in/2016/08/31/Ngrok%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/</a></li>
+<li><a href="https://imququ.com/post/self-hosted-ngrokd.html" target="_blank" rel="noopener">https://imququ.com/post/self-hosted-ngrokd.html</a></li>
+<li><a href="https://aotu.io/notes/2016/02/19/ngrok/" target="_blank" rel="noopener">https://aotu.io/notes/2016/02/19/ngrok/</a></li>
+<li><a href="https://fengqi.me/unix/409.html" target="_blank" rel="noopener">https://fengqi.me/unix/409.html</a></li>
+<li><a href="http://blog.csdn.net/xs910115/article/details/50096757" target="_blank" rel="noopener">http://blog.csdn.net/xs910115/article/details/50096757</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/" data-id="ckdbgbyx5003y43po0k4cvx1n" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/ngrok-reverse-proxy/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/proxy/">proxy</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-great-wall-proxy" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/13/great-wall-proxy/">翻墙的一些工具</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/great-wall-proxy/" class="article-date"><time datetime="2017-02-13T08:52:33.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a> / <a class="article-category-link" href="/categories/运营运维/代理/">代理</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>目前代理shadowsocks客户端连接，后者提供sock5代理，在Windows下可以直接全局代理，Linux比较麻烦。各种平台客户端见<a href="https://shadowsocks.org/en/download/clients.html" target="_blank" rel="noopener">https://shadowsocks.org/en/download/clients.html</a></p>
+<p>对于chrome浏览器，可以安装插件<a href="https://github.com/FelisCatus/SwitchyOmega/releases" target="_blank" rel="noopener">switchyomega</a>，以前有个<a href="https://switchysharp.com/" target="_blank" rel="noopener">SwitchySharp</a></p>
+<blockquote>
+<p>SwitchyOmega, 下一代 SwitchySharp 升级版已经完成了。新版完全免费，只希望大家能够继续支持。<br>P.S. 别担心，更新后可自动升级设置，无须再次手动配置。</p>
+</blockquote>
+<p>firefox可以使用<a href="https://addons.mozilla.org/zh-cn/firefox/addon/foxyproxy-standard/" target="_blank" rel="noopener">foxyproxy</a></p>
+<h2 id="终端使用代理"><a href="#终端使用代理" class="headerlink" title="终端使用代理"></a>终端使用代理</h2><h3 id="proxychains"><a href="#proxychains" class="headerlink" title="proxychains"></a>proxychains</h3><p>注意配置中不要画蛇添足，在<strong>ProxyList</strong>一节中添加sock4</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ apt-get install proxychains</span><br><span class="line"></span><br><span class="line">$ cat /etc/proxychains.conf | sed <span class="string">"/^#/d"</span> | sed <span class="string">"/^$/d"</span></span><br><span class="line">strict_chain</span><br><span class="line">chain_len = 1</span><br><span class="line">proxy_dns </span><br><span class="line">tcp_read_time_out 15000</span><br><span class="line">tcp_connect_time_out 8000</span><br><span class="line">[ProxyList]</span><br><span class="line">socks5  127.0.0.1   1080</span><br></pre></td></tr></table></figure>
+<p>使用方法<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">proxychains curl https://www.twitter.com/</span><br><span class="line">proxychains git push origin master</span><br></pre></td></tr></table></figure></p>
+<h2 id="sock5代理转http代理"><a href="#sock5代理转http代理" class="headerlink" title="sock5代理转http代理"></a>sock5代理转http代理</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install polipo</span><br><span class="line"></span><br><span class="line">$ cat /etc/polipo/config | sed <span class="string">"/^#/d"</span> | sed <span class="string">"/^$/d"</span></span><br><span class="line">logSyslog = <span class="literal">true</span></span><br><span class="line">logFile = /var/<span class="built_in">log</span>/polipo/polipo.log</span><br><span class="line">proxyAddress = <span class="string">"0.0.0.0"</span></span><br><span class="line">socksParentProxy = <span class="string">"127.0.0.1:1080"</span></span><br><span class="line">socksProxyType = socks5</span><br><span class="line">chunkHighMark = 50331648</span><br><span class="line">objectHighMark = 16384</span><br><span class="line">serverMaxSlots = 64</span><br><span class="line">serverSlots = 16</span><br><span class="line">serverSlots1 = 32</span><br><span class="line"></span><br><span class="line">$ sudo /etc/init.d/polipo restart</span><br><span class="line">$ <span class="built_in">export</span> http_proxy=<span class="string">"http://127.0.0.1:8123/"</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ol>
+<li><a href="https://www.domecross.com/" target="_blank" rel="noopener">https://www.domecross.com/</a></li>
+<li><a href="https://crola.xyz/" target="_blank" rel="noopener">https://crola.xyz/</a></li>
+<li><a href="https://shadowsocks.org/en/download/clients.html" target="_blank" rel="noopener">https://shadowsocks.org/en/download/clients.html</a></li>
+<li><a href="https://www.yuntisecure.com/" target="_blank" rel="noopener">https://www.yuntisecure.com/</a></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://blog.xinshangshangxin.com/2015/06/21/linux%E7%BB%88%E7%AB%AF%E7%BF%BB%E5%A2%99/" target="_blank" rel="noopener">https://blog.xinshangshangxin.com/2015/06/21/linux%E7%BB%88%E7%AB%AF%E7%BF%BB%E5%A2%99/</a></li>
+<li><a href="https://jingsam.github.io/2016/05/08/setup-shadowsocks-http-proxy-on-ubuntu-server.html" target="_blank" rel="noopener">https://jingsam.github.io/2016/05/08/setup-shadowsocks-http-proxy-on-ubuntu-server.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/great-wall-proxy/" data-id="ckdbgbywh002t43po0sf2rr7w" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/great-wall-proxy/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/proxy/">proxy</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-multi-github-in-one-host" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/13/multi-github-in-one-host/">同一台电脑多github帐号的ssh配置</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/multi-github-in-one-host/" class="article-date"><time datetime="2017-02-13T08:20:05.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>为了免去push时输入密码，用git仓库时，通常都在本地生成ssh密钥对，并且配置到githu，bitbucket、gitlab等平台，例如<a href="http://blog.csdn.net/itmyhome1990/article/details/39668349" target="_blank" rel="noopener">GitHub创建SSH Keys</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"youremail@xxx.com"</span></span><br></pre></td></tr></table></figure>
+<p>如果一切顺利,可以在用户目录里找到.ssh目录 里面有id_rsa和id_rsa.pub两个文件。这两个就是SSH Key的秘钥,id_rsa是私钥,id_rsa.pub是公钥。将id_rsa.pub内容拷贝到目标网站的某个地方几个。</p>
+<p>多个github帐号不能用同一个key，所以必须创建两个。同样使用上面的命令，不过不能一直回车，存储文件时选择一个不同的路径，仍然确保在<strong>.ssh</strong>目录下。</p>
+<p>新建名为<strong>config</strong>的文件，内容<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa</span><br><span class="line"></span><br><span class="line">Host xxx.github.com</span><br><span class="line">    HostName github.com</span><br><span class="line">    PreferredAuthentications publickey</span><br><span class="line">    IdentityFile ~/.ssh/id_rsa1</span><br></pre></td></tr></table></figure></p>
+<p>HostName随意，后续需要用到，所以简单明了会比较好。</p>
+<p>如果本地已经有仓库，或者直接clone下来的仓库，需要修改文件<strong>.git/config</strong><br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">[remote &quot;origin&quot;]</span><br><span class="line">    url = git@xxx.github.com:king/blog.git</span><br></pre></td></tr></table></figure></p>
+<p>或者直接修改remote<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git remote rm origin</span><br><span class="line">git remote add origin git@xxx.github.com:king/blog.git</span><br></pre></td></tr></table></figure></p>
+<p>或者clone时使用自定义的地址<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> git@xxx.github.com:king/blog.git</span><br></pre></td></tr></table></figure></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="http://blog.csdn.net/itmyhome1990/article/details/42643233" target="_blank" rel="noopener">http://blog.csdn.net/itmyhome1990/article/details/42643233</a></li>
+<li><a href="https://gist.github.com/suziewong/4378434" target="_blank" rel="noopener">https://gist.github.com/suziewong/4378434</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/multi-github-in-one-host/" data-id="ckdbgbyx1003o43poc2gggvit" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/multi-github-in-one-host/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/github/">github</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-start" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/02/13/start/">新博客之旅</a>
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/02/13/start/" class="article-date"><time datetime="2017-02-13T01:32:16.000Z" itemprop="datePublished">2017-02-13</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a> / <a class="article-category-link" href="/categories/运营运维/网站/">网站</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><p>之前有个博客用<a href="https://github.com/jekyll/jekyll" target="_blank" rel="noopener">jekyll</a>搞的，但是它依赖ruby，这在Windows下很麻烦，而且ruby个人感觉很另类不喜欢（个人喜好问题），而且编译又慢，所以果断用<a href="https://github.com/hexojs/hexo" target="_blank" rel="noopener">hexo</a></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="安装git，node-npm"><a href="#安装git，node-npm" class="headerlink" title="安装git，node/npm"></a>安装git，node/npm</h3><p>创建编写博客的目录，使用npm安装必须的组件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo --save</span><br><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/blog$ hexo -v</span><br><span class="line">hexo: 3.2.2</span><br><span class="line">hexo-cli: 1.0.2</span><br><span class="line">os: Linux 4.4.0-47-generic linux x64</span><br><span class="line">http_parser: 2.5.0</span><br><span class="line">node: 4.2.6</span><br><span class="line">v8: 4.5.103.35</span><br><span class="line">uv: 1.8.0</span><br><span class="line">zlib: 1.2.8</span><br><span class="line">ares: 1.10.1-DEV</span><br><span class="line">icu: 55.1</span><br><span class="line">modules: 46</span><br><span class="line">openssl: 1.0.2g-fips</span><br></pre></td></tr></table></figure>
+<h3 id="初始化博客"><a href="#初始化博客" class="headerlink" title="初始化博客"></a>初始化博客</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo init</span><br><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">npm install</span><br><span class="line"><span class="comment"># 编译</span></span><br><span class="line">hexo g</span><br><span class="line"><span class="comment"># 运行</span></span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/blog$ hexo s</span><br><span class="line">INFO  Start processing</span><br><span class="line">INFO  Hexo is running at http://localhost:4000/. Press Ctrl+C to stop.</span><br></pre></td></tr></table></figure>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>可以在 _config.yml 中修改大部份的配置。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>title</code></td>
+<td>网站标题</td>
+</tr>
+<tr>
+<td><code>subtitle</code></td>
+<td>网站副标题</td>
+</tr>
+<tr>
+<td><code>description</code></td>
+<td>网站描述</td>
+</tr>
+<tr>
+<td><code>author</code></td>
+<td>您的名字</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>theme</code></td>
+<td>当前主题名称。值为<code>false</code>时禁用主题</td>
+</tr>
+<tr>
+<td><code>deploy</code></td>
+<td>部署部分的设置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h3><p>见<a href="https://github.com/cgmartin/hexo-theme-bootstrap-blog" target="_blank" rel="noopener">A simple Bootstrap v3 blog theme for Hexo</a></p>
+<blockquote>
+<p><a href="https://github.com/cgmartin/hexo-theme-bootstrap-blog" target="_blank" rel="noopener">https://github.com/cgmartin/hexo-theme-bootstrap-blog</a></p>
+</blockquote>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Extensions</span></span><br><span class="line"><span class="comment">## Plugins: https://hexo.io/plugins/</span></span><br><span class="line"><span class="comment">## Themes: https://hexo.io/themes/</span></span><br><span class="line"><span class="attr">theme:</span> <span class="string">bootstrap-blog</span></span><br></pre></td></tr></table></figure>
+<h3 id="新文章"><a href="#新文章" class="headerlink" title="新文章"></a>新文章</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/blog$ hexo new <span class="string">"start"</span></span><br><span class="line">INFO  Created: ~/tmp/blog/<span class="built_in">source</span>/_posts/start.md</span><br></pre></td></tr></table></figure>
+<h3 id="tag和category"><a href="#tag和category" class="headerlink" title="tag和category"></a>tag和category</h3><p>tag支持多个，category支持层级关系</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">tags:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">hexo</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">travis</span></span><br><span class="line"><span class="attr">categories:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">运营运维</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">网站</span></span><br></pre></td></tr></table></figure>
+<h2 id="域名"><a href="#域名" class="headerlink" title="域名"></a>域名</h2><p>新建文件<strong>source/CNAME</strong></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/blog$ cat <span class="built_in">source</span>/CNAME </span><br><span class="line">blog.qiujinwu.com</span><br></pre></td></tr></table></figure>
+<p>然后在域名管理网站，例如<a href="https://www.dnspod.cn" target="_blank" rel="noopener">Dnspod</a>，新建CNAME记录。【<em>xxx就是github用户名,注意最后面的点</em>】</p>
+<table>
+<thead>
+<tr>
+<th>主机记录</th>
+<th>记录类型</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>blog</code></td>
+<td>CNAME</td>
+<td>xxx.github.com.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="发布"><a href="#发布" class="headerlink" title="发布"></a>发布</h3><p>hexo g编译之后，默认会在public目录生成编译好的前端内容，发布可以简单地将这个目录push到github目标仓库的master分支。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Deployment</span></span><br><span class="line"><span class="comment">## Docs: https://hexo.io/docs/deployment.html</span></span><br><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@github.com:yyy/xxx.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>运行下面命令发布<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">hexo d</span><br></pre></td></tr></table></figure></p>
+<h2 id="发布-1"><a href="#发布-1" class="headerlink" title="发布"></a>发布</h2><p>前面的发布有个问题，原始文件没有备份。最简单的办法是写个脚本，把源文件和编译好的文件分别push到不同的仓库。若不想别人看到源文件，还可以将源文件的残酷设置为私有（需要掏银子）</p>
+<p>另一种办法是将源文件和编译好的文件放在不同的分支，参考<a href="http://www.dxjia.cn/2016/01/27/hexo-write-everywhere/" target="_blank" rel="noopener">Hexo利用Github分支在不同电脑上写博客</a></p>
+<p>另一种办法是用持续集成，推荐<a href="https://travis-ci.org/" target="_blank" rel="noopener">travis-ci</a>,参考<a href="http://www.jianshu.com/p/e22c13d85659" target="_blank" rel="noopener">手把手教你使用Travis CI自动部署你的Hexo博客到Github上</a></p>
+<p>注册github账户，新建两个仓库，一个用于存储博客源文件，一个用于存储编译后的静态内容。对于后者，开启<strong>gh-pages</strong>功能【<em>注意：只有master分支支持gh-pages功能</em>】</p>
+<p>用github账户登录travis-ci之后，按照前面<a href="http://www.jianshu.com/p/e22c13d85659" target="_blank" rel="noopener">参考链接</a>配置好即可，本质上就是push到github的源文件仓库，travis-ci就会收到通知，然后pull下来，并且按照.travis.yml配置的参数执行。</p>
+<p>在我的环境下，.travis.yml文件中的命令无法读取到<a href="https://travis-ci.org/" target="_blank" rel="noopener">https://travis-ci.org/</a>网站配置的环境变量，所以用另一种加密token的办法实现的，具体参考<a href="http://lotabout.me/2016/Hexo-Auto-Deploy-to-Github/" target="_blank" rel="noopener">Hexo 自动部署到 Github</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装ruby之后</span></span><br><span class="line">gem install travis</span><br><span class="line"><span class="comment"># cd 博客项目文件夹根目录</span></span><br><span class="line">travis login --auto</span><br><span class="line"><span class="comment"># 加密从github取下来的token，不需要&lt;&gt;</span></span><br><span class="line"><span class="comment"># 此操作会自动往.travis.yml添加一个密钥[env - global - secure]</span></span><br><span class="line">travis encrypt <span class="string">'GH_TOKEN=&lt;TOKEN&gt;'</span> --add</span><br></pre></td></tr></table></figure>
+<p>完整的文件如下<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">language:</span> <span class="string">node_js</span></span><br><span class="line"><span class="attr">node_js:</span> <span class="string">stable</span></span><br><span class="line"><span class="attr">install:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line"><span class="attr">script:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">hexo</span> <span class="string">g</span></span><br><span class="line"><span class="attr">after_script:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">cd</span> <span class="string">./public</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">init</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.name</span> <span class="string">"king"</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">config</span> <span class="string">user.email</span> <span class="string">"qiujinwu456@gmail.com"</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">add</span> <span class="string">.</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">commit</span> <span class="string">-m</span> <span class="string">"Update docs"</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">git</span> <span class="string">push</span> <span class="string">--force</span> <span class="string">--quiet</span> <span class="string">"https://$GH_TOKEN@$&#123;GH_REF&#125;"</span> <span class="string">master:master</span></span><br><span class="line"><span class="attr">branches:</span></span><br><span class="line">  <span class="attr">only:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">master</span></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line">  <span class="attr">global:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">GH_REF:</span> <span class="string">github.com/xxxx/blog.qiujinwu.com.git</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">secure:</span> <span class="string">hmLkN8N2DZ9x/auC9hpdnv/he1XBYtxG/T3z</span></span><br></pre></td></tr></table></figure></p>
+<h2 id="RSS"><a href="#RSS" class="headerlink" title="RSS"></a>RSS</h2><p>参考<a href="http://hanhailong.com/2015/10/08/Hexo%E2%80%94%E6%AD%A3%E7%A1%AE%E6%B7%BB%E5%8A%A0RSS%E8%AE%A2%E9%98%85/" target="_blank" rel="noopener">Hexo—正确添加RSS订阅</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 安装hexo-generator-feed</span></span><br><span class="line">npm install hexo-generator-feed --save</span><br></pre></td></tr></table></figure>
+<p>配置到根目录的_config.yml<br><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">plugin:</span></span><br><span class="line"><span class="bullet">-</span> <span class="string">hexo-generator-feed</span></span><br><span class="line"><span class="comment">#Feed Atom</span></span><br><span class="line"><span class="attr">feed:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">atom</span></span><br><span class="line">  <span class="attr">path:</span> <span class="string">atom.xml</span></span><br><span class="line">  <span class="attr">limit:</span> <span class="number">20</span></span><br></pre></td></tr></table></figure></p>
+<p>最后在主题的配置中添加入口</p>
+<h2 id="评论"><a href="#评论" class="headerlink" title="评论"></a>评论</h2><p>使用<a href="https://disqus.com" target="_blank" rel="noopener">disqus</a>，</p>
+<p>进入disqus网站，填写博客的域名，按照指引完成之后，获取shortname，然后在_config.xml中添加</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">disqus_shortname:</span> <span class="string">shortname</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://xuanwo.org/2015/03/26/hexo-intor/" target="_blank" rel="noopener">https://xuanwo.org/2015/03/26/hexo-intor/</a></li>
+<li><a href="http://jiji262.github.io/2016/04/15/2016-04-15-hexo-github-pages-blog/" target="_blank" rel="noopener">http://jiji262.github.io/2016/04/15/2016-04-15-hexo-github-pages-blog/</a></li>
+<li><a href="https://github.com/hexojs/hexo" target="_blank" rel="noopener">https://github.com/hexojs/hexo</a></li>
+<li><a href="https://github.com/cgmartin/hexo-theme-bootstrap-blog" target="_blank" rel="noopener">https://github.com/cgmartin/hexo-theme-bootstrap-blog</a></li>
+<li><a href="http://lotabout.me/2016/Hexo-Auto-Deploy-to-Github" target="_blank" rel="noopener">http://lotabout.me/2016/Hexo-Auto-Deploy-to-Github</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/02/13/start/" data-id="ckdbgbyy2005l43poen1m7fxa" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/02/13/start/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hexo/">hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/travis/">travis</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <div id="page-nav">
+    <nav><ul class="pagination"><li><a class="page-prev" rel="prev" href="/page/6/"><i class="fa fa-chevron-left"></i> Prev</a></li><li><a class="page-number" href="/">1</a></li><li class="disabled"><span class="page-space">&hellip;</span></li><li><a class="page-number" href="/page/5/">5</a></li><li><a class="page-number" href="/page/6/">6</a></li><li class="active"><span class="page-number">7</span></li><li class="disabled"><span class="page-next">Next <i class="fa fa-chevron-right"></i></a></li></ul></nav>
+  </div>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

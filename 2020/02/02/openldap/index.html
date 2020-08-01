@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>OpenLdap学习 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="运行$ docker run -d --privileged -p 10004:80 --name php \  --env PHPLDAPADMIN_HTTPS=false --env PHPLDAPADMIN_LDAP_HOSTS=172.17.0.1  \  --detach osixia/phpldapadmin  172.17.0.1 注意留意下本地docker网卡的ip地址  $ do">
+<meta name="keywords" content="openldap">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenLdap学习">
+<meta property="og:url" content="http://blog.kimq.cn/2020/02/02/openldap/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="运行$ docker run -d --privileged -p 10004:80 --name php \  --env PHPLDAPADMIN_HTTPS=false --env PHPLDAPADMIN_LDAP_HOSTS=172.17.0.1  \  --detach osixia/phpldapadmin  172.17.0.1 注意留意下本地docker网卡的ip地址  $ do">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OpenLdap学习">
+<meta name="twitter:description" content="运行$ docker run -d --privileged -p 10004:80 --name php \  --env PHPLDAPADMIN_HTTPS=false --env PHPLDAPADMIN_LDAP_HOSTS=172.17.0.1  \  --detach osixia/phpldapadmin  172.17.0.1 注意留意下本地docker网卡的ip地址  $ do">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-openldap" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      OpenLdap学习
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2020/02/02/openldap/" class="article-date"><time datetime="2020-02-02T16:00:00.000Z" itemprop="datePublished">2020-02-03</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Openldap/">Openldap</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -d --privileged -p 10004:80 --name php \</span><br><span class="line">  --env PHPLDAPADMIN_HTTPS=<span class="literal">false</span> --env PHPLDAPADMIN_LDAP_HOSTS=172.17.0.1  \</span><br><span class="line">  --detach osixia/phpldapadmin</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>172.17.0.1</code> 注意留意下本地docker网卡的ip地址</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run -p 389:389 --name ldap \</span><br><span class="line">  --network bridge --hostname openldap-host \</span><br><span class="line">  --env LDAP_ORGANISATION=<span class="string">"example"</span> --env LDAP_DOMAIN=<span class="string">"example.org"</span> \</span><br><span class="line">  --env LDAP_ADMIN_PASSWORD=<span class="string">"pwd"</span> --detach osixia/openldap</span><br></pre></td></tr></table></figure>
+<h2 id="SSL"><a href="#SSL" class="headerlink" title="SSL"></a>SSL</h2><p>如果要使用SSL访问, 将地址从<code>ldap://localhost</code>换成<code>ldaps://localhost</code></p>
+<p>若使用自己的证书</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker run --hostname ldap.example.org \</span><br><span class="line">  --volume /path/to/certificates:/container/service/slapd/assets/certs \</span><br><span class="line">  --env LDAP_TLS_CRT_FILENAME=my-ldap.crt \</span><br><span class="line">  --env LDAP_TLS_KEY_FILENAME=my-ldap.key \</span><br><span class="line">  --env LDAP_TLS_CA_CRT_FILENAME=the-ca.crt \</span><br><span class="line">  --detach osixia/openldap</span><br></pre></td></tr></table></figure>
+<h2 id="原生客户端"><a href="#原生客户端" class="headerlink" title="原生客户端"></a><a href="http://www.ldapadmin.org/" target="_blank" rel="noopener">原生客户端</a></h2><p>支持<code>Windows</code> 和<code>Linux</code> , 个人感觉体验不如<strong><a href="http://phpldapadmin.sourceforge.net/wiki/index.php/Main_Page" target="_blank" rel="noopener">phpldapadmin</a></strong></p>
+<ul>
+<li><a href="http://www.ldapadmin.org/download/ldapadmin.html" target="_blank" rel="noopener">http://www.ldapadmin.org/download/ldapadmin.html</a></li>
+<li><a href="http://ivb.sweb.cz/en/ldap.html" target="_blank" rel="noopener">http://ivb.sweb.cz/en/ldap.html</a></li>
+<li><a href="https://github.com/ibv/LDAP-Admin/releases" target="_blank" rel="noopener">https://github.com/ibv/LDAP-Admin/releases</a></li>
+</ul>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>打开本地浏览器, 访问<a href="http://localhost:10004" target="_blank" rel="noopener">http://localhost:10004</a> 即可打开<code>PHPLdapAdmin</code></p>
+<blockquote>
+<p>端口10004和docker保持一致</p>
+</blockquote>
+<p>需要登录, 登录帐号密码<code>cn=admin,dc=example,dc=org</code> / <code>pwd</code></p>
+<blockquote>
+<p>注意参数和docker中的保持一致, <code>缺省用户是固定的admin</code></p>
+</blockquote>
+<h3 id="命令行"><a href="#命令行" class="headerlink" title="命令行"></a>命令行</h3><p>也可以登录docker shell用命令行测试</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ docker ps</span><br><span class="line">CONTAINER ID  IMAGE               COMMAND               CREATED        STATUS        PORTS                          NAMES</span><br><span class="line">bfa797f2e0c7  osixia/phpldapadmin <span class="string">"/container/tool/run"</span> 15 minutes ago Up 15 minutes 443/tcp, 0.0.0.0:10004-&gt;80/tcp php</span><br><span class="line">e0c9ca20a8f1  osixia/openldap     <span class="string">"/container/tool/run"</span> 15 minutes ago Up 15 minutes 0.0.0.0:389-&gt;389/tcp, 636/tcp  ldap</span><br><span class="line">$ docker <span class="built_in">exec</span> -it --privileged ldap /bin/bash</span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,dc=example,dc=org"</span> -w <span class="built_in">pwd</span> -b <span class="string">"dc=example,dc=org"</span></span><br><span class="line"><span class="comment"># extended LDIF</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># LDAPv3</span></span><br><span class="line"><span class="comment"># base &lt;dc=example,dc=org&gt; with scope subtree</span></span><br><span class="line"><span class="comment"># filter: (objectclass=*)</span></span><br><span class="line"><span class="comment"># requesting: ALL</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># example.org</span></span><br><span class="line">dn: dc=example,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: dcObject</span><br><span class="line">objectClass: organization</span><br><span class="line">o: example</span><br><span class="line">dc: example</span><br><span class="line"></span><br><span class="line"><span class="comment"># admin, example.org</span></span><br><span class="line">dn: cn=admin,dc=example,dc=org</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">cn: admin</span><br><span class="line">description: LDAP administrator</span><br><span class="line">userPassword:: e1NTSEF9cVNPeHRiYTFoQ0RtMlJPcWRwOW0vaTVULzRidzE2NHI=</span><br><span class="line"></span><br><span class="line"><span class="comment"># search result</span></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br><span class="line"></span><br><span class="line"><span class="comment"># numResponses: 3</span></span><br><span class="line"><span class="comment"># numEntries: 2</span></span><br></pre></td></tr></table></figure>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>ldap的数据是分层的数组结构, 并且可能有多个DB,每个DB一棵树</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dc:         com</span><br><span class="line">             |</span><br><span class="line">dc:        genfic         ## (公司)</span><br><span class="line">          /      \</span><br><span class="line">ou:   People   servers    ## (公司部门)</span><br><span class="line">      /    \     ..</span><br><span class="line">uid: ..   John            ## (部门里的数据)</span><br></pre></td></tr></table></figure>
+<p>一些常用的概念</p>
+<ul>
+<li>Distinguished Name(<code>DN</code>) 惟一辨别名，类似于Linux文件系统中的绝对路径，每个对象都有一个惟一的名称，如”uid=king,ou=qiu,dc=example,dc=org”，在一个目录树中DN总是惟一的</li>
+<li>RDN, DN最左边的一节, 一直凭借父节点的RDN就构成了DN</li>
+<li>OID, 可以理解为内部ID, 但是仍然需要申请并公示, 避免重复</li>
+<li>Domain Component(<code>DC</code>) 域名的部分，其格式是将完整的域名分成几部分，如域名为example.org变成dc=example,dc=org</li>
+<li>User Id(<code>uid</code>) 用户ID，如”king”</li>
+<li>Organization Unit(<code>OU</code>) 组织单位，类似于Linux文件系统中的子目录，它是一个容器对象，组织单位可以包含其他各种对象（包括其他组织单元），如”lixin”</li>
+<li>Common Name(<code>CN</code>) 公共名称，如”king qiu”</li>
+<li>Surname(<code>SN</code>) 姓，如”king”</li>
+<li>Relative dn(<code>RDN</code>) 相对辨别名，类似于文件系统中的相对路径，它是与目录树结构无关的部分，如”uid=qiu”或”cn=king”</li>
+<li>Country(<code>C</code>) 国家，如”CN”或”US”等。</li>
+<li>Organization(<code>O</code>) 组织名，如”Example, Inc.”</li>
+</ul>
+<h2 id="通信协议-渠道"><a href="#通信协议-渠道" class="headerlink" title="通信协议/渠道"></a>通信协议/渠道</h2><blockquote>
+<p>以下内容以具体实现<a href="https://linux.die.net/man/8/slapd" target="_blank" rel="noopener"><strong><code>slapd</code></strong></a> 为准</p>
+</blockquote>
+<p>slapd提供了几种方式客户端接入<a href="https://www.openldap.org/doc/admin24/runningslapd.html#Command-Line%20Options" target="_blank" rel="noopener">连接渠道</a></p>
+<table>
+<thead>
+<tr>
+<th>URL</th>
+<th>Protocol</th>
+<th>Transport</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ldap:///</td>
+<td>LDAP    TCP</td>
+<td>port 389</td>
+</tr>
+<tr>
+<td>ldaps:///</td>
+<td>LDAP over SSL</td>
+<td>TCP port 636</td>
+</tr>
+<tr>
+<td>ldapi:///</td>
+<td>LDAP</td>
+<td>IPC (Unix-domain socket)</td>
+</tr>
+</tbody>
+</table>
+<p>当使用官方的客户端工具时, 使用参数<code>-H</code></p>
+<h2 id="后端-Backends"><a href="#后端-Backends" class="headerlink" title="后端(Backends)"></a><a href="https://www.openldap.org/doc/admin24/backends.html" target="_blank" rel="noopener">后端(Backends)</a></h2><p>slapd 支持多种数据的后端存储方式</p>
+<ul>
+<li>Berkeley DB</li>
+<li>LDAP, not an actual database; instead it acts as a proxy to forward incoming requests to another LDAP server</li>
+<li>LDIF, a basic storage backend that stores entries in text files in LDIF format</li>
+<li>LMDB, the recommended primary backend for a normal slapd database. It uses OpenLDAP’s own Lightning Memory-Mapped Database (LMDB) library to store data and is intended to replace the Berkeley DB backends</li>
+<li>etc…</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 从cn=config下过滤特定objectClass所有条目的dn</span></span><br><span class="line">$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b cn=config \</span><br><span class="line">    -s sub <span class="string">"(objectClass=olcDatabaseConfig)"</span> dn</span><br><span class="line">dn: olcDatabase=&#123;-1&#125;frontend,cn=config</span><br><span class="line">dn: olcDatabase=&#123;0&#125;config,cn=config</span><br><span class="line">dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br></pre></td></tr></table></figure>
+<p>可以看到, 上述实例使用的<code>mdb</code></p>
+<h2 id="数据库-Database"><a href="#数据库-Database" class="headerlink" title="数据库(Database)"></a><a href="https://www.openldap.org/doc/admin24/slapdconf2.html" target="_blank" rel="noopener">数据库(Database)</a></h2><blockquote>
+<p>早期的slapd使用配置文件<code>slapd.conf</code>, 目前已不建议, 考虑<code>dynamic runtime configuration engine</code> , 后者有以下优势</p>
+</blockquote>
+<ul>
+<li>is fully LDAP-enabled</li>
+<li>is managed using the standard LDAP operations</li>
+<li>stores its configuration data in an LDIF database, generally in the /usr/local/etc/openldap/slapd.d directory.</li>
+<li>allows all of slapd’s configuration options to be changed on the fly, generally without requiring a server restart for the changes to take effect.</li>
+</ul>
+<p>从上面的环境可以看到, 缺省就存在三个<code>database</code></p>
+<ul>
+<li>frontend, 对所有DB有效的配置, 优先级较低(special database that is used to hold database-level options that should be applied to all the other databases)</li>
+<li>config, 配置数据库</li>
+<li>mdb(视bachend而不同), 实际的数据存储</li>
+</ul>
+<blockquote>
+<p>实际上slapd可以有多个db, slapd会根据dn匹配各个库的<a href="https://www.openldap.org/doc/admin24/slapdconf2.html#olcSuffix:%20%3Cdn%20suffix%3E" target="_blank" rel="noopener"><code>olcSuffix</code></a>来做路由</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b <span class="string">"olcDatabase=&#123;1&#125;mdb,cn=config"</span> \</span><br><span class="line">   -s sub <span class="string">"(objectClass=olcDatabaseConfig)"</span>  olcSuffix</span><br><span class="line">dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">olcSuffix: dc=example,dc=org</span><br></pre></td></tr></table></figure>
+<p>官方提供了</p>
+<ul>
+<li><a href="https://www.zytrax.com/books/ldap/ch14/#ldapsearch" target="_blank" rel="noopener"><strong><code>ldapsearch</code></strong></a> 查询(search LDAP entries)</li>
+<li><a href="https://www.zytrax.com/books/ldap/ch14/#ldapadd" target="_blank" rel="noopener"><strong><code>ldapadd</code></strong></a> 新增(add LDIF entries to an LDAP directory)</li>
+<li><a href="https://www.zytrax.com/books/ldap/ch14/#ldapdelete" target="_blank" rel="noopener"><strong><code>ldapdelete</code></strong></a> 删除(delete LDAP entries)</li>
+<li><a href="https://www.zytrax.com/books/ldap/ch14/#ladpadd" target="_blank" rel="noopener"><strong><code>ldapmodify</code></strong></a> 修改(modify existing LDAP entries)</li>
+</ul>
+<h1 id="config库"><a href="#config库" class="headerlink" title="config库"></a>config库</h1><p>config库的根DN是<code>cn=config</code>, 这里包含了所有的配置</p>
+<p>具体的每个字段的意义, 参考<a href="https://www.openldap.org/doc/admin24/slapdconf2.html" target="_blank" rel="noopener">https://www.openldap.org/doc/admin24/slapdconf2.html</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b <span class="string">"cn=config"</span> dn 2&gt;/dev/null | head -n 5</span><br><span class="line">dn: cn=config</span><br><span class="line">dn: cn=module&#123;0&#125;,cn=config</span><br><span class="line">dn: cn=module&#123;1&#125;,cn=config</span><br></pre></td></tr></table></figure>
+<h2 id="数据库配置"><a href="#数据库配置" class="headerlink" title="数据库配置"></a><a href="https://www.openldap.org/doc/admin24/slapdconf2.html#Database-specific%20Directives" target="_blank" rel="noopener">数据库配置</a></h2><p>几个重要的配置</p>
+<ul>
+<li><a href="https://www.openldap.org/doc/admin24/slapdconf2.html#olcAccess:%20to%20%3Cwhat%3E%20[%20by%20%3Cwho%3E%20[%3Caccesslevel%3E]%20[%3Ccontrol%3E]%20]+" target="_blank" rel="noopener">olcAccess</a> 访问控制记录, 一般会有多条</li>
+<li><a href="https://www.openldap.org/doc/admin24/slapdconf2.html#olcRootDN:%20%3CDN%3E" target="_blank" rel="noopener">olcRootDN</a>  超级管理员DN</li>
+<li><a href="https://www.openldap.org/doc/admin24/slapdconf2.html#olcRootPW:%20%3Cpassword%3E" target="_blank" rel="noopener">olcRootPW</a>  超级管理员密码</li>
+<li><a href="https://www.openldap.org/doc/admin24/slapdconf2.html#olcSuffix:%20%3Cdn%20suffix%3E" target="_blank" rel="noopener">olcSuffix</a> 路由的DN后缀</li>
+</ul>
+<blockquote>
+<p>对于<code>olcSuffix</code>, 更具体的路由应该在前, 否则后面的db永远无法路由</p>
+</blockquote>
+<h1 id="添加-删除-配置"><a href="#添加-删除-配置" class="headerlink" title="添加/删除/配置"></a>添加/删除/配置</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat &gt; base.ldif  &lt;&lt; EOF</span><br><span class="line">&gt; dn: ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: organizationalUnit</span><br><span class="line">ou: lixin</span><br><span class="line"><span class="comment"># 空行</span></span><br><span class="line">dn: ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: organizationalUnit</span><br><span class="line">ou: tech</span><br><span class="line">description: 产品部</span><br><span class="line"><span class="comment"># 空行</span></span><br><span class="line">dn: cn=king1,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">cn: king1</span><br><span class="line">userPassword: 1</span><br><span class="line"><span class="comment"># 空行</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">cn: king2</span><br><span class="line">userPassword: 1</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapadd -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org -f base.ldif </span><br><span class="line">adding new entry <span class="string">"ou=lixin,dc=example,dc=org"</span></span><br><span class="line">adding new entry <span class="string">"ou=tech,ou=lixin,dc=example,dc=org"</span></span><br><span class="line">adding new entry <span class="string">"cn=king1,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br><span class="line">adding new entry <span class="string">"cn=king2,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br></pre></td></tr></table></figure>
+<p>查询<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> dn</span><br><span class="line"><span class="comment"># lixin, example.org</span></span><br><span class="line">dn: ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># tech, lixin, example.org</span></span><br><span class="line">dn: ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># king1, tech, lixin, example.org</span></span><br><span class="line">dn: cn=king1,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># king2, tech, lixin, example.org</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># search result</span></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br><span class="line"></span><br><span class="line"><span class="comment"># numResponses: 5</span></span><br><span class="line"><span class="comment"># numEntries: 4</span></span><br></pre></td></tr></table></figure></p>
+<p>修改<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat &gt; c &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">changetype: modify</span><br><span class="line">add: description</span><br><span class="line">description: 你懂的</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapmodify -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org -f c</span><br><span class="line">modifying entry <span class="string">"cn=king2,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ cat &gt; c &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">changetype: modify</span><br><span class="line">delete: description</span><br><span class="line">description: 你懂的</span><br><span class="line">-</span><br><span class="line">add: street</span><br><span class="line">street: iii</span><br><span class="line">&gt; EOF<span class="string">""</span></span><br><span class="line">$ ldapmodify -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org -f c</span><br><span class="line">modifying entry <span class="string">"cn=king2,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br></pre></td></tr></table></figure></p>
+<p>多字段属性增删改<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"cn=king2,ou=tech,ou=lixin,dc=example,dc=org"</span> street | \</span><br><span class="line">    sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">street: iii</span><br><span class="line">street: jjj</span><br><span class="line">street: kkk</span><br><span class="line"><span class="comment"># 删除stree=jjj的条目, 修改street=kkk的条目修改为lll</span></span><br><span class="line">$ cat &gt; c &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">changetype: modify</span><br><span class="line">delete: street</span><br><span class="line">street: jjj</span><br><span class="line">-</span><br><span class="line">delete: street</span><br><span class="line">street: kkk</span><br><span class="line">-</span><br><span class="line">add: street</span><br><span class="line">street: lll</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"cn=king2,ou=tech,ou=lixin,dc=example,dc=org"</span> street | \</span><br><span class="line">    sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">street: iii</span><br><span class="line">street: lll</span><br></pre></td></tr></table></figure></p>
+<p>删除<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat &gt; base.ldif &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">cn: admin</span><br><span class="line">userPassword: 1</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapadd -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org -f base.ldif</span><br><span class="line">adding new entry <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapdelete -H ldap://localhost -D cn=admin,dc=example,dc=org -w 1 \</span><br><span class="line">    cn=king1,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> dn</span><br><span class="line"><span class="comment"># lixin, example.org</span></span><br><span class="line">dn: ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># tech, lixin, example.org</span></span><br><span class="line">dn: ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># king2, tech, lixin, example.org</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># search result</span></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br></pre></td></tr></table></figure></p>
+<h2 id="查询-filter"><a href="#查询-filter" class="headerlink" title="查询/filter"></a>查询/filter</h2><p>ldap的优势是<code>快速</code>/<code>灵活</code>的查询, ldapsearch有一个filter参数, 用于定制查询条件</p>
+<p>几个概念</p>
+<ul>
+<li>basedn 从树的那个子(根)节点开始查找(<code>-b</code>)</li>
+<li>filter 查询条件</li>
+<li>attrs 查询结果返回哪些属性</li>
+</ul>
+<blockquote>
+<p>filter手册,参考<a href="https://www.zytrax.com/books/ldap/apa/search.html" target="_blank" rel="noopener">https://www.zytrax.com/books/ldap/apa/search.html</a></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 从`ou=lixin,dc=example,dc=org`开始查找</span></span><br><span class="line"><span class="comment"># 匹配属性cn等于`king2`的条目</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    cn=king2 | sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: top</span><br><span class="line">objectClass: organizationalRole</span><br><span class="line">objectClass: simpleSecurityObject</span><br><span class="line">cn: king2</span><br><span class="line">userPassword:: e1NTSEF9RzFqOGszdG82aHRWamRvQmYvRUlqbmo1dHNpb0NQcTE=</span><br><span class="line">street: iii</span><br><span class="line">description:: 5L2g5oeC55qE</span><br><span class="line"><span class="comment"># 接上, 只显示dn属性</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    cn=king2 dn | sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br></pre></td></tr></table></figure>
+<h3 id="判断"><a href="#判断" class="headerlink" title="判断"></a>判断</h3><ul>
+<li>= 等于</li>
+<li>~= 不等于</li>
+<li>>= 大于等于</li>
+<li>&lt;= 小于等于</li>
+</ul>
+<blockquote>
+<p>比较逻辑支持通配符<code>*</code></p>
+</blockquote>
+<h3 id="与或非"><a href="#与或非" class="headerlink" title="与或非"></a>与或非</h3><ul>
+<li>&amp; (AND)</li>
+<li>! (NOT)</li>
+<li>| (OR)</li>
+</ul>
+<blockquote>
+<p>优先级用括号<code>(</code>界定</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">(&amp;(exp1)(exp2)(exp3)) # exp1 AND exp2 AND exp3</span><br><span class="line">(|(exp1)(exp2)(exp3)) # exp1 OR exp2 OR exp3</span><br><span class="line">(!(exp1)) # NOT exp1</span><br><span class="line">(&amp;(!(exp1))(!(exp2))) # NOT exp1 AND NOT exp2</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># cn等于admin 或者 street等于iii</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    <span class="string">"(|(cn=admin)(street=iii))"</span> dn | sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br></pre></td></tr></table></figure>
+<h3 id="DN查找"><a href="#DN查找" class="headerlink" title="DN查找"></a>DN查找</h3><p>用于查找DN中的每一段是否包含某个属性, <code>不支持通配符</code><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># dn中包含ou等于tech的条目</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> <span class="string">"ou:dn:=tech"</span> dn | sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"><span class="comment"># dn中包含cn等于admin的条目</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost  -w <span class="built_in">pwd</span> -D cn=admin,dc=example,dc=org \</span><br><span class="line">    -b <span class="string">"ou=lixin,dc=example,dc=org"</span> <span class="string">"cn:dn:=admin"</span> dn | sed -e <span class="string">"/^$/d"</span> -e <span class="string">"/^#/d"</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br></pre></td></tr></table></figure></p>
+<h2 id="匹配规则-matchingrules"><a href="#匹配规则-matchingrules" class="headerlink" title="匹配规则(matchingrules)"></a><a href="https://www.zytrax.com/books/ldap/ch3/#matchingrules" target="_blank" rel="noopener">匹配规则(matchingrules)</a></h2><p>每个属性的业务场景各有不同, 所以ldap引入了匹配规则, 用于约束属性的匹配规则, 例如姓名大小写不一致关系并不大</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">matchingRule ( 2.5.13.2 NAME &apos;caseIgnoreMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>ldap内建了一大波规则</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># Subschema</span><br><span class="line">dn: cn=Subschema</span><br><span class="line">matchingRules: ( 2.5.13.0 NAME &apos;objectIdentifierMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )</span><br><span class="line">matchingRules: ( 2.5.13.1 NAME &apos;distinguishedNameMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 )</span><br><span class="line">matchingRules: ( 2.5.13.2 NAME &apos;caseIgnoreMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )</span><br><span class="line">matchingRules: ( 2.5.13.3 NAME &apos;caseIgnoreOrderingMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )</span><br><span class="line">matchingRules: ( 2.5.13.4 NAME &apos;caseIgnoreSubstringsMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.58 )</span><br><span class="line">matchingRules: ( 2.5.13.5 NAME &apos;caseExactMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )</span><br><span class="line">matchingRules: ( 2.5.13.6 NAME &apos;caseExactOrderingMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )</span><br><span class="line">matchingRules: ( 2.5.13.7 NAME &apos;caseExactSubstringsMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.58 )</span><br><span class="line">matchingRules: ( 2.5.13.8 NAME &apos;numericStringMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.36 )</span><br><span class="line">matchingRules: ( 2.5.13.10 NAME &apos;numericStringSubstringsMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.58 )</span><br><span class="line">matchingRules: ( 2.5.13.13 NAME &apos;booleanMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )</span><br><span class="line">matchingRules: ( 2.5.13.14 NAME &apos;integerMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )</span><br><span class="line">matchingRules: ( 2.5.13.15 NAME &apos;integerOrderingMatch&apos; </span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )</span><br><span class="line">matchingRules: ( 2.5.13.16 NAME &apos;bitStringMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.6 )</span><br><span class="line">matchingRules: ( 2.5.13.17 NAME &apos;octetStringMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )</span><br><span class="line">matchingRules: ( 2.5.13.18 NAME &apos;octetStringOrderingMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.40 )</span><br><span class="line">matchingRules: ( 2.5.13.20 NAME &apos;telephoneNumberMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.50 )</span><br><span class="line">matchingRules: ( 2.5.13.21 NAME &apos;telephoneNumberSubstringsMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.58 )</span><br><span class="line">matchingRules: ( 2.5.13.23 NAME &apos;uniqueMemberMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.34 )</span><br><span class="line">matchingRules: ( 2.5.13.27 NAME &apos;generalizedTimeMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 )</span><br><span class="line">matchingRules: ( 2.5.13.28 NAME &apos;generalizedTimeOrderingMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 )</span><br><span class="line">matchingRules: ( 2.5.13.29 NAME &apos;integerFirstComponentMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )</span><br><span class="line">matchingRules: ( 2.5.13.30 NAME &apos;objectIdentifierFirstComponentMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )</span><br><span class="line">matchingRules: ( 2.5.13.34 NAME &apos;certificateExactMatch&apos;</span><br><span class="line">  SYNTAX 1.2.826.0.1.3344810.7.1 )</span><br><span class="line">matchingRules: ( 1.3.6.1.4.1.1466.109.114.1 NAME &apos;caseExactIA5Match&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )</span><br><span class="line">matchingRules: ( 1.3.6.1.4.1.1466.109.114.2 NAME &apos;caseIgnoreIA5Match&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )</span><br><span class="line">matchingRules: ( 1.3.6.1.4.1.1466.109.114.3 NAME &apos;caseIgnoreIA5SubstringsMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )</span><br><span class="line">matchingRules: ( 1.3.6.1.4.1.4203.1.2.1 NAME &apos;caseExactIA5SubstringsMatch&apos; </span><br><span class="line"> SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )</span><br><span class="line">matchingRules: ( 1.2.840.113556.1.4.803 NAME &apos;integerBitAndMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )</span><br><span class="line">matchingRules: ( 1.2.840.113556.1.4.804 NAME &apos;integerBitOrMatch&apos;</span><br><span class="line">  SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )</span><br></pre></td></tr></table></figure>
+<p>在比较时, 可以后面加一个<code>oid</code> 修改缺省的匹配规则<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># default sn EQUALITY comparison behaviour</span></span><br><span class="line"><span class="comment"># is caseIgnoreMatch (2.5.13.2)</span></span><br><span class="line">sn=smith</span><br><span class="line"></span><br><span class="line"><span class="comment"># override EQUALITY match with case sensitive match</span></span><br><span class="line">sn:caseExactMatch:=Smith</span><br><span class="line"><span class="comment"># functionally same as above using OID</span></span><br><span class="line">sn:2.5.13.5:=Smith</span><br><span class="line"></span><br><span class="line"><span class="comment"># if a wildcard appears in seach the SUBSTR </span></span><br><span class="line"><span class="comment"># MatchingRule applies</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># default sn SUBSTR comparison behavior</span></span><br><span class="line"><span class="comment"># is caseIgnoreSubstringMatch</span></span><br><span class="line">sn=*s* <span class="comment"># finds Smith or smith</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># override SUBSTR match with case sensitive match</span></span><br><span class="line">sn:caseExactSubstringMatch:=*S* <span class="comment"># only finds Smith</span></span><br><span class="line"><span class="comment"># functionally same as above using OID</span></span><br><span class="line">sn:2.5.13.7:=*S*</span><br></pre></td></tr></table></figure></p>
+<h1 id="权限"><a href="#权限" class="headerlink" title="权限"></a><a href="https://www.openldap.org/doc/admin24/access-control.html" target="_blank" rel="noopener"><code>权限</code></a></h1><p>到目前位置, 所有的操作,要不使用unix socket通道(<code>ldapi:///</code>), 不受权限控制, 要不就使用超级管理员<code>admin,dc=example,dc=org</code></p>
+<p>slapd提供了完善的权限控制, 让其他用户也能做全部/部分操作</p>
+<p>缺省情况下, 其他用户只有对自己的权限<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b <span class="string">"olcDatabase=&#123;1&#125;mdb,cn=config"</span> \</span><br><span class="line">    -s sub <span class="string">"(objectClass=olcDatabaseConfig)"</span>  olcAccess</span><br><span class="line">dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">olcAccess: &#123;0&#125;to attrs=userPassword,shadowLastChange by self write by dn=<span class="string">"cn=a</span></span><br><span class="line"><span class="string"> dmin,dc=example,dc=org"</span> write by anonymous auth by * none</span><br><span class="line">olcAccess: &#123;1&#125;to * by self <span class="built_in">read</span> by dn=<span class="string">"cn=admin,dc=example,dc=org"</span> write by * </span><br><span class="line"> none</span><br><span class="line"><span class="comment"># 查询lixin部门</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    -w 1 -b <span class="string">"ou=lixin,dc=example,dc=org"</span> dn</span><br><span class="line">search: 2</span><br><span class="line">result: 32 No such object</span><br><span class="line"><span class="comment"># 查询自己</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    -w 1 -b <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> dn</span><br><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br></pre></td></tr></table></figure></p>
+<p>现在给<code>cn=admin,ou=tech,ou=lixin,dc=example,dc=org</code> 加一个<code>read</code>权限<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat &gt; perm &lt;&lt; EOF</span><br><span class="line">&gt; dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">changetype: modify</span><br><span class="line">add: olcAccess</span><br><span class="line">olcAccess: &#123;0&#125;to dn.subtree=<span class="string">"ou=lixin,dc=example,dc=org"</span></span><br><span class="line">    by dn.exact=<span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> <span class="built_in">read</span></span><br><span class="line">    by anonymous auth</span><br><span class="line">    by * none</span><br><span class="line">&gt; EOF</span><br><span class="line">$ ldapmodify -H ldapi:// -Y EXTERNAL -f perm</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapsearch -LLL -Y EXTERNAL -H ldapi:/// -b <span class="string">"olcDatabase=&#123;1&#125;mdb,cn=config"</span> \</span><br><span class="line">   -s sub <span class="string">"(objectClass=olcDatabaseConfig)"</span>  olcAccess</span><br><span class="line">dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">olcAccess: &#123;0&#125;to dn.subtree=<span class="string">"ou=lixin,dc=example,dc=org"</span>   by dn.exact=<span class="string">"cn=adm</span></span><br><span class="line"><span class="string"> in,ou=tech,ou=lixin,dc=example,dc=org"</span> <span class="built_in">read</span>   by anonymous auth   by * none</span><br><span class="line">olcAccess: &#123;1&#125;to attrs=userPassword,shadowLastChange by self write by dn=<span class="string">"cn=a</span></span><br><span class="line"><span class="string"> dmin,dc=example,dc=org"</span> write by anonymous auth by * none</span><br><span class="line">olcAccess: &#123;2&#125;to * by self <span class="built_in">read</span> by dn=<span class="string">"cn=admin,dc=example,dc=org"</span> write by * </span><br><span class="line"> none</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    -w 1 -b <span class="string">"ou=lixin,dc=example,dc=org"</span> dn</span><br><span class="line"><span class="comment"># lixin, example.org</span></span><br><span class="line">dn: ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># tech, lixin, example.org</span></span><br><span class="line">dn: ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># hr, tech, lixin, example.org</span></span><br><span class="line">dn: cn=hr,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># king1, tech, lixin, example.org</span></span><br><span class="line">dn: cn=king1,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line"><span class="comment"># king2, tech, lixin, example.org</span></span><br><span class="line">dn: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line"></span><br><span class="line">search: 2</span><br><span class="line">result: 0 Success</span><br><span class="line"><span class="comment"># 查分配的权限之外的dn就找不到了</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    -w 1 -b <span class="string">"dc=example,dc=org"</span> dn</span><br><span class="line">search: 2</span><br><span class="line">result: 32 No such object</span><br></pre></td></tr></table></figure>
+<h2 id="权限Index"><a href="#权限Index" class="headerlink" title="权限Index"></a>权限Index</h2><p>由于权限规则定义的顺序非常关键, 所以slapd使用一个<code>{X}</code>来锁定顺序, 在上面的例子中,可以看到<code>{0}, {1}, {2}</code> </p>
+<blockquote>
+<p>我们的配置中手动写死{0}, 是为了确保新插入的规则优先级最高, 因为此调规则的DN范围是小于后两条</p>
+</blockquote>
+<p>{X}的另外一个作用是在增删改查时用作定位, 例如删除第一条</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dn: olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">changetype: modify</span><br><span class="line">delete: olcAccess</span><br><span class="line">olcAccess: &#123;0&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="权限集合"><a href="#权限集合" class="headerlink" title="权限集合"></a>权限集合</h2><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Privileges</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>none</td>
+<td>0</td>
+<td>no access</td>
+</tr>
+<tr>
+<td>disclose</td>
+<td>d</td>
+<td>needed for information disclosure on error</td>
+</tr>
+<tr>
+<td>auth</td>
+<td>dx</td>
+<td>needed to authenticate (bind)</td>
+</tr>
+<tr>
+<td>compare</td>
+<td>cdx</td>
+<td>needed to compare</td>
+</tr>
+<tr>
+<td>search</td>
+<td>scdx</td>
+<td>needed to apply search filters</td>
+</tr>
+<tr>
+<td>read</td>
+<td>rscdx</td>
+<td>needed to read search results</td>
+</tr>
+<tr>
+<td>write</td>
+<td>wrscdx</td>
+<td>needed to modify/rename</td>
+</tr>
+<tr>
+<td>manage</td>
+<td>mwrscdx</td>
+<td>needed to manage</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>高级别权限自动包含低级别权限</li>
+<li>search和read的区别在于, search可以返回<code>查到了</code>, 但是没有<code>查到的具体结果</code></li>
+<li>认证权限, 表示允许登录, 至于能不能成功, 则使用帐号密码认证</li>
+</ul>
+<h2 id="权限规则"><a href="#权限规则" class="headerlink" title="权限规则"></a>权限规则</h2><p>规则语法<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">access to what： </span><br><span class="line">by who access control</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>control 就是之前的权限等级, 读/写/授权etc</li>
+<li>指令中包含1个to语句，可多个by语句</li>
+<li><code>what</code> 限定规则应用条目(entries)的集合, 全部用<code>*</code></li>
+<li><code>who</code> 授权给哪些实体(entities)</li>
+</ul>
+<h3 id="what"><a href="#what" class="headerlink" title="what"></a>what</h3><blockquote>
+<p>匹配所有使用<code>*</code><br>多种匹配规则可同时使用</p>
+</blockquote>
+<p><a href="https://www.openldap.org/doc/admin24/access-control.html#What%20to%20control%20access%20to" target="_blank" rel="noopener">scope</a>(基于某个根DN匹配)</p>
+<ul>
+<li>base matches only the entry with provided DN</li>
+<li>one matches the entries whose parent is the provided DN</li>
+<li>subtree matches all entries in the subtree whose root is the provided DN</li>
+<li>children matches all entries under the DN (but not the entry named by the DN)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0: o=suffix</span><br><span class="line">1: cn=Manager,o=suffix</span><br><span class="line">2: ou=people,o=suffix</span><br><span class="line">3: uid=kdz,ou=people,o=suffix</span><br><span class="line">4: cn=addresses,uid=kdz,ou=people,o=suffix</span><br><span class="line">5: uid=hyc,ou=people,o=suffix</span><br></pre></td></tr></table></figure>
+<ul>
+<li>dn.base=”ou=people,o=suffix” match 2; </li>
+<li>dn.one=”ou=people,o=suffix” match 3, and 5; </li>
+<li>dn.subtree=”ou=people,o=suffix” match 2, 3, 4, and 5; and </li>
+<li>dn.children=”ou=people,o=suffix” match 3, 4, and 5.</li>
+</ul>
+<p>regex(基于DN正则表达式匹配)</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">access to dn.regex=&quot;(.+,)?ou=People,(dc=[^,]+,dc=[^,]+)$&quot;</span><br></pre></td></tr></table></figure>
+<p>filter(基于过滤器)<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">filter=(objectClass=person)</span><br><span class="line"><span class="comment"># 配合使用</span></span><br><span class="line">dn.one=<span class="string">"ou=people,o=suffix"</span> filter=(objectClass=person)</span><br></pre></td></tr></table></figure></p>
+<p>attrs(只授权部分属性)</p>
+<p>缺省授权所有的attr, 这里可以过滤限定属性的范围</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">to attrs=member,entry</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>有两个<code>伪属性</code>(pseudo), <code>entry</code> <code>children</code> , 需要特别注意</p>
+</blockquote>
+<ul>
+<li>To read (and hence return) a target entry, the subject must have read access to the target’s <code>entry</code> attribute</li>
+<li>To perform a search, the subject must have search access to the search base’s <code>entry</code> attribute.</li>
+<li>To add or delete an entry, the subject must have write access to the entry’s <code>entry</code> attribute AND must have write access to the entry’s parent’s <code>children</code> attribute</li>
+<li>To rename an entry, the subject must have write access to entry’s <code>entry</code> attribute AND have write access to both the old parent’s and new parent’s <code>children</code> attributes.</li>
+</ul>
+<h3 id="who"><a href="#who" class="headerlink" title="who"></a>who</h3><p>用于限定权限赋予给哪些实体, 一些特殊的实体如下</p>
+<table>
+<thead>
+<tr>
+<th>Specifier</th>
+<th>Entities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>*</td>
+<td>All, including anonymous and authenticated users</td>
+</tr>
+<tr>
+<td>anonymous</td>
+<td>Anonymous (non-authenticated) users</td>
+</tr>
+<tr>
+<td>users</td>
+<td>Authenticated users</td>
+</tr>
+<tr>
+<td>self</td>
+<td>User associated with target entry</td>
+</tr>
+</tbody>
+</table>
+<p>剩下两种通用的匹配方式 <code>scope</code> <code>regex</code> 和what用于保持一致</p>
+<p>一个特殊的<code>dnattr</code>用于限定DN在某种条目的attr列表中</p>
+<blockquote>
+<p>这个attr只能存放其他条目的DN</p>
+</blockquote>
+<h3 id="权限评估-Evaluation"><a href="#权限评估-Evaluation" class="headerlink" title="权限评估(Evaluation)"></a>权限评估(Evaluation)</h3><p>当判断who是否具有what的access权限时</p>
+<ul>
+<li>根据权限结合的优先级, 从先到后</li>
+<li>找到第一条匹配what的记录(<code>dn/attr</code>)</li>
+<li>根据这条记录的by, 判断当前用户是否符合who<ul>
+<li>如果没有who, 那么会append一个缺省的<code>access to * by * none</code> (<strong>而不是继续评估下个access to</strong>)</li>
+<li>如果有, 则检查by的access 是否满足客户端申请的权限</li>
+</ul>
+</li>
+<li>如果没有what, 那么<code>then a default read is used</code></li>
+</ul>
+<blockquote>
+<p>所以, 一个<code>access to</code>必须把所有<code>by</code>的考虑清楚, 否则未考虑的<code>who</code>将无权限</p>
+</blockquote>
+<h2 id="密码"><a href="#密码" class="headerlink" title="密码"></a>密码</h2><p>新建用户时, 可以用明文写到<code>userPassword</code> 一次性创建, 通过ldapsearch可以看到密码被加密了, 不过只是简单的<code>base64编码</code>, 安全性较低</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">userPassword:: MQ==</span><br></pre></td></tr></table></figure>
+<p>我们可以用<code>slappasswd</code> 生成带盐的强加密密码</p>
+<p>再测试之前, 先调整权限, 让所有用户可以自己修改密码<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 内建规则, 所有用户可以自己修改密码</span></span><br><span class="line">olcAccess: &#123;0&#125;to attrs=userPassword,shadowLastChange </span><br><span class="line">  by self write </span><br><span class="line">  by dn=<span class="string">"cn=admin,dc=example,dc=org"</span> write </span><br><span class="line">  by anonymous auth </span><br><span class="line">  by * none</span><br><span class="line"><span class="comment"># 本地新增,移动到第二位</span></span><br><span class="line">olcAccess: &#123;1&#125;to dn.subtree=<span class="string">"ou=lixin,dc=example,dc=org"</span>   by dn.exact=<span class="string">"cn=adm</span></span><br><span class="line"><span class="string"> in,ou=tech,ou=lixin,dc=example,dc=org"</span> <span class="built_in">read</span>   by anonymous auth   by * none</span><br><span class="line"><span class="comment"># 超级管理员</span></span><br><span class="line">olcAccess: &#123;2&#125;to * by self <span class="built_in">read</span> by dn=<span class="string">"cn=admin,dc=example,dc=org"</span> write by * </span><br><span class="line"> none</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ slappasswd -h &#123;SSHA&#125;</span><br><span class="line">New password: </span><br><span class="line">Re-enter new password: </span><br><span class="line">&#123;SSHA&#125;zDDMqF0N2uSGQfsFlYIYJVehKpVlCqhi</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ cat &gt; <span class="built_in">pwd</span> &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">changetype: modify</span><br><span class="line">replace: userPassword</span><br><span class="line">userPassword: &#123;SSHA&#125;zDDMqF0N2uSGQfsFlYIYJVehKpVlCqhi</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment"># </span></span><br><span class="line">$ ldapmodify -x -H ldap://localhost  -w <span class="built_in">pwd</span> \</span><br><span class="line">   -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> -f <span class="built_in">pwd</span></span><br><span class="line">modifying entry <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">  -w <span class="built_in">pwd</span> -b <span class="string">"ou=lixin,dc=example,dc=org"</span> userPassword</span><br><span class="line">ldap_bind: Invalid credentials (49)</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">   -w 123456 -b <span class="string">"ou=lixin,dc=example,dc=org"</span> userPassword</span><br><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">userPassword:: e1NTSEF9ekRETXFGME4ydVNHUWZzRmxZSVlKVmVoS3BWbENxaGk=</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ <span class="built_in">echo</span> e1NTSEF9ekRETXFGME4ydVNHUWZzRmxZSVlKVmVoS3BWbENxaGk= | base64 -d</span><br><span class="line">&#123;SSHA&#125;zDDMqF0N2uSGQfsFlYIYJVehKpVlCqhi</span><br></pre></td></tr></table></figure>
+<h1 id="第三方授权"><a href="#第三方授权" class="headerlink" title="第三方授权"></a>第三方授权</h1><p>ldap一个很重要的用途就是做第三方的认证授权</p>
+<p>通常的做法</p>
+<ul>
+<li>客户输入一个<code>cn</code>或者<code>uid</code>, 按照限定的规则拼装成DN</li>
+<li>根据限定的搜索条件, 查询DN是否存在</li>
+<li>使用DN和客户输入的密码做bind</li>
+</ul>
+<h2 id="Group"><a href="#Group" class="headerlink" title="Group"></a>Group</h2><p>slapd内建了一个<code>groupOfNames</code>的objectClass, 其包含一个member的属性, 该属性只能包含其他DN<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"># ou, lixin, example.org</span><br><span class="line">dn: cn=ou,ou=lixin,dc=example,dc=org</span><br><span class="line">member: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">member: cn=king2,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">objectClass: groupOfNames</span><br><span class="line">objectClass: top</span><br><span class="line">cn: ou</span><br></pre></td></tr></table></figure></p>
+<p>那么可以考虑将角色和groupOfNames关联起来, 如果某个用户在这个groupOfNames的member中,那么就具有这个角色</p>
+<p>这里有个问题, 在user端, 没有渠道查到它属于哪些groups, 为此需要安装额外的插件</p>
+<h2 id="memberOf"><a href="#memberOf" class="headerlink" title="memberOf"></a>memberOf</h2><p>具体安装参考<a href="https://mayanbin.com/post/enable-memberof-in-openldap.html" target="_blank" rel="noopener">https://mayanbin.com/post/enable-memberof-in-openldap.html</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ cat &gt; a &lt;&lt; EOF</span><br><span class="line">&gt; dn: cn=module,cn=config</span><br><span class="line">cn: module</span><br><span class="line">objectClass: olcModuleList</span><br><span class="line">olcModulePath: /usr/lib64/openldap</span><br><span class="line"><span class="comment"># 空行</span></span><br><span class="line">dn: cn=module&#123;0&#125;,cn=config</span><br><span class="line">changetype: modify</span><br><span class="line">add: olcModuleLoad</span><br><span class="line">olcModuleLoad: memberof.la</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ ldapadd -Q -Y EXTERNAL -H ldapi:/// -f a</span><br><span class="line">adding new entry <span class="string">"cn=module,cn=config"</span></span><br><span class="line"></span><br><span class="line">modifying entry <span class="string">"cn=module&#123;0&#125;,cn=config"</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">$ cat &gt; a &lt;&lt; EOF</span><br><span class="line">&gt; dn: olcOverlay=memberof,olcDatabase=&#123;1&#125;mdb,cn=config</span><br><span class="line">objectClass: olcConfig</span><br><span class="line">objectClass: olcMemberOf</span><br><span class="line">objectClass: olcOverlayConfig</span><br><span class="line">objectClass: top</span><br><span class="line">olcOverlay: memberof</span><br><span class="line">olcMemberOfDangling: ignore</span><br><span class="line">olcMemberOfRefInt: TRUE</span><br><span class="line">olcMemberOfGroupOC: groupOfNames</span><br><span class="line">olcMemberOfMemberAD: member     </span><br><span class="line">olcMemberOfMemberOfAD: memberOf</span><br><span class="line">&gt; EOF</span><br><span class="line"><span class="comment"># </span></span><br><span class="line">$ ldapadd -Q -Y EXTERNAL -H ldapi:/// -f a</span><br><span class="line">adding new entry <span class="string">"olcOverlay=memberof,olcDatabase=&#123;1&#125;mdb,cn=config"</span></span><br></pre></td></tr></table></figure>
+<p>之后就有了<code>memberOf</code> 字段</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ ldapsearch -x -H ldap://localhost -D <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> \</span><br><span class="line">    -w 123456 -b <span class="string">"cn=admin,ou=tech,ou=lixin,dc=example,dc=org"</span> memberof</span><br><span class="line"><span class="comment"># admin, tech, lixin, example.org</span></span><br><span class="line">dn: cn=admin,ou=tech,ou=lixin,dc=example,dc=org</span><br><span class="line">memberOf: cn=ou,ou=lixin,dc=example,dc=org</span><br><span class="line">memberOf: cn=ou2,ou=lixin,dc=example,dc=or</span><br></pre></td></tr></table></figure>
+<p>注意:</p>
+<ul>
+<li>memberof不属于强制，ldapsearch查询需要单独指定</li>
+<li>老数据不会修复</li>
+</ul>
+<p>当我们做组判断时, </p>
+<ul>
+<li>根据三方系统配置的组名, 按照规则拼接完整DN, </li>
+<li>根据搜索规则, 判断DN是否存在</li>
+<li>检查用户的memberOf里面是否存在这个组DN</li>
+</ul>
+<h1 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ pip install flask_simpleldap</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果不使用flask, 也可以直接安装<strong><a href="https://www.python-ldap.org/en/python-ldap-3.2.0/" target="_blank" rel="noopener">python-ldap</a></strong></p>
+</blockquote>
+<p>Debian/Ubuntu:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo apt-get install libsasl2-dev python-dev libldap2-dev libssl-dev</span><br></pre></td></tr></table></figure>
+<p>RedHat/CentOS:</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo yum install python-devel openldap-devel</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> ldap</span><br><span class="line">ldapconn = ldap.initialize(<span class="string">'ldap://localhost:389'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">p</span><span class="params">(con, u, p)</span>:</span></span><br><span class="line">    res = con.simple_bind_s(u, p)</span><br><span class="line">    print(res)</span><br><span class="line"></span><br><span class="line">    res = con.whoami_s()</span><br><span class="line">    print(res)</span><br><span class="line"></span><br><span class="line">    res = con.search_s(</span><br><span class="line">        <span class="string">"cn=admin,dc=example,dc=org"</span>,</span><br><span class="line">        ldap.SCOPE_SUBTREE,</span><br><span class="line">        <span class="comment"># ldap.SCOPE_BASE,</span></span><br><span class="line">        <span class="comment"># ldap.SCOPE_ONELEVEL,</span></span><br><span class="line">        <span class="string">'(&amp;(cn=admin))'</span>,</span><br><span class="line">    )</span><br><span class="line">    print(res)</span><br><span class="line"></span><br><span class="line">p(ldapconn, <span class="string">'cn=admin,dc=example,dc=org'</span>, <span class="string">"pwd"</span>)</span><br></pre></td></tr></table></figure>
+<p>新建用户, 注意<code>uid</code>, <code>objectClass</code><br><figure class="highlight ldif"><table><tr><td class="code"><pre><span class="line"><span class="comment"># king, example.org</span></span><br><span class="line"><span class="attribute">dn</span>: uid=king,dc=example,dc=org</span><br><span class="line"><span class="attribute">uid</span>: king</span><br><span class="line"><span class="attribute">userPassword:</span>: e01ENX14TXBDT0tDNUk0SU56RkNhYjNXRW13PT0=</span><br><span class="line"><span class="attribute">objectClass</span>: account</span><br><span class="line"><span class="attribute">objectClass</span>: simpleSecurityObject</span><br><span class="line"><span class="attribute">objectClass</span>: top</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, g</span><br><span class="line"><span class="keyword">from</span> flask_simpleldap <span class="keyword">import</span> LDAP</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.secret_key = <span class="string">'dev key'</span></span><br><span class="line">app.debug = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line">app.config[<span class="string">'LDAP_OPENLDAP'</span>] = <span class="literal">True</span></span><br><span class="line">app.config[<span class="string">'LDAP_BASE_DN'</span>] = <span class="string">'dc=example,dc=org'</span></span><br><span class="line">app.config[<span class="string">'LDAP_USERNAME'</span>] = <span class="string">'cn=admin,dc=example,dc=org'</span></span><br><span class="line">app.config[<span class="string">'LDAP_PASSWORD'</span>] = <span class="string">'pwd'</span></span><br><span class="line">app.config[<span class="string">'LDAP_USER_OBJECT_FILTER'</span>] = <span class="string">'(&amp;(objectclass=simpleSecurityObject)(userid=%s))'</span></span><br><span class="line"></span><br><span class="line">ldap = LDAP(app)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/')</span></span><br><span class="line"><span class="meta">@ldap.basic_auth_required</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'Welcome, &#123;0&#125;!'</span>.format(g.ldap_username)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    app.run(port=<span class="number">5010</span>)</span><br></pre></td></tr></table></figure>
+<p>浏览器访问<a href="http://127.0.0.1:5010/" target="_blank" rel="noopener">http://127.0.0.1:5010/</a>, 即弹出对话框,输入<code>king</code>, <code>1</code> 登录成功</p>
+<ul>
+<li><a href="https://github.com/admiralobvious/flask-simpleldap/tree/master/examples" target="_blank" rel="noopener">https://github.com/admiralobvious/flask-simpleldap/tree/master/examples</a> 有若干sample可供参考</li>
+<li><a href="https://medium.com/@chris.pruitt15/ldap-user-authentication-in-flask-api-e662b0aeb7de" target="_blank" rel="noopener">https://medium.com/@chris.pruitt15/ldap-user-authentication-in-flask-api-e662b0aeb7de</a></li>
+</ul>
+<p>具体原理比较简单</p>
+<ul>
+<li>先使用环境变量配置的帐号密码(管理员)登录<ul>
+<li><code>LDAP_USERNAME</code>/<code>LDAP_PASSWORD</code></li>
+<li>登录见<code>simple_bind_s</code></li>
+</ul>
+</li>
+<li>根据输入的uid以及<code>LDAP_USER_OBJECT_FILTER</code>来搜索用户</li>
+<li>找到用户, 获取完整的<code>DN</code></li>
+<li>使用DN和输入的密码再登录, 确认密码有效性</li>
+</ul>
+<h1 id="Golang"><a href="#Golang" class="headerlink" title="Golang"></a>Golang</h1><p><a href="https://github.com/go-ldap/ldap/blob/master/examples_test.go" target="_blank" rel="noopener">https://github.com/go-ldap/ldap/blob/master/examples_test.go</a> 有较详细的sample</p>
+<blockquote>
+<p>如果<code>gopkg.in/asn1-ber.v1</code> 安装不上, 修改<code>go.mod</code>, 添加以下内容, 重新<code>tidy</code></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">replace (</span><br><span class="line">	gopkg.in/asn1-ber.v1 =&gt; github.com/go-asn1-ber/asn1-ber v0.0.0-20181015200546-f715ec2f112d</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"fmt"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/go-ldap/ldap"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	conn, err := ldap.Dial(<span class="string">"tcp"</span>, <span class="string">"127.0.0.1:389"</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err := conn.Bind(<span class="string">"cn=admin,dc=example,dc=org"</span>, <span class="string">"pwd"</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	searchRequest := ldap.NewSearchRequest(</span><br><span class="line">		<span class="string">"dc=example,dc=org"</span>, <span class="comment">// The base dn to search</span></span><br><span class="line">		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, <span class="number">0</span>, <span class="number">0</span>, <span class="literal">false</span>,</span><br><span class="line">		<span class="string">"(&amp;(uid=king))"</span>, <span class="comment">// The filter to apply</span></span><br><span class="line">		[]<span class="keyword">string</span>&#123;&#125;,      <span class="comment">// A list attributes to retrieve</span></span><br><span class="line">		<span class="literal">nil</span>,</span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	sr, err := conn.Search(searchRequest)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> _, entry := <span class="keyword">range</span> sr.Entries &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"%s: %v\n"</span>, entry.DN, entry.GetAttributeValue(<span class="string">"cn"</span>))</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> _, entry := <span class="keyword">range</span> sr.Referrals &#123;</span><br><span class="line">		fmt.Printf(<span class="string">"%s: %v\n"</span>, entry)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数据安全"><a href="#数据安全" class="headerlink" title="数据安全"></a>数据安全</h1><p>缺省的<a href="https://lmdb.readthedocs.io/en/release/" target="_blank" rel="noopener">mdb数据存储</a>在<code>/var/lib/ldap/</code>, 一个数据文件,一个锁文件, 我们可以外挂docker数据目录(<code>/var/lib/ldap</code>)和配置目录(<code>/etc/ldap/slapd.d</code>)实现数据的持久化保存</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> lmdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># 注意传入的路径是一个目录, 下面包含两文件</span></span><br><span class="line">env_db = lmdb.Environment(<span class="string">'/home/user/mdb'</span>)</span><br><span class="line"></span><br><span class="line">txn = env_db.begin()</span><br><span class="line"><span class="keyword">for</span> key, value <span class="keyword">in</span> txn.cursor():  <span class="comment"># 遍历</span></span><br><span class="line">    print(key)</span><br><span class="line"></span><br><span class="line">print(<span class="string">"-"</span>)</span><br><span class="line">data = txn.get(<span class="string">"cn"</span>.encode(<span class="string">"utf8"</span>))</span><br><span class="line">env_db.close()</span><br></pre></td></tr></table></figure>
+<h2 id="安装问题"><a href="#安装问题" class="headerlink" title="安装问题"></a>安装问题</h2><ul>
+<li><a href="https://stackoverflow.com/questions/4768446/i-cant-install-python-ldap" target="_blank" rel="noopener">I can’t install python-ldap</a></li>
+<li><a href="https://askubuntu.com/questions/815897/how-to-meet-depends-requirements-for-libldap-2-4-2" target="_blank" rel="noopener">How to meet depends requirements for libldap-2.4-2</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ sudo aptitude install libsasl2-dev</span><br><span class="line">The following NEW packages will be installed:</span><br><span class="line">  libsasl2-dev&#123;b&#125; </span><br><span class="line">0 packages upgraded, 1 newly installed, 0 to remove and 5 not upgraded.</span><br><span class="line">Need to get 254 kB of archives. After unpacking 831 kB will be used.</span><br><span class="line">The following packages have unmet dependencies:</span><br><span class="line"> libsasl2-dev : Depends: libsasl2-2 (= 2.1.26.dfsg1-14build1) but 2.1.26.dfsg1-14ubuntu0.1 is installed.</span><br><span class="line">The following actions will resolve these dependencies:</span><br><span class="line"></span><br><span class="line">     Keep the following packages at their current version:</span><br><span class="line">1)     libsasl2-dev [Not Installed]                       </span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Accept this solution? [Y/n/q/?] n</span><br><span class="line">The following actions will resolve these dependencies:</span><br><span class="line"></span><br><span class="line">     Downgrade the following packages:                                                   </span><br><span class="line">1)     libsasl2-2 [2.1.26.dfsg1-14ubuntu0.1 (now) -&gt; 2.1.26.dfsg1-14build1 (xenial)]     </span><br><span class="line">2)     libsasl2-2:i386 [2.1.26.dfsg1-14ubuntu0.1 (now) -&gt; 2.1.26.dfsg1-14build1 (xenial)]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Accept this solution? [Y/n/q/?] y</span><br><span class="line">The following packages will be DOWNGRADED:</span><br><span class="line">  libsasl2-2 libsasl2-2:i386 </span><br><span class="line">The following NEW packages will be installed:</span><br><span class="line">  libsasl2-dev </span><br><span class="line">0 packages upgraded, 1 newly installed, 2 downgraded, 0 to remove and 5 not upgraded.</span><br><span class="line">Need to get 354 kB of archives. After unpacking 831 kB will be used.</span><br><span class="line">Do you want to <span class="built_in">continue</span>? [Y/n/?] y</span><br><span class="line">Get: 1 http://mirrors.aliyun.com/ubuntu xenial/main i386 libsasl2-2 i386 2.1.26.dfsg1-14build1 [51.8 kB]</span><br><span class="line">Get: 2 http://mirrors.aliyun.com/ubuntu xenial/main amd64 libsasl2-2 amd64 2.1.26.dfsg1-14build1 [48.7 kB]</span><br><span class="line">Get: 3 http://mirrors.aliyun.com/ubuntu xenial/main amd64 libsasl2-dev amd64 2.1.26.dfsg1-14build1 [254 kB]</span><br><span class="line">Fetched 354 kB <span class="keyword">in</span> 0s (384 kB/s)       </span><br><span class="line">dpkg: warning: downgrading libsasl2-2:i386 from 2.1.26.dfsg1-14ubuntu0.1 to 2.1.26.dfsg1-14build1</span><br><span class="line">(Reading database ... 530388 files and directories currently installed.)</span><br><span class="line">Preparing to unpack .../libsasl2-2_2.1.26.dfsg1-14build1_i386.deb ...</span><br><span class="line">De-configuring libsasl2-2:amd64 (2.1.26.dfsg1-14ubuntu0.1) ...</span><br><span class="line">Unpacking libsasl2-2:i386 (2.1.26.dfsg1-14build1) over (2.1.26.dfsg1-14ubuntu0.1) ...</span><br><span class="line">dpkg: warning: downgrading libsasl2-2:amd64 from 2.1.26.dfsg1-14ubuntu0.1 to 2.1.26.dfsg1-14build1</span><br><span class="line">Preparing to unpack .../libsasl2-2_2.1.26.dfsg1-14build1_amd64.deb ...</span><br><span class="line">Unpacking libsasl2-2:amd64 (2.1.26.dfsg1-14build1) over (2.1.26.dfsg1-14ubuntu0.1) ...</span><br><span class="line">Selecting previously unselected package libsasl2-dev.</span><br><span class="line">Preparing to unpack .../libsasl2-dev_2.1.26.dfsg1-14build1_amd64.deb ...</span><br><span class="line">Unpacking libsasl2-dev (2.1.26.dfsg1-14build1) ...</span><br><span class="line">Processing triggers <span class="keyword">for</span> libc-bin (2.23-0ubuntu11) ...</span><br><span class="line">Processing triggers <span class="keyword">for</span> man-db (2.7.5-1) ...</span><br><span class="line">Setting up libsasl2-2:amd64 (2.1.26.dfsg1-14build1) ...</span><br><span class="line">Setting up libsasl2-2:i386 (2.1.26.dfsg1-14build1) ...</span><br><span class="line">Setting up libsasl2-dev (2.1.26.dfsg1-14build1) ...</span><br><span class="line">Processing triggers <span class="keyword">for</span> libc-bin (2.23-0ubuntu11) ...</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="https://blog.mylitboy.com/article/operation/docker-install-openldap/" target="_blank" rel="noopener">Docker安装OpenLDAP及PHPLdapAdmin客户端</a></li>
+<li><a href="https://wiki.gentoo.org/wiki/Centralized_authentication_using_OpenLDAP/zh" target="_blank" rel="noopener">使用OpenLDAP实现集中式认证</a></li>
+<li><a href="https://www.cnblogs.com/woshimrf/p/ldap.html" target="_blank" rel="noopener">openldap介绍和使用</a></li>
+</ol>
+<h2 id="应用支持"><a href="#应用支持" class="headerlink" title="应用支持"></a>应用支持</h2><ul>
+<li><a href="https://grafana.com/docs/grafana/v6.5/auth/ldap/" target="_blank" rel="noopener">https://grafana.com/docs/grafana/v6.5/auth/ldap/</a></li>
+<li><a href="https://github.com/nginxinc/nginx-ldap-auth" target="_blank" rel="noopener">https://github.com/nginxinc/nginx-ldap-auth</a></li>
+<li><a href="https://github.com/Banno/getsentry-ldap-auth" target="_blank" rel="noopener">https://github.com/Banno/getsentry-ldap-auth</a></li>
+<li><a href="https://docs.gitlab.com/ee/administration/auth/ldap.html" target="_blank" rel="noopener">https://docs.gitlab.com/ee/administration/auth/ldap.html</a></li>
+<li><a href="https://confluence.atlassian.com/adminjiraserver/connecting-to-an-ldap-directory-938847052.html" target="_blank" rel="noopener">https://confluence.atlassian.com/adminjiraserver/connecting-to-an-ldap-directory-938847052.html</a></li>
+<li><a href="https://wiki.jenkins.io/display/JENKINS/LDAP+Plugin" target="_blank" rel="noopener">https://wiki.jenkins.io/display/JENKINS/LDAP+Plugin</a></li>
+<li><a href="https://resources.collab.net/blogs/subversion-ldap-authentication-with-apache" target="_blank" rel="noopener">https://resources.collab.net/blogs/subversion-ldap-authentication-with-apache</a></li>
+<li><a href="https://github.com/flowable/flowable-engine/tree/master/modules/flowable-ldap" target="_blank" rel="noopener">https://github.com/flowable/flowable-engine/tree/master/modules/flowable-ldap</a></li>
+<li><a href="https://www.zentao.net/extension-viewExt-76.html" target="_blank" rel="noopener">https://www.zentao.net/extension-viewExt-76.html</a></li>
+</ul>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2020/02/02/openldap/" data-id="ckdbgbyxe004h43popx1teubf" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2020/02/02/openldap/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/openldap/">openldap</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2020/01/19/config/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">关于配置文件的一些想法</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2020/02/03/sentry_ldap/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">sentry配置ldap登录授权</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2020/02/02/openldap/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

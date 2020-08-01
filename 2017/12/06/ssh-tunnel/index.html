@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>SSH隧道 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ssh常用来做远程ssl登录，通过添加公钥到~/.ssh/authorized_keys还可以实现无密登录 其他小tip直接执行命令king@DESKTOP-89R692H:/home/king$ ssh king@192.168.1.2 pwdking@192.168.1.2&apos;s password:/home/king 拷贝文件king@DESKTOP-89R692H:/home/king$ s">
+<meta name="keywords" content="ssh">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SSH隧道">
+<meta property="og:url" content="http://blog.kimq.cn/2017/12/06/ssh-tunnel/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="ssh常用来做远程ssl登录，通过添加公钥到~/.ssh/authorized_keys还可以实现无密登录 其他小tip直接执行命令king@DESKTOP-89R692H:/home/king$ ssh king@192.168.1.2 pwdking@192.168.1.2&apos;s password:/home/king 拷贝文件king@DESKTOP-89R692H:/home/king$ s">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.731Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SSH隧道">
+<meta name="twitter:description" content="ssh常用来做远程ssl登录，通过添加公钥到~/.ssh/authorized_keys还可以实现无密登录 其他小tip直接执行命令king@DESKTOP-89R692H:/home/king$ ssh king@192.168.1.2 pwdking@192.168.1.2&apos;s password:/home/king 拷贝文件king@DESKTOP-89R692H:/home/king$ s">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-ssh-tunnel" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      SSH隧道
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/12/06/ssh-tunnel/" class="article-date"><time datetime="2017-12-06T11:07:25.000Z" itemprop="datePublished">2017-12-06</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/运营运维/">运营运维</a> / <a class="article-category-link" href="/categories/运营运维/代理/">代理</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>ssh常用来做远程ssl登录，通过添加公钥到<code>~/.ssh/authorized_keys</code>还可以实现<code>无密登录</code></p>
+<h1 id="其他小tip"><a href="#其他小tip" class="headerlink" title="其他小tip"></a>其他小tip</h1><h2 id="直接执行命令"><a href="#直接执行命令" class="headerlink" title="直接执行命令"></a>直接执行命令</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@DESKTOP-89R692H:/home/king$ ssh king@192.168.1.2 <span class="built_in">pwd</span></span><br><span class="line">king@192.168.1.2<span class="string">'s password:</span></span><br><span class="line"><span class="string">/home/king</span></span><br></pre></td></tr></table></figure>
+<h2 id="拷贝文件"><a href="#拷贝文件" class="headerlink" title="拷贝文件"></a>拷贝文件</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@DESKTOP-89R692H:/home/king$ scp test.sh king@192.168.1.2:/tmp</span><br><span class="line">king@192.168.1.2<span class="string">'s password:</span></span><br><span class="line"><span class="string">test.sh                100%  124     0.1KB/s   00:00</span></span><br><span class="line"><span class="string">king@DESKTOP-89R692H:/home/king$ scp king@192.168.1.2:/tmp/test.sh ./test.sh</span></span><br><span class="line"><span class="string">king@192.168.1.2'</span>s password:</span><br><span class="line">test.sh                100%  124     0.1KB/s   00:00</span><br></pre></td></tr></table></figure>
+<h2 id="密码参数"><a href="#密码参数" class="headerlink" title="密码参数"></a>密码参数</h2><p>在不适用公钥无密登录的时候，密码必需手动输入，无法通过命令行直接带进去</p>
+<p>对此，可以使用开源软件<a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank" rel="noopener">putty</a>来支持，后者有发布Windows版本，不过可以直接在Linux下编译</p>
+<p>具体用法参考<a href="http://qjw.qiujinwu.com/blog/2013/01/28/putty" target="_blank" rel="noopener">http://qjw.qiujinwu.com/blog/2013/01/28/putty</a></p>
+<h1 id="本地端口转发"><a href="#本地端口转发" class="headerlink" title="本地端口转发"></a>本地端口转发</h1><p>假定host1是本地主机，host2是远程主机。由于种种原因，这两台主机之间无法连通。但是，另外还有一台host3，可以同时连通前面两台主机。因此，很自然的想法就是，通过host3，将host1连上host2。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">本地端口:目标主机:目标主机端口 -p 跳板机端口 跳板机username@跳板机host</span><br></pre></td></tr></table></figure>
+<p>端口转发的一个类似场景如nginx</p>
+<blockquote>
+<p>只留一个对外的主机，并且开放80端口，通过nginx根据ServerName/Path来分发到upsteam(本机/其他主机的端口)，</p>
+</blockquote>
+<h2 id="docker"><a href="#docker" class="headerlink" title="docker"></a>docker</h2><p>默认情况docker的端口对于host是不可访问的，当然<code>-p</code>可以将端口share出来</p>
+<p>这里模拟一种场景，测试服务器只开放了22/80端口，想通过ssh隧道访问其他端口</p>
+<p>准备文件<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/docker$ ls</span><br><span class="line">authorized_keys  dockerfile  sources.list</span><br></pre></td></tr></table></figure></p>
+<p><code>authorized_keys</code>存host的公钥，文件来自<code>~/.ssh/id_rsa.pub</code>,<code>sources.list</code>设置（比如阿里云）的源，这里我们用它来实现无密登录docker的ssh</p>
+<p>dockerfile<br><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line"><span class="keyword">FROM</span> ubuntu:<span class="number">16.04</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">MAINTAINER</span> qiujinwu@gmail.com</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir -p /app</span></span><br><span class="line"><span class="keyword">WORKDIR</span><span class="bash"> /app</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> sources.list /etc/apt</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> apt-get update \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get install openssh-server netcat iputils-ping telnet net-tools -y \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get clean -y \</span></span><br><span class="line"><span class="bash">	&amp;&amp; apt-get autoclean</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir /var/run/sshd</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> <span class="built_in">echo</span> <span class="string">'root:1'</span> |chpasswd</span></span><br><span class="line"><span class="keyword">RUN</span><span class="bash"> mkdir /root/.ssh/</span></span><br><span class="line"><span class="keyword">COPY</span><span class="bash"> authorized_keys /root/.ssh/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">EXPOSE</span> <span class="number">22</span></span><br><span class="line"><span class="keyword">CMD</span><span class="bash"> [<span class="string">"/usr/sbin/sshd"</span>, <span class="string">"-D"</span>]</span></span><br></pre></td></tr></table></figure></p>
+<p>build docker镜像<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker build -t sshd:0.1 ~/tmp/docker/</span><br></pre></td></tr></table></figure></p>
+<p>运行<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 进入交互shell，再手动启动sshd</span></span><br><span class="line">docker run -it --rm -p 10022:22 --name sshd sshd:0.1 /bin/bash</span><br><span class="line"><span class="comment"># 自动启动sshd</span></span><br><span class="line">docker run -it --rm -p 10022:22 --name sshd sshd:0.1</span><br><span class="line"><span class="comment"># 关闭(另起shell）</span></span><br><span class="line">docker stop sshd</span><br></pre></td></tr></table></figure></p>
+<h3 id="echo-服务器"><a href="#echo-服务器" class="headerlink" title="echo 服务器"></a>echo 服务器</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">rm -f /tmp/f; mkfifo /tmp/f</span><br><span class="line">cat /tmp/f | nc -l -p 40001 127.0.0.1 &gt; /tmp/f</span><br></pre></td></tr></table></figure>
+<p>到此，我们可以启动一个进入shell的docker镜像，然后<code>/etc/init.d/sshd start</code>启动sshd，最后在shell中启动echo服务器</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~$ docker run -it --rm -p 10022:22 --name sshd sshd:0.1 /bin/bash</span><br><span class="line">root@2f661b626247:/app<span class="comment"># /etc/init.d/ssh start</span></span><br><span class="line"> * Starting OpenBSD Secure Shell server sshd [ OK ]</span><br><span class="line">root@2f661b626247:/app<span class="comment"># rm -f /tmp/f; mkfifo /tmp/f</span></span><br><span class="line">root@2f661b626247:/app<span class="comment"># cat /tmp/f | nc -l -p 40001 127.0.0.1 &gt; /tmp/f</span></span><br><span class="line">root@2f661b626247:/app<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<h2 id="端口转发"><a href="#端口转发" class="headerlink" title="端口转发"></a>端口转发</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -N参数，表示只连接远程主机，不打开远程shell</span></span><br><span class="line"><span class="comment"># -T参数，表示不为这个连接分配TTY</span></span><br><span class="line">ssh -NT -L localhost:40001:localhost:40001 -p 10022 root@127.0.0.1</span><br></pre></td></tr></table></figure>
+<p>这是，本机的sshd会监听40001端口，并且转交到本机的10022端口（docker的22端口），然后docker会交给自己的40001端口</p>
+<p>接下来在本机运行客户端<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~$ nc 127.0.0.1 40001</span><br><span class="line">aa</span><br><span class="line">aa</span><br><span class="line">bbb</span><br><span class="line">bbb</span><br></pre></td></tr></table></figure></p>
+<h2 id="跨主机"><a href="#跨主机" class="headerlink" title="跨主机"></a>跨主机</h2><p>前面的例子第三方的跳板机收到请求后，转发到自己（localhost）的其他端口，也可以转发到其他主机</p>
+<p>运行目标机docker<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/.ssh$ docker run -it --rm --name sshd2 sshd:0.1 /bin/bash</span><br><span class="line">root@bea2bbfe3625:/app<span class="comment"># rm -f /tmp/f; mkfifo /tmp/f</span></span><br><span class="line"><span class="comment"># 这里不指定0.0.0.0</span></span><br><span class="line">root@bea2bbfe3625:/app<span class="comment"># cat /tmp/f | nc -l -p 40001 &gt; /tmp/f</span></span><br></pre></td></tr></table></figure></p>
+<p>运行跳板机docker, 暴露端口22到10022，并且链接到目标机（使用别名up）<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -it --rm -p 10022:22 --link=sshd2:up --name=sshd sshd:0.1</span><br></pre></td></tr></table></figure></p>
+<p>参考<a href="http://qjw.qiujinwu.com/blog/2013/12/22/nc_server" target="_blank" rel="noopener">http://qjw.qiujinwu.com/blog/2013/12/22/nc_server</a></p>
+<p>运行宿主机 ,将本机40001的数据转发到跳板机docker，然后再转发到名为up的docker的40001端口<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -NT -L localhost:40001:up:40001 -p 10022 root@127.0.0.1</span><br></pre></td></tr></table></figure></p>
+<h1 id="远程端口转发"><a href="#远程端口转发" class="headerlink" title="远程端口转发"></a>远程端口转发</h1><p>host1与host2之间无法连通，必须借助host3转发。但是，特殊情况出现了，host3是一台内网机器，它可以连接外网的host1，但是反过来就不行，外网的host1连不上内网的host3。这时，”本地端口转发”就不能用了，怎么办？<br>解决办法是，既然host3可以连host1，那么就从host3上建立与host1的SSH连接，然后在host1上使用这条连接就可以了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">外网端口:目标主机:目标主机端口 -p 外网ssh端口 外网机username@外网host</span><br></pre></td></tr></table></figure>
+<p>继续使用docker模拟</p>
+<p>默认的bridge模式, host机会有一个x.x.x.1的ip和docker机器联通</p>
+<p>运行目标机器<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/.ssh$ docker run -it --rm --name sshd2 sshd:0.1 /bin/bash</span><br><span class="line">root@556f737ec232:/app<span class="comment"># rm -f /tmp/f; mkfifo /tmp/f</span></span><br><span class="line">root@556f737ec232:/app<span class="comment"># cat /tmp/f | nc -l -p 40001 &gt; /tmp/f</span></span><br></pre></td></tr></table></figure></p>
+<p>运行跳板机，通知host机监听40001端口，并且转发给自己，然后自己再转发给up机器的40001端口<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~/tmp/docker$ docker run -it --rm --link=sshd2:up --name=sshd sshd:0.1 /bin/bash</span><br><span class="line">root@fd1b60b1b84e:/app<span class="comment"># ssh -NT -R 40001:up:40001 -p 22 king@172.17.0.1</span></span><br><span class="line">king@172.17.0.1<span class="string">'s password:</span></span><br></pre></td></tr></table></figure></p>
+<p>在host机执行测试程序即可<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:~$ nc 127.0.0.1 40001</span><br><span class="line">aa</span><br><span class="line">aa</span><br><span class="line">bbb</span><br><span class="line">bbb</span><br></pre></td></tr></table></figure></p>
+<h1 id="SSL隧道"><a href="#SSL隧道" class="headerlink" title="SSL隧道"></a>SSL隧道</h1><p>在本地绑定一个端口，发送往这个端口的数据都通过ssh到远程机器出去，本质上就是socks代理<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ssh -NT -D 1080 king@192.168.1.219</span><br></pre></td></tr></table></figure></p>
+<p>浏览器可以安装个<a href="https://github.com/FelisCatus/SwitchyOmega/releases" target="_blank" rel="noopener">switchyomega</a>工具，然后设置socks5代理指向 localhost:1080，就可以让浏览器所有数据都从192.168.1.219出去，从而做些羞羞的事情</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a href="http://www.ruanyifeng.com/blog/2011/12/ssh_port_forwarding.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2011/12/ssh_port_forwarding.html</a></li>
+<li><a href="http://qjw.qiujinwu.com/blog/2013/12/22/nc_server" target="_blank" rel="noopener">http://qjw.qiujinwu.com/blog/2013/12/22/nc_server</a></li>
+<li><a href="http://www.cnblogs.com/wellbye/p/3163966.html" target="_blank" rel="noopener">http://www.cnblogs.com/wellbye/p/3163966.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/12/06/ssh-tunnel/" data-id="ckdbgbyxy005g43pos4jf2ykz" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/12/06/ssh-tunnel/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ssh/">ssh</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/12/05/influxdb/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">telegraf/influxdb/grafana初探</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2018/05/23/build-time-secrets-with-docker-containers/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Docker编译期间传递隐私数据</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/12/06/ssh-tunnel/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

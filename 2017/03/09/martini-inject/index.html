@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>Martini路由框架 | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="go-martini/martini是一个非常简单，流行的Golang web框架，并且非常的小巧简单灵活易扩展，也有非常多的插件，见https://github.com/martini-contrib package mainimport &quot;github.com/go-martini/martini&quot;func main() &amp;#123;    m := martini.Classic()">
+<meta name="keywords" content="golang,martini">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Martini路由框架">
+<meta property="og:url" content="http://blog.kimq.cn/2017/03/09/martini-inject/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="go-martini/martini是一个非常简单，流行的Golang web框架，并且非常的小巧简单灵活易扩展，也有非常多的插件，见https://github.com/martini-contrib package mainimport &quot;github.com/go-martini/martini&quot;func main() &amp;#123;    m := martini.Classic()">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Martini路由框架">
+<meta name="twitter:description" content="go-martini/martini是一个非常简单，流行的Golang web框架，并且非常的小巧简单灵活易扩展，也有非常多的插件，见https://github.com/martini-contrib package mainimport &quot;github.com/go-martini/martini&quot;func main() &amp;#123;    m := martini.Classic()">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-martini-inject" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Martini路由框架
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/03/09/martini-inject/" class="article-date"><time datetime="2017-03-09T03:27:49.000Z" itemprop="datePublished">2017-03-09</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/后端/">后端</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong><a href="https://github.com/go-martini/martini" target="_blank" rel="noopener">go-martini/martini</a></strong>是一个非常简单，流行的Golang web框架，并且非常的小巧简单灵活易扩展，也有非常多的插件，见<strong><a href="https://github.com/martini-contrib" target="_blank" rel="noopener">https://github.com/martini-contrib</a></strong></p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">"github.com/go-martini/martini"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    m := martini.Classic()</span><br><span class="line">    m.Get(<span class="string">"/"</span>, <span class="function"><span class="keyword">func</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">    	<span class="keyword">return</span> <span class="string">"Hello world!"</span></span><br><span class="line">    &#125;)</span><br><span class="line">    m.Run()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="Inject"><a href="#Inject" class="headerlink" title="Inject"></a>Inject</h1><p><strong><a href="https://github.com/go-martini/martini" target="_blank" rel="noopener">go-martini/martini</a></strong>的灵活性多亏了<strong><a href="https://github.com/codegangsta/inject" target="_blank" rel="noopener">codegangsta/inject</a></strong>，后者是一个Golang的注入小框架，代码非常简单，利用Golang自带的reflect库完成函数参数的自动适配。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"github.com/codegangsta/inject"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义一个空interface&#123;&#125;, 必须是interface&#123;&#125;类型MapTo才能接受</span></span><br><span class="line"><span class="keyword">type</span> SpecialString <span class="keyword">interface</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原定义Foo(s1,s2 string), 改成</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Foo</span><span class="params">(s1 <span class="keyword">string</span>, s2 SpecialString)</span></span> &#123;</span><br><span class="line">    fmt.Println(s1, s2.(<span class="keyword">string</span>)) <span class="comment">// type assertion</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ij := inject.New()</span><br><span class="line">    <span class="comment">// 注入string类型的"a"</span></span><br><span class="line">    ij.Map(<span class="string">"a"</span>)</span><br><span class="line">    <span class="comment">// 注入SpecialString类型的"b"</span></span><br><span class="line">    ij.MapTo(<span class="string">"b"</span>, (*SpecialString)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 调用Foo函数时，会自动查找已经注入的值，并自动传递。</span></span><br><span class="line">    <span class="comment">// inject包的设计确保不会有两个相同类型的值（限制）</span></span><br><span class="line">    <span class="comment">// 若找不到会抛出运行时错误</span></span><br><span class="line">    ij.Invoke(Foo)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Map和MapTo的区别在于后者可以指定注入value的类型</p>
+<p>除了自动注入函数的参数外，还支持自动注入Struct的成员变量，参见Apply函数（利用了Struct成员的tag特性）</p>
+<h2 id="SpecialString-nil"><a href="#SpecialString-nil" class="headerlink" title="(*SpecialString)(nil))"></a>(*SpecialString)(nil))</h2><p>这种写法对于初学者很费解，原理得从interface{}的内部表述说起</p>
+<p>为了支持reflect，interface{}内部存储了实际对象的Kind（类型）和Value（值），例如var v interface{} = “aaaa”，那么v的类型就是string，值就是”aaaa”，回到inject，由于Mapto第二个参数只需要一个类型，所以我们只需要初始化一个正确的Kind，Value为nil的interface{}即可。</p>
+<p>由于Go是有区分Struct指针和对象，初始化一个对象需要分配额外的内存，而指针就很简单（学C的很好理解），所以这里起始就是传入的一个指针，并且value是nil，用最小的开销实现了一个类型的表述和传导。</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> Str <span class="keyword">struct</span>&#123;</span><br><span class="line">	b <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> b *Str = <span class="literal">nil</span></span><br><span class="line">	<span class="keyword">var</span> a = (*Str)(<span class="literal">nil</span>)</span><br><span class="line">    <span class="comment">// 变量a,b都是一个类型为Str的空指针</span></span><br><span class="line">	fmt.Print(a)</span><br><span class="line">	fmt.Print(b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而inject在内部会自动获取指针指向变量的类型，见<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// InterfaceOf dereferences a pointer to an Interface type.</span></span><br><span class="line"><span class="comment">// It panics if value is not an pointer to an interface.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">InterfaceOf</span><span class="params">(value <span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">reflect</span>.<span class="title">Type</span></span> &#123;</span><br><span class="line">	t := reflect.TypeOf(value)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 获取实际的类型，用for循环是为了确保多级指针（指向指针的指针）</span></span><br><span class="line">	<span class="keyword">for</span> t.Kind() == reflect.Ptr &#123;</span><br><span class="line">		t = t.Elem()</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> t.Kind() != reflect.Interface &#123;</span><br><span class="line">		<span class="built_in">panic</span>(<span class="string">"Called ... interface. (*MyInterface)(nil)"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> t</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h1 id="Martini"><a href="#Martini" class="headerlink" title="Martini"></a>Martini</h1><p>主要的逻辑参考【github.com/go-martini/martini/martini.go】和【github.com/go-martini/martini/router.go】</p>
+<h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>ClassicMartini用两个匿名对象实现继承</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> ClassicMartini <span class="keyword">struct</span> &#123;</span><br><span class="line">	*Martini</span><br><span class="line">	Router</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Martini <span class="keyword">struct</span> &#123;</span><br><span class="line">	inject.Injector</span><br><span class="line">	handlers []Handler</span><br><span class="line">	action   Handler</span><br><span class="line">	logger   *log.Logger</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Classic</span><span class="params">()</span> *<span class="title">ClassicMartini</span></span> &#123;</span><br><span class="line">	r := NewRouter()</span><br><span class="line">	m := New()</span><br><span class="line">	m.Use(Logger())</span><br><span class="line">	m.Use(Recovery())</span><br><span class="line">	m.Use(Static(<span class="string">"public"</span>))</span><br><span class="line">    <span class="comment">// Mapto注入router处理器</span></span><br><span class="line">	m.MapTo(r, (*Routes)(<span class="literal">nil</span>))</span><br><span class="line">	m.Action(r.Handle)</span><br><span class="line">	<span class="keyword">return</span> &amp;ClassicMartini&#123;m, r&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>m.Use用于注入中间件，存储在Martini.handlers，m.Action存储实际的路由处理入口，存储在Martini.action，他们的调用顺序见<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *context)</span> <span class="title">handler</span><span class="params">()</span> <span class="title">Handler</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> c.index &lt; <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">		<span class="keyword">return</span> c.handlers[c.index]</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="comment">// 最后调用</span></span><br><span class="line">	<span class="keyword">if</span> c.index == <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">		<span class="keyword">return</span> c.action</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">panic</span>(<span class="string">"invalid index for context handler"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="运行入口"><a href="#运行入口" class="headerlink" title="运行入口"></a>运行入口</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Run the http server on a given host and port.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">RunOnAddr</span><span class="params">(addr <span class="keyword">string</span>)</span></span> &#123;</span><br><span class="line">	logger := m.Injector.Get(reflect.TypeOf(m.logger)).Interface().(*log.Logger)</span><br><span class="line">	logger.Printf(<span class="string">"listening on %s (%s)\n"</span>, addr, Env)</span><br><span class="line">	logger.Fatalln(http.ListenAndServe(addr, m))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到传入的m变量，它必须实现接口http.Handler接口，回调如下<br><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">ServeHTTP</span><span class="params">(res http.ResponseWriter, req *http.Request)</span></span> &#123;</span><br><span class="line">	m.createContext(res, req).run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> context <span class="keyword">struct</span> &#123;</span><br><span class="line">	inject.Injector</span><br><span class="line">	handlers []Handler</span><br><span class="line">	action   Handler</span><br><span class="line">	rw       ResponseWriter</span><br><span class="line">	index    <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(m *Martini)</span> <span class="title">createContext</span><span class="params">(res http.ResponseWriter, req *http.Request)</span> *<span class="title">context</span></span> &#123;</span><br><span class="line">	c := &amp;context&#123;inject.New(), m.handlers, m.action, NewResponseWriter(res), <span class="number">0</span>&#125;</span><br><span class="line">    <span class="comment">// 从m继承注入的变量，比如logger之类的全局变量</span></span><br><span class="line">	c.SetParent(m)</span><br><span class="line">    <span class="comment">// 注入自己</span></span><br><span class="line">	c.MapTo(c, (*Context)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注入responce</span></span><br><span class="line">	c.MapTo(c.rw, (*http.ResponseWriter)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注入request</span></span><br><span class="line">	c.Map(req)</span><br><span class="line">	<span class="keyword">return</span> c</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 最后运行Run函数，先依次运行middleware，然后运行路由总入口，参见handler()函数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *context)</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> c.index &lt;= <span class="built_in">len</span>(c.handlers) &#123;</span><br><span class="line">        <span class="comment">// 最终会触发router.Handle</span></span><br><span class="line">		_, err := c.Invoke(c.handler())</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		c.index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> c.Written() &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>在router.Handle找到最匹配的route，调用route.Handle函数</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> router <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 所有的路由对象</span></span><br><span class="line">	routes     []*route</span><br><span class="line">	notFounds  []Handler</span><br><span class="line">	groups     []group</span><br><span class="line">	routesLock sync.RWMutex</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">type</span> route <span class="keyword">struct</span> &#123;</span><br><span class="line">	method   <span class="keyword">string</span></span><br><span class="line">	regex    *regexp.Regexp</span><br><span class="line">    <span class="comment">// 所有的handle</span></span><br><span class="line">	handlers []Handler</span><br><span class="line">	pattern  <span class="keyword">string</span></span><br><span class="line">	name     <span class="keyword">string</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *route)</span> <span class="title">Handle</span><span class="params">(c Context, res http.ResponseWriter)</span></span> &#123;</span><br><span class="line">	<span class="comment">// 构建新的对象，</span></span><br><span class="line">	context := &amp;routeContext&#123;c, <span class="number">0</span>, r.handlers&#125;</span><br><span class="line">    <span class="comment">// 注入新的变量</span></span><br><span class="line">	c.MapTo(context, (*Context)(<span class="literal">nil</span>))</span><br><span class="line">	c.MapTo(r, (*Route)(<span class="literal">nil</span>))</span><br><span class="line">    <span class="comment">// 注意这里调用的是routeContext的run</span></span><br><span class="line">	context.run()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> routeContext <span class="keyword">struct</span> &#123;</span><br><span class="line">	<span class="comment">// 继承了最初的Context，后者又继承了Martini注入的变量</span></span><br><span class="line">	Context</span><br><span class="line">	index    <span class="keyword">int</span></span><br><span class="line">	handlers []Handler</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 依次触发所有的handle</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *routeContext)</span> <span class="title">run</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> r.index &lt; <span class="built_in">len</span>(r.handlers) &#123;</span><br><span class="line">		handler := r.handlers[r.index]</span><br><span class="line">        <span class="comment">// 依次触发回调</span></span><br><span class="line">		vals, err := r.Invoke(handler)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			<span class="built_in">panic</span>(err)</span><br><span class="line">		&#125;</span><br><span class="line">		r.index += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// if the handler returned something, write it to the http response</span></span><br><span class="line">		<span class="keyword">if</span> <span class="built_in">len</span>(vals) &gt; <span class="number">0</span> &#123;</span><br><span class="line">			ev := r.Get(reflect.TypeOf(ReturnHandler(<span class="literal">nil</span>)))</span><br><span class="line">			handleReturn := ev.Interface().(ReturnHandler)</span><br><span class="line">			handleReturn(r, vals)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> r.Written() &#123;</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a href="https://my.oschina.net/achun/blog/192912" target="_blank" rel="noopener">https://my.oschina.net/achun/blog/192912</a></li>
+<li><a href="http://betazk.github.io/2014/11/%E5%AF%B9martini%E8%BF%99%E4%B8%AA%E6%A1%86%E6%9E%B6%E4%B8%ADinject%E9%83%A8%E5%88%86%E7%9A%84%E7%90%86%E8%A7%A3/" target="_blank" rel="noopener">http://betazk.github.io/2014/11/%E5%AF%B9martini%E8%BF%99%E4%B8%AA%E6%A1%86%E6%9E%B6%E4%B8%ADinject%E9%83%A8%E5%88%86%E7%9A%84%E7%90%86%E8%A7%A3/</a></li>
+<li><a href="http://memoryleak.io/go/martini/2015/10/24/martini-inject.html" target="_blank" rel="noopener">http://memoryleak.io/go/martini/2015/10/24/martini-inject.html</a></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/03/09/martini-inject/" data-id="ckdbgbywy003j43pow7m444qs" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/03/09/martini-inject/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/golang/">golang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/martini/">martini</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/03/08/drone5/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Drone学习笔记5</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/03/09/noexport-json-xml-gob/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Struct未导出变量序列化时的坑</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/03/09/martini-inject/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

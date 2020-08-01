@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="utf-8">
+  <meta name="google-site-verification" content="6jvcY_UrCpp1JLjXITf45ljboLU0NDGF16ZqomMt-ls">
+  
+  <title>git rebase 合并commit | 个人笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对git基本上是记住一些常用的功能，其他用到了去查手册，这里备注一个我不常用但挺实用的功能 一句话，将若干commit合并成一个。 本地多个commit合并# 本地新建10个commitfor ((i=1;i&amp;lt;10;i++));do echo $i &amp;gt; a;git add .;git commit -m commit$i;done; log如下* a69d8fb - (HEAD -&amp;g">
+<meta name="keywords" content="git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git rebase 合并commit">
+<meta property="og:url" content="http://blog.kimq.cn/2017/04/17/git-rebase/index.html">
+<meta property="og:site_name" content="个人笔记">
+<meta property="og:description" content="对git基本上是记住一些常用的功能，其他用到了去查手册，这里备注一个我不常用但挺实用的功能 一句话，将若干commit合并成一个。 本地多个commit合并# 本地新建10个commitfor ((i=1;i&amp;lt;10;i++));do echo $i &amp;gt; a;git add .;git commit -m commit$i;done; log如下* a69d8fb - (HEAD -&amp;g">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-08-01T09:26:24.727Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="git rebase 合并commit">
+<meta name="twitter:description" content="对git基本上是记住一些常用的功能，其他用到了去查手册，这里备注一个我不常用但挺实用的功能 一句话，将若干commit合并成一个。 本地多个commit合并# 本地新建10个commitfor ((i=1;i&amp;lt;10;i++));do echo $i &amp;gt; a;git add .;git commit -m commit$i;done; log如下* a69d8fb - (HEAD -&amp;g">
+  
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+</html>
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="/atom.xml">Rss</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">个人笔记</h1>
+  
+    <p class="lead blog-description">专注互联网</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-9 blog-main">
+          <article id="post-git-rebase" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      git rebase 合并commit
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2017/04/17/git-rebase/" class="article-date"><time datetime="2017-04-17T08:13:05.000Z" itemprop="datePublished">2017-04-17</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/开发环境/">开发环境</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>对git基本上是记住一些常用的功能，其他用到了去查手册，这里备注一个我不常用但挺实用的功能</p>
+<p>一句话，将若干commit合并成一个。</p>
+<h1 id="本地多个commit合并"><a href="#本地多个commit合并" class="headerlink" title="本地多个commit合并"></a>本地多个commit合并</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 本地新建10个commit</span></span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; a;git add .;git commit -m commit<span class="variable">$i</span>;<span class="keyword">done</span>;</span><br></pre></td></tr></table></figure>
+<p>log如下<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* a69d8fb - (HEAD -&gt; master) commit9 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 6b24d3a - commit8 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 98aeb92 - commit7 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 8b2120b - commit6 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 8660ff5 - commit5 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 38b1be3 - commit4 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 07be2fa - commit3 (2 分钟前) &lt;King&gt;</span><br><span class="line">* 139aabd - commit2 (2 分钟前) &lt;King&gt;</span><br><span class="line">* f570edb - commit1 (2 分钟前) &lt;King&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/git/work$ git rebase -i f570edb</span><br><span class="line"><span class="comment"># 将后面的提交的pick都改成s，保存确认commit的描述</span></span><br><span class="line">pick 139aabd commit2</span><br><span class="line">s 07be2fa commit3</span><br><span class="line">s 38b1be3 commit4</span><br><span class="line">s 8660ff5 commit5</span><br><span class="line">s 8b2120b commit6</span><br><span class="line">s 98aeb92 commit7</span><br><span class="line">s 6b24d3a commit8</span><br><span class="line">s a69d8fb commit9</span><br><span class="line">king@king:/tmp/git/work$ git <span class="built_in">log</span></span><br><span class="line">commit c040772af1dd96cd3311112193e39cbfd7a93e28</span><br><span class="line">Author: King &lt;qiujinwu456@gmail.com&gt;</span><br><span class="line">Date:   Mon Apr 17 16:17:11 2017 +0800</span><br><span class="line">    commit2</span><br><span class="line">    commit3</span><br><span class="line">    commit4</span><br><span class="line">    commit5</span><br><span class="line">    commit6</span><br><span class="line">    commit7</span><br><span class="line">    commit8</span><br><span class="line">    commit9</span><br><span class="line">commit f570edbf5bbe3ba661c36916c36ac12227e1cdd1</span><br><span class="line">Author: King &lt;qiujinwu456@gmail.com&gt;</span><br><span class="line">Date:   Mon Apr 17 16:17:11 2017 +0800</span><br><span class="line">    commit1</span><br></pre></td></tr></table></figure>
+<p>可以看到最新的9个已经merge成一个，但是第一个和第二个还是分开了（<strong>搞不懂为啥要这么设计，将第一个pick改成s，或者其他操作都不行</strong>）</p>
+<p>如果一定要合并，可以参考<a href="http://stackoverflow.com/questions/2563632/how-can-i-merge-two-commits-into-one" target="_blank" rel="noopener">http://stackoverflow.com/questions/2563632/how-can-i-merge-two-commits-into-one</a><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 清掉第一条commit，但是保留代码</span></span><br><span class="line">git reset --soft <span class="string">"HEAD^"</span></span><br><span class="line"><span class="comment"># 复用上一次的commit</span></span><br><span class="line">git commit --amend</span><br></pre></td></tr></table></figure></p>
+<h1 id="多人合作"><a href="#多人合作" class="headerlink" title="多人合作"></a>多人合作</h1><p>新建三个目录<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/git$ tree . -d 2</span><br><span class="line">.</span><br><span class="line">├── origin</span><br><span class="line">├── work</span><br><span class="line">└── work1</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp/git/work</span><br><span class="line">git init .</span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; a;git add .;git commit -m commit<span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line">git remote add origin /tmp/git/origin/</span><br><span class="line"><span class="built_in">cd</span> ../origin</span><br><span class="line">git init --bare</span><br><span class="line"><span class="built_in">cd</span> -</span><br><span class="line">git push origin master</span><br><span class="line"><span class="built_in">cd</span> ../work1</span><br><span class="line">git <span class="built_in">clone</span> /tmp/git/origin/ .</span><br></pre></td></tr></table></figure>
+<p>到目前为止，work和work1共享了origin仓库</p>
+<p>接下来让别人push一些修改到master，自己也做了一些commit<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp/git/work</span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; b;git add .;git commit -m <span class="built_in">local</span><span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">cd</span> ../work1</span><br><span class="line">git config user.name <span class="string">"another king"</span></span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; c;git add .;git commit -m remote<span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line">git push origin master</span><br><span class="line"><span class="built_in">cd</span> -</span><br></pre></td></tr></table></figure></p>
+<p>在work pull远程代码之后，log是这样的<br><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">git pull origin master</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*   3d5b7d2 - (HEAD -&gt; master) Merge branch <span class="string">'master'</span> of /tmp/git/origin (19 秒钟前) &lt;King&gt;</span><br><span class="line">|\  </span><br><span class="line">| * c83b1e9 - (origin/master) remote9 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * 0c6e331 - remote8 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * 17a8fcd - remote7 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * c685ee7 - remote6 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * 8868d35 - remote5 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * 3b724d2 - remote4 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * d82b1bd - remote3 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * e9865f1 - remote2 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">| * 2c86a3b - remote1 (40 秒钟前) &lt;another king&gt;</span><br><span class="line">* | 1384e0c - local9 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | ae7c46e - local8 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | bbea9bb - local7 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | 88e2fbb - local6 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | 60b7ac3 - local5 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | c5494bd - local4 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | 5dfe9a9 - local3 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | 18ecbb4 - local2 (40 秒钟前) &lt;King&gt;</span><br><span class="line">* | 76662a5 - local1 (40 秒钟前) &lt;King&gt;</span><br><span class="line">|/  </span><br><span class="line">* 8383510 - commit9 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* 0a15467 - commit8 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* 3f76d47 - commit7 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* 3d469ec - commit6 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* cdcf488 - commit5 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* cab099e - commit4 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* 77a35fe - commit3 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* 5b8b08e - commit2 (48 秒钟前) &lt;King&gt;</span><br><span class="line">* f1d3575 - commit1 (49 秒钟前) &lt;King&gt;</span><br></pre></td></tr></table></figure>
+<p>这里有个问题，别人的改动插入到我的改动之中，若改成rebase，就不一样<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/git/work$ git pull --rebase origin master</span><br><span class="line">remote: 对象计数中: 26, 完成.</span><br><span class="line">remote: 压缩对象中: 100% (18/18), 完成.</span><br><span class="line">remote: Total 26 (delta 0), reused 0 (delta 0)</span><br><span class="line">展开对象中: 100% (26/26), 完成.</span><br><span class="line">来自 /tmp/git/origin</span><br><span class="line"> * branch            master     -&gt; FETCH_HEAD</span><br><span class="line">   4245282..ff5ceb9  master     -&gt; origin/master</span><br><span class="line">首先，回退分支以便在上面重放您的工作...</span><br><span class="line">应用：local1</span><br><span class="line">应用：local2</span><br><span class="line">应用：local3</span><br><span class="line">应用：local4</span><br><span class="line">应用：local5</span><br><span class="line">应用：local6</span><br><span class="line">应用：local7</span><br><span class="line">应用：local8</span><br><span class="line">应用：local9</span><br></pre></td></tr></table></figure></p>
+<p>生成后的log如下<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">* d6f1150 - (HEAD -&gt; master) local9 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* 3ea2ae7 - local8 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* a1dcc9b - local7 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* 65488ec - local6 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* 417f852 - local5 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* e460dbd - local4 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* 7a0e9a5 - local3 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* cc58778 - local2 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* e69d861 - local1 (29 秒钟前) &lt;King&gt;</span><br><span class="line">* ff5ceb9 - (origin/master) remote9 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* dc8997b - remote8 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* ef231f5 - remote7 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* e7af01a - remote6 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* 3ed0382 - remote5 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* 1dce6c2 - remote4 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* f726941 - remote3 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* 13b51a6 - remote2 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* 949d038 - remote1 (54 秒钟前) &lt;another king&gt;</span><br><span class="line">* 4245282 - commit9 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 6713be4 - commit8 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* d5c11c8 - commit7 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 3e07d30 - commit6 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 7265b3d - commit5 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 0deb807 - commit4 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 9b232a4 - commit3 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* bfd3ad1 - commit2 (60 秒钟前) &lt;King&gt;</span><br><span class="line">* 108010e - commit1 (60 秒钟前) &lt;King&gt;</span><br></pre></td></tr></table></figure></p>
+<p>原理很简单</p>
+<blockquote>
+<p>–rebase,这里表示把你的本地当前分支里的每个提交(commit)取消掉，并且把它们临时 保存为补丁(patch)(这些补丁放到”.git/rebase”目录中),然后把本地当前分支更新 为最新的”origin”分支，最后把保存的这些补丁应用到本地当前分支上。</p>
+</blockquote>
+<p>参考<a href="http://blog.csdn.net/hudashi/article/details/7664631/" target="_blank" rel="noopener">http://blog.csdn.net/hudashi/article/details/7664631/</a></p>
+<h1 id="开发分支合并"><a href="#开发分支合并" class="headerlink" title="开发分支合并"></a>开发分支合并</h1><p>大部分情况下，不会直接基于master分支，而是自己拉一个分支下来，然后commit，最后创建一个pull request。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp/git/work</span><br><span class="line">git init .</span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; a;git add .;git commit -m commit<span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line">git remote add origin /tmp/git/origin/</span><br><span class="line"><span class="built_in">cd</span> ../origin</span><br><span class="line">git init --bare</span><br><span class="line"><span class="built_in">cd</span> -</span><br><span class="line">git push origin master</span><br><span class="line"><span class="built_in">cd</span> ../work1</span><br><span class="line">git <span class="built_in">clone</span> /tmp/git/origin/ .</span><br></pre></td></tr></table></figure>
+<p>到目前为止，work和work1共享了origin仓库</p>
+<p>接下来让别人push一些修改到master，自己<strong>开个新分支</strong>也做了一些commit。最后切回master，并且拉取别人提交到master的commit<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /tmp/git/work</span><br><span class="line">git checkout -b tmp</span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; b;git add .;git commit -m <span class="built_in">local</span><span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line"><span class="built_in">cd</span> ../work1</span><br><span class="line">git config user.name <span class="string">"another king"</span></span><br><span class="line"><span class="keyword">for</span> ((i=1;i&lt;10;i++));<span class="keyword">do</span> <span class="built_in">echo</span> <span class="variable">$i</span> &gt; c;git add .;git commit -m remote<span class="variable">$i</span>;<span class="keyword">done</span>;</span><br><span class="line">git push origin master</span><br><span class="line"><span class="built_in">cd</span> -</span><br><span class="line">git checkout master</span><br><span class="line">git pull origin master</span><br></pre></td></tr></table></figure></p>
+<p>一般情况是直接git merge master将别人的commit合并到临时分支<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git checkout tmp</span><br><span class="line">git merge master</span><br></pre></td></tr></table></figure></p>
+<p>和之前的直接pull一样，别人的提交穿插在自己的commit中间<br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">*   36d5aa7 - (HEAD -&gt; tmp) Merge branch <span class="string">'master'</span> into tmp (29 秒钟前) &lt;King&gt;</span><br><span class="line">|\  </span><br><span class="line">| * f5c0dc8 - (origin/master, master) remote9 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 45ec76f - remote8 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 095dc1b - remote7 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 7999947 - remote6 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 889f88c - remote5 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 303ab0c - remote4 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * cff4cb8 - remote3 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * c4995a0 - remote2 (2 分钟前) &lt;another king&gt;</span><br><span class="line">| * 56bf566 - remote1 (2 分钟前) &lt;another king&gt;</span><br><span class="line">* | 589f098 - local9 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | e575680 - local8 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | 2a14876 - local7 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | fa8458b - local6 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | a4f6c50 - local5 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | 6118659 - local4 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | b2bfba8 - local3 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | 0f422b5 - local2 (2 分钟前) &lt;King&gt;</span><br><span class="line">* | 3be57eb - local1 (2 分钟前) &lt;King&gt;</span><br><span class="line">|/  </span><br><span class="line">* 491590d - commit9 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 918800c - commit8 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 0dfe536 - commit7 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 17521f8 - commit6 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 9db0b79 - commit5 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 58cbf4e - commit4 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 1c4abaa - commit3 (3 分钟前) &lt;King&gt;</span><br><span class="line">* b973520 - commit2 (3 分钟前) &lt;King&gt;</span><br><span class="line">* 9718254 - commit1 (3 分钟前) &lt;King&gt;</span><br></pre></td></tr></table></figure></p>
+<p>利用rebase，同样可以做的很<strong>干净</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">king@king:/tmp/git/work$ git checkout  tmp </span><br><span class="line">切换到分支 <span class="string">'tmp'</span></span><br><span class="line">king@king:/tmp/git/work$ git rebase master </span><br><span class="line">首先，回退分支以便在上面重放您的工作...</span><br><span class="line">应用：local1</span><br><span class="line">应用：local2</span><br><span class="line">应用：local3</span><br><span class="line">应用：local4</span><br><span class="line">应用：local5</span><br><span class="line">应用：local6</span><br><span class="line">应用：local7</span><br><span class="line">应用：local8</span><br><span class="line">应用：local9</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://blog.kimq.cn/2017/04/17/git-rebase/" data-id="ckdbgbyvv001c43powccgq9rq" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+        <a href="http://blog.kimq.cn/2017/04/17/git-rebase/#disqus_thread" class="article-comment-link">
+          <i class="fa fa-comment"></i> Comments
+        </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2017/04/13/docker-build-gcc1/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">用docker构建c编译环境2</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2017/06/19/gitlab-env/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">搭建gitlab测试环境</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+
+
+
+        </div>
+        <div class="col-sm-2 col-sm-offset-1 blog-sidebar">
+          
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Golang/">Golang</a><span class="sidebar-module-list-count">14</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Openldap/">Openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Python/">Python</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/后端/">后端</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/学习笔记/">学习笔记</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/开发环境/">开发环境</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/源码学习/">源码学习</a><span class="sidebar-module-list-count">9</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/环境搭建/">环境搭建</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/">运营运维</a><span class="sidebar-module-list-count">10</span><ul class="sidebar-module-list-child"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/代理/">代理</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/运营运维/网站/">网站</a><span class="sidebar-module-list-count">1</span></li></ul></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ansible/">ansible</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/antd/">antd</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cookie/">cookie</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/cors/">cors</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/crsf/">crsf</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/docker/">docker</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/drone/">drone</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/elasticsearch/">elasticsearch</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/flask/">flask</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/git/">git</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/github/">github</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gitlab/">gitlab</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/golang/">golang</a><span class="sidebar-module-list-count">27</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/gorm/">gorm</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/grpc/">grpc</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/influxdb/">influxdb</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonp/">jsonp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/jsonschema/">jsonschema</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/kibana/">kibana</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/martini/">martini</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/nginx/">nginx</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ngrok/">ngrok</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/node/">node</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/openldap/">openldap</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/pip/">pip</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/proxy/">proxy</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/redis/">redis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sentry/">sentry</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sqlalchemy/">sqlalchemy</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/ssh/">ssh</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/sso/">sso</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tars/">tars</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/tavern/">tavern</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/travis/">travis</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/uml/">uml</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/wcgi/">wcgi</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/xss/">xss</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/一致性hash/">一致性hash</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/持续集成/">持续集成</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/盗链/">盗链</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/签名/">签名</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/证书/">证书</a><span class="sidebar-module-list-count">2</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/ansible/" style="font-size: 10px;">ansible</a> <a href="/tags/antd/" style="font-size: 10px;">antd</a> <a href="/tags/cookie/" style="font-size: 11.67px;">cookie</a> <a href="/tags/cors/" style="font-size: 10px;">cors</a> <a href="/tags/crsf/" style="font-size: 10px;">crsf</a> <a href="/tags/docker/" style="font-size: 13.33px;">docker</a> <a href="/tags/drone/" style="font-size: 16.67px;">drone</a> <a href="/tags/elasticsearch/" style="font-size: 10px;">elasticsearch</a> <a href="/tags/flask/" style="font-size: 11.67px;">flask</a> <a href="/tags/git/" style="font-size: 11.67px;">git</a> <a href="/tags/github/" style="font-size: 10px;">github</a> <a href="/tags/gitlab/" style="font-size: 11.67px;">gitlab</a> <a href="/tags/golang/" style="font-size: 20px;">golang</a> <a href="/tags/gorm/" style="font-size: 10px;">gorm</a> <a href="/tags/grpc/" style="font-size: 10px;">grpc</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/influxdb/" style="font-size: 10px;">influxdb</a> <a href="/tags/jsonp/" style="font-size: 10px;">jsonp</a> <a href="/tags/jsonschema/" style="font-size: 10px;">jsonschema</a> <a href="/tags/kibana/" style="font-size: 10px;">kibana</a> <a href="/tags/martini/" style="font-size: 10px;">martini</a> <a href="/tags/nginx/" style="font-size: 15px;">nginx</a> <a href="/tags/ngrok/" style="font-size: 11.67px;">ngrok</a> <a href="/tags/node/" style="font-size: 10px;">node</a> <a href="/tags/openldap/" style="font-size: 13.33px;">openldap</a> <a href="/tags/pip/" style="font-size: 10px;">pip</a> <a href="/tags/proxy/" style="font-size: 13.33px;">proxy</a> <a href="/tags/python/" style="font-size: 11.67px;">python</a> <a href="/tags/redis/" style="font-size: 10px;">redis</a> <a href="/tags/sentry/" style="font-size: 11.67px;">sentry</a> <a href="/tags/sqlalchemy/" style="font-size: 10px;">sqlalchemy</a> <a href="/tags/ssh/" style="font-size: 11.67px;">ssh</a> <a href="/tags/sso/" style="font-size: 10px;">sso</a> <a href="/tags/tars/" style="font-size: 10px;">tars</a> <a href="/tags/tavern/" style="font-size: 10px;">tavern</a> <a href="/tags/travis/" style="font-size: 10px;">travis</a> <a href="/tags/uml/" style="font-size: 10px;">uml</a> <a href="/tags/wcgi/" style="font-size: 10px;">wcgi</a> <a href="/tags/xss/" style="font-size: 10px;">xss</a> <a href="/tags/一致性hash/" style="font-size: 10px;">一致性hash</a> <a href="/tags/持续集成/" style="font-size: 18.33px;">持续集成</a> <a href="/tags/盗链/" style="font-size: 10px;">盗链</a> <a href="/tags/签名/" style="font-size: 11.67px;">签名</a> <a href="/tags/证书/" style="font-size: 11.67px;">证书</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/08/">八月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/06/">六月 2020</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/03/">三月 2020</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/02/">二月 2020</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2020/01/">一月 2020</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/07/">七月 2018</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/06/">六月 2018</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2018/05/">五月 2018</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/12/">十二月 2017</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/10/">十月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/08/">八月 2017</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/07/">七月 2017</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/06/">六月 2017</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/04/">四月 2017</a><span class="sidebar-module-list-count">4</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/03/">三月 2017</a><span class="sidebar-module-list-count">10</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2017/02/">二月 2017</a><span class="sidebar-module-list-count">10</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2020/08/01/gitlab-sentry/">gitlab/sentry集成</a>
+        </li>
+      
+        <li>
+          <a href="/2020/06/10/ansible/">Ansible实践</a>
+        </li>
+      
+        <li>
+          <a href="/2020/03/08/elasticsearch_basic/">ElasticSearch学习笔记</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/29/jaeger_basic/">Jaeger初探</a>
+        </li>
+      
+        <li>
+          <a href="/2020/02/20/tavern/">ResfulApi测试框架tavern</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2020 KingQiu<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+      <br/>
+      CopyRight © 2019 <a href="http://beian.miit.gov.cn/" target="_blank">粤ICP备19068003号</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+    var bp = document.createElement('script');
+    bp.src = '//push.zhanzhang.baidu.com/push.js';
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+  
+<script>
+  var disqus_shortname = 'blog-qiujinwu-com';
+  
+  var disqus_url = 'http://blog.kimq.cn/2017/04/17/git-rebase/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="http://cdn.bootcss.com/jquery/2.1.4/jquery.min.js" crossorigin="anonymous"></script>
+
+<script src="http://cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
